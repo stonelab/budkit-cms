@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Application\Controller;
+namespace Budkit\Cms\Controller;
 
+use Budkit\Cms\Provider;
 use Budkit\Routing\Controller;
 use Budkit\Dependency\Container as Application;
 

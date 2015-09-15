@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Application\Controller;
+namespace Budkit\Cms\Controller;
 
+use Budkit\Cms\Provider;
 use Budkit\Routing\Controller;
 use Budkit\Dependency\Container as Application;
 
@@ -16,7 +17,7 @@ class Stream extends Controller {
     public function index($format = 'html') {
         //echo "Browsing in {$format} format";
 
-        $this->display('App\Application\View\Index');
+        $this->display(Budkit\Cms\View\Index::class);
     }
 
 

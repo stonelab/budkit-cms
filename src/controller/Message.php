@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Application\Controller;
+namespace Budkit\Cms\Controller;
 
+use Budkit\Cms\Provider;
 use Budkit\Dependency\Container as Application;
 
 class Message extends Controller {
@@ -15,7 +16,7 @@ class Message extends Controller {
     public function index($format = 'html') {
         //echo "Browsing in {$format} format";
 
-        $this->display('App\Application\View\Index');
+        $this->display(Budkit\Cms\View\Index::class);
     }
 
 

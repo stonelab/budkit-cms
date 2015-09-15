@@ -1,6 +1,6 @@
 <?php 
 
-namespace App\Application\View;
+namespace Budkit\Cms\View;
 
 use Budkit\View\Display;
 
