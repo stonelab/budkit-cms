@@ -2,30 +2,23 @@
 
 namespace Budkit\Cms\Controller;
 
-use Budkit\Cms\Provider;
-use Budkit\Routing\Controller;
-use Budkit\Dependency\Container as Application;
+use Budkit\Cms\Helper\Controller;
 
-class Person extends Controller {
-
-    public function __construct(Application $application) {
-        parent::__construct($application);
-
-        $this->view->appendLayoutSearchPath( Provider::getPackageDir()."layouts/");
-    }
+class Post extends Controller {
 
     public function index($format = 'html') {
         //echo "Browsing in {$format} format";
 
-
-
         $this->view->setData("name", "Livingstone");
-        $this->view->setLayout("person/profile");
+        $this->view->setLayout("inbox/index");
     }
 
 
     public function read($id, $format = 'html') {
         echo "Reading {$id} in {$format} format";
+
+        $this->view->setData("name", "Livingstone");
+        $this->view->setLayout("inbox/index");
     }
 
     public function edit($id = 'new', $format = 'html') {
@@ -41,7 +34,11 @@ class Person extends Controller {
     }
 
     public function create() {
-        echo "Creating...";
+
+        $this->view->setData("editor", "post");
+        $this->view->setData("title", "Create New Post");
+
+        $this->view->setLayout("editor");
     }
 
     public function update() {

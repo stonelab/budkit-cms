@@ -1,18 +1,9 @@
 <?php
 
 namespace Budkit\Cms\Controller;
-
-use Budkit\Cms\Provider;
-use Budkit\Routing\Controller;
-use Budkit\Dependency\Container as Application;
+use Budkit\Cms\Helper\Controller;
 
 class Stream extends Controller {
-
-    public function __construct(Application $application) {
-        parent::__construct($application);
-
-        $this->view->appendLayoutSearchPath( Provider::getPackageDir()."layouts/");
-    }
 
     public function index($format = 'html') {
         //echo "Browsing in {$format} format";
