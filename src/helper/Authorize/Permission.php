@@ -232,13 +232,31 @@ class Permission{
                     endif;
                 endforeach;
             }
+        else:
+            //What about the public?
+            $publicAuthority = $this->config->get( "setup.site.public-authority", NULL );
+
+            //@TODO Replace the exception list with actual route map paths!
+            if(array_key_exists($publicAuthority, $permissionTree) ) {
+
+                $granted = $permissionTree[$publicAuthority];
+
+                if($granted['permission_type'] == $forPermission ) {
+                    //We need the sign-in sign-up page to be public
+                    $allowed = true; //We need the sign-in sign-up page to be public
+                }
+
+            }
+
         endif;
 
-        //What about the public?
-        $publicAuthority = $this->config->get( "setup.site.public-authority", NULL );
 
-        //@TODO Replace the exception list with actual route map paths!
-        if(array_key_exists($publicAuthority, $permissionTree) || in_array( $path , array("/member/signin", "/member/signup", "/member/signin-reset" )) ) $allowed = true; //We need the sign-in sign-up page to be public
+        //Login and sign-up pages;
+        //@TODO may need to get them via named routes;
+        if (in_array( $path , array("/member/signin", "/member/signup", "/member/signin-reset" )) ){
+            $allowed = true;
+        }
+
 
         if(!$allowed):
 //            if($redirect):

@@ -85,7 +85,6 @@ class Controller extends RouteController {
 
     function checkPermission( $level="view"){
 
-
         if (!$this->permission->isAllowed( $this->request->getPathInfo(), null, $level)) {
 
             $message = t("You do not have permission to access the requested resource. If you are not signed in please consider signing in with an account that has sufficient permissions.");

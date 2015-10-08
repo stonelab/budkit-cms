@@ -12,8 +12,14 @@ class Page extends Controller {
     public function index($format = 'html', $id="") {
         //echo "Browsing in {$format} format";
 
+        $this->checkPermission("execute");
+
+        //die;
+
         $this->view->setData("name", "Livingstone");
         $this->view->setLayout("index");
+
+        //@TODO redirect to the homepage
 
     }
 
