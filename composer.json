@@ -9,7 +9,8 @@
         }
     ],
     "require": {
-        "php": ">=5.4.0"
+        "php": ">=5.4.0",
+        "erusev/parsedown": "*"
     },
     "autoload": {
         "psr-4": { "Budkit\\Cms\\": "src/"}
