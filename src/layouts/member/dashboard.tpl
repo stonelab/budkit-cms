@@ -10,7 +10,6 @@
                 <div class="page-header">
                     <h1 class="mvn">
                         <span><tpl:data value="title" /></span>
-
                         <tpl:condition on="action" test="empty" is="false">
                             <div class="btn-group mlm">
                                 <tpl:loop foreach="action">

@@ -41,7 +41,8 @@ class Options extends DataModel {
             return false;
         }
         //Inser the data if not exists, or update if it does exists;
-        $table = $this->load->table("?options");
+        $table = $this->database->getTable("?options");
+
         $shortgun = "REPLACE INTO ?options (`option_group_id`,`option_name`,`option_value`)\t";
 
         //$this->database->startTransaction();

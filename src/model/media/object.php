@@ -86,7 +86,7 @@ class Object {
      * @return type
      */
     public static function getArray() {
-        $object = new \ReflectionClass(self);
+        $object = new \ReflectionClass(Object::class);
         $properties = $object->getProperties(\ReflectionProperty::IS_PUBLIC);
         $array = array();
 
@@ -107,7 +107,7 @@ class Object {
      */
     public static function set($property, $value = NULL) {
 
-        $object = new \ReflectionClass(self);
+        $object = new \ReflectionClass(Object::class);
         $object->setStaticPropertyValue($property, $value);
 
         return true;
@@ -121,7 +121,7 @@ class Object {
      */
     public static function get($property, $default = NULL) {
 
-        $object = new \ReflectionClass(self);
+        $object = new \ReflectionClass(Object::class);
         $value = $object->getStaticPropertyValue($property);
 
         //If there is no value return the default

@@ -16,6 +16,8 @@ use Budkit\Dependency\Container as Application;
 class Controller extends RouteController {
 
 
+
+
     public function __construct(Application $application, Menu $menu) {
 
 
@@ -83,9 +85,11 @@ class Controller extends RouteController {
     }
 
 
-    function checkPermission( $level="view"){
+    function checkPermission( $level="view", $path = ''){
 
-        if (!$this->permission->isAllowed( $this->request->getPathInfo(), null, $level)) {
+        $path = empty($path)? $this->request->getPathInfo() : $path;
+
+        if (!$this->permission->isAllowed( $path, null, $level)) {
 
             $message = t("You do not have permission to access the requested resource. If you are not signed in please consider signing in with an account that has sufficient permissions.");
 

@@ -38,7 +38,7 @@ class User extends Entity implements AuthenticationUser{
         $this->database =   $database;
         $this->session =   $session;
 
-        parent::__construct($database);
+        parent::__construct($database, $application);
         
         //"label"=>"","datatype"=>"","charsize"=>"" , "default"=>"", "index"=>TRUE, "allowempty"=>FALSE
         $this->extendPropertyModel(

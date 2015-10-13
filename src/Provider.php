@@ -6,8 +6,11 @@ use Budkit\Cms\Helper\Authorize\Permission;
 use Budkit\Application\Support\Service;
 use Budkit\Dependency\Container;
 use Budkit\Cms\Controller;
+use Budkit\Cms\Helper\ErrorHandler;
 use Budkit\Protocol\Uri;
 use Route;
+use Whoops\Example\Exception;
+use Whoops\Handler\Handler;
 
 class Provider implements Service
 {
@@ -29,9 +32,48 @@ class Provider implements Service
 
     public function onRegister()
     {
+        //Register a before dispatch method to check if
+        //The system has been installed;
+        $this->application->observer->attach([$this, "onAfterRouteMatch"], "Dispatcher.afterRouteMatch");
+        $this->application->observer->attach([$this, "onCompileLayoutData"], "Layout.onCompile.scheme.data");
+
+        /*
+        |--------------------------------------------------------------------------
+        | Error Pages
+        |--------------------------------------------------------------------------
+        |
+        | We need to modify the internal error handling, so we don't show system
+        | inners to the entire world
+        | - Check the nature of the environment. If development or test mode, leave as is
+        | - If in production mode, then customize as follows
+        |
+        */
+        $application = $this->application;
+        $environment = $this->application->config->get("setup.environment.mode", 0);
+
+        if ((int)$environment > 2){ //0=developermet;1=test;2=production
+            //$this->application->error->unregister();
+            $this->application->error->pushHandler( $application->createInstance( ErrorHandler::class ));
+            //$this->application->error->register();
+        }
+
+        //throw new Exception("something wong");
 
         //Sets global tokens
         Route::setTokens(['format' => '(\.[^/]+)?', 'id' => '(\d+)([a-zA-Z0-9-_]+)?']);
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | The Homepage
+        |--------------------------------------------------------------------------
+        |
+        | The installation route accepts POST so enable all methods
+        |
+        */
+        Route::addGet("/", "homepage", Controller\Page::class);
+
+
 
         /*
         |--------------------------------------------------------------------------
@@ -68,6 +110,13 @@ class Provider implements Service
                 'format' => '(\.[^/]+)?'
             ));
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | Save global settings
+            |--------------------------------------------------------------------------
+            */
+            $route->addPost('/save{format}', 'save');
 
             /*
             |--------------------------------------------------------------------------
@@ -171,7 +220,14 @@ class Provider implements Service
 
         });
 
-        //The installation route accepts POST so enable all methods
+        /*
+        |--------------------------------------------------------------------------
+        | The installation wizard
+        |--------------------------------------------------------------------------
+        |
+        | The installation route accepts POST so enable all methods
+        |
+        */
         Route::add("/admin/setup/install{/step}", "install.admin", Controller\Admin\Setup\Install::class);
 
 
@@ -207,12 +263,6 @@ class Provider implements Service
             $route->addGet("/messages", "member.messages", Controller\Member\Inbox::class); //a collection of streams;
 
         });
-
-
-        //Register a before dispatch method to check if
-        //The system has been installed;
-        $this->application->observer->attach([$this, "onAfterRouteMatch"], "Dispatcher.afterRouteMatch");
-        $this->application->observer->attach([$this, "onCompileLayoutData"], "Layout.onCompile.scheme.data");
     }
 
     public function onAfterRouteMatch($afterRouteMatch)
@@ -300,8 +350,6 @@ class Provider implements Service
             //if the scheme is config://get.config.path, then load the config data;
             return $event->setResult(trim($this->application->config->get($path)));
         }
-
-        //die;
 
     }
 

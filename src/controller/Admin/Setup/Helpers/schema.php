@@ -172,7 +172,7 @@ final class Schema{
                 (86, 0, 'Audio', '/audio/gallery', NULL, 0, 1, 'link', NULL, 4, 11, 1),
                 (87, 0, 'Videos', '/video/gallery', NULL, 0, 1, 'link', NULL, 5, 10, 1),
                 (88, 0, 'Text', '/text/gallery', '', 23, 1, 'link', '', 6, 9, 1),
-                (73, 0, 'Account', '/member/account', '', 0, 2, 'link', NULL, 1, 2, 1),
+                (73, 0, 'Dashboard', '/member/dashboard', '', 0, 2, 'link', NULL, 1, 2, 1),
                 (74, 0, 'Profile', '/member/profile', NULL, 0, 2, 'link', NULL, 3, 4, 1),
                 (75, 0, 'Messages', '/member/messages', NULL, 0, 2, 'link', NULL, 5, 6, 1),
                 (25, 80, 'Maintenance', '/admin/settings/maintenance', '', 20, 3, 'link', '', 12, 13, 1),

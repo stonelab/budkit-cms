@@ -2,9 +2,10 @@
 <tpl:layout xmlns:tpl="http://budkit.org/tpl" extends="navigation">
 
     <tpl:replace path="//a[@role='navbar-brand']">
-        <button class="navbar-btn btn btn-default sidebar-toggle mlm mtm" data-switch="minimized" data-target=".sidebar">
+        <button class="navbar-btn btn btn-default sidebar-toggle mlm mts" data-switch="minimized" data-target=".sidebar">
             <i class="fa fa-bars"></i>
         </button>
+        <tpl:block position="navbar-button" />
     </tpl:replace>
 
     <tpl:replace path="//div[@role='navbar-collapse']">
@@ -16,8 +17,8 @@
             <form class="navbar-form navbar-left" action="#" role="search">
                 <div class="form-group">
                     <div class="input-group">
-                        <input class="form-control" id="navbarInput-01" type="search" placeholder="Search"/>
-                          <span class="input-group-btn">
+                        <input class="form-control flat" id="navbarInput-01" type="search" placeholder="Search"/>
+                          <span class="input-group-btn flat">
                             <button type="submit" class="btn"><span class="fui-search"></span></button>
                           </span>
                     </div>

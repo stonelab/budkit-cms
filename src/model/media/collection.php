@@ -55,7 +55,7 @@ final class Collection{
      * @return array of items in collection
      */
     public static function getArray() {
-        $object = new \ReflectionClass(self);
+        $object = new \ReflectionClass( Collection::class );
         $properties = $object->getProperties(\ReflectionProperty::IS_PUBLIC);
         $array = array();
 
@@ -76,7 +76,7 @@ final class Collection{
      */
     public static function set($property, $value = NULL) {
 
-        $object = new \ReflectionClass(self);
+        $object = new \ReflectionClass( Collection::class );
         $object->setStaticPropertyValue($property, $value);
 
         return true;
@@ -90,7 +90,7 @@ final class Collection{
      */
     public static function get($property, $default = NULL) {
 
-        $object = new \ReflectionClass(self);
+        $object = new \ReflectionClass( Collection::class );
         $value = $object->getStaticPropertyValue($property);
 
         //If there is no value return the default

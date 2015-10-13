@@ -3,7 +3,6 @@
 
 namespace Budkit\Cms\Model\Media;
 
-use Budkit\Cms\Model\Collection;
 use Budkit\Cms\Model\User;
 use Budkit\Datastore\Database;
 use Budkit\Datastore\Model\Entity;
@@ -51,7 +50,7 @@ class Content extends Entity {
 
     public function __construct(Database $database, Collection $collection, Container $container, User $user) {
 
-        parent::__construct($database);
+        parent::__construct($database, $container);
 
         $this->collection   = $collection;
         $this->input        = $container->input;
@@ -66,9 +65,10 @@ class Content extends Entity {
             "media_comment_status" => array("Allow Comments", "tinyint", 1, 0), //*
             "media_parent" => array("Parent", "smallint", 10, 0), //*
             "media_generator" => array("Generator", "mediumtext", 100),
+            "media_template" => array("Template", "mediumtext", 100),
             "media_provider" => array("Provider", "mediumtext", 100, "budkit"),
             "media_mentions" => array("Mentions", "varchar", 1000), //*
-            "media_actor" => array("Actor", "varchar", 1000),
+            "media_owner" => array("Owner", "varchar", 1000),
             "media_verb" => array("Verb", "mediumtext", 20, "post"),
             "media_geotags" => array("Geotags", "varchar", 1000), //*
             "media_object" => array("Object", "varchar", 1000),
@@ -105,9 +105,12 @@ class Content extends Entity {
         $objects = $this->getMediaObjectsList($objectType, $objectURI, $objectId)->fetchAll();
         $items = array();
 
+
         //Parse the mediacollections;
         foreach ($objects as $i=>$object) {
-            $object = $this->getActor($object, $object['media_actor']);
+            $object = $this->getOwner($object, $object['media_owner']);
+
+            //If object is an attachment ?
             if($object['object_type']==="attachment"):
                $object['media_object'] = $object['object_uri']; //add to the collection
                 if(empty($object['media_title'])):
@@ -119,10 +122,10 @@ class Content extends Entity {
             $object['media_published'] = $object['object_created_on'];
 
             //CleanUp
-            foreach ($object as $key => $value):
-                $object[str_replace(array('media_', 'object_'), '', $key)] = $value;
-                unset($object[$key]);
-            endforeach;
+//            foreach ($object as $key => $value):
+//                $object[str_replace(array('media_', 'object_'), '', $key)] = $value;
+//                unset($object[$key]);
+//            endforeach;
 
             $items[] = $object;
         }
@@ -168,7 +171,7 @@ class Content extends Entity {
             endforeach;
 
             //Join the UserObjects Properties
-            $_actorProperties = $this->load->model("profile", "member")->getPropertyModel();
+            $_actorProperties = $this->user->getPropertyModel();
             $actorProperties = array_diff(array_keys($_actorProperties), array("user_password", "user_api_key", "user_email"));
             $count = count($actorProperties);
             if (!empty($actorProperties) || $count < 1):
@@ -200,7 +203,7 @@ class Content extends Entity {
                     . "\nLEFT JOIN ?properties p ON p.property_id = v.property_id"
                     . "\nLEFT JOIN ?objects o ON o.object_id=v.object_id"
                     //Join the OwnerObjects Properties tables on userid=actorid
-                    . "\nLEFT JOIN ?objects q ON q.object_id=v.value_data AND p.property_name ='media_actor'"
+                    . "\nLEFT JOIN ?objects q ON q.object_uri=v.value_data AND p.property_name ='media_owner'"
                     . "\nLEFT JOIN ?user_property_values u ON u.object_id=q.object_id"
                     . "\nLEFT JOIN ?properties l ON l.property_id = u.property_id"
             ;
@@ -247,10 +250,10 @@ class Content extends Entity {
     public function addAllMediaTypes(){}
     public function getAllMediaTypesObjectList(){}
 
-    public function getActor($object, $actorId) {
+    public function getOwner($object, $actorId) {
 
         if (!is_array($object) || !isset($object['user_name_id']))
-            return null;
+            return $object;
 
         //2.0 THE ACTOR
         $actorObject = new Object();
@@ -261,7 +264,7 @@ class Content extends Entity {
         $actorObject::set("uri", $object['user_name_id']);
 
         $actorImage = new MediaLink();
-        $actorImageEntity = $this->load->model("attachment", "system")->loadObjectByURI($object['user_photo']);
+        $actorImageEntity = $this->container->createInstance( Attachment::class )->loadObjectByURI($object['user_photo']);
         $actorImageURL = !empty($object['user_photo']) ? "/system/object/{$object['user_photo']}/resize/60/60" : "http://placeskull.com/50/50/999999";
         $actorImage::set("type", $actorImageEntity->getPropertyValue("attachment_type"));
         $actorImage::set("url", $actorImageURL);
@@ -273,9 +276,9 @@ class Content extends Entity {
         endif;
         $actorObject::set("image", $actorImage::getArray());
 
-        $object['media_actor'] = $actorObject::getArray();
+        $object['media_owner'] = $actorObject::getArray();
         //Remove user model sensitive Data
-        foreach (array_keys($this->load->model("user", "member")->getPropertyModel()) as $private):
+        foreach (array_keys($this->user->getPropertyModel()) as $private):
             unset($object[$private]);
         endforeach;
 
@@ -332,46 +335,19 @@ class Content extends Entity {
         return $object;
     }
 
+
+
     /**
      * Adds a new media object to the database
      * @return boolean Returns true on save, or false on failure
      */
-    public function store($objectId = null)
+    public function store($objectURI = null)
     {
-
-        $inputModel = $this->getPropertyModel();
-
-        // print_R($_POST);
-        foreach ($inputModel as $property => $definition):
-            $value = $this->input->getString($property,  "","post");
-            if( !empty( $value ) ):
-                $this->setPropertyValue($property, $value);
-            endif;
-        endforeach;
-
-
-        //Allow some HTML in media content;
-        $mediaContent = $this->input->getFormattedString("media_content", "", "post", true);
-
-        $this->setPropertyValue("media_content", $mediaContent);
-
         //@TODO determine the user has permission to post;
-        $this->setPropertyValue("media_actor", $this->user->getPropertyValue("user_name_id"));
-
-
-        //@TODO only set media_published on articles that are actually published;
-        
-        //@TODO
-        //Search for media link
-        //$targetObject = new Object();
-        //$mediaLink = new MediaLink();
-        $mediaObject = null;
-
-        //Look for attachedObjects;
-
+        $this->setPropertyValue("media_owner", $this->user->getPropertyValue("user_name_id"));
 
         //Determine the target
-        if (!$this->saveObject($objectId, $this->getObjectType())) {
+        if (!$this->saveObject($objectURI, $this->getObjectType())) {
             //There is a problem! the error will be in $this->getError();
             return false;
         }

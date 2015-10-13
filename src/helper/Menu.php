@@ -106,9 +106,14 @@ class Menu{
                     "menu_url" => "/member/signout",
                 )
             );
-            $event->setResult( $menuItems );
+        }else{
+            array_push($menuItems, array(
+                    "menu_title" => "Sign In",
+                    "menu_url" => "/member/signin",
+                )
+            );
         }
-
+        $event->setResult( $menuItems );
     }
 
     public function hasPermission($event){

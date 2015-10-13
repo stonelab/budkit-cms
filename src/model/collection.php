@@ -4,6 +4,7 @@
 namespace Budkit\Cms\Model;
 use Budkit\Datastore\Database;
 use Budkit\Datastore\Model\Entity;
+use Budkit\Dependency\Container;
 
 /**
  * Options management model
@@ -20,9 +21,9 @@ use Budkit\Datastore\Model\Entity;
  */
 class Collection extends Entity {
 
-    public function __construct(Database $database) {
+    public function __construct(Database $database, Container $application) {
 
-        parent::__construct($database);
+        parent::__construct($database, $application);
 
         //"label"=>"","datatype"=>"","charsize"=>"" , "default"=>"", "index"=>TRUE, "allowempty"=>FALSE
         $this->definePropertyModel(

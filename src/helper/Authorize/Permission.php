@@ -253,7 +253,7 @@ class Permission{
 
         //Login and sign-up pages;
         //@TODO may need to get them via named routes;
-        if (in_array( $path , array("/member/signin", "/member/signup", "/member/signin-reset" )) ){
+        if (in_array( $path , array("/", "/member/signin", "/member/signup", "/member/signin-reset" )) ){
             $allowed = true;
         }
 

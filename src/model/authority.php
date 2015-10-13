@@ -5,6 +5,7 @@ namespace Budkit\Cms\Model;
 
 use Budkit\Datastore\Database;
 use Budkit\Datastore\Model\DataModel;
+use Budkit\Dependency\Container;
 use Budkit\Protocol\Input;
 
 /**
@@ -33,10 +34,12 @@ use Budkit\Protocol\Input;
 class Authority extends DataModel{
 
 
-    public function __construct(Database $database, Input $input){
+    public function __construct(Database $database, Input $input, Container $container){
 
         $this->input    = $input;
         $this->database = $database;
+
+        parent::__construct( $container);
 
     }
 

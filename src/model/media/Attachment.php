@@ -2,6 +2,7 @@
 
 namespace Budkit\Cms\Model\Media;
 
+use Budkit\Cms\Model\User;
 use Budkit\Datastore\Database;
 use Budkit\Datastore\Model\Entity;
 use Budkit\Dependency\Container;
@@ -76,9 +77,9 @@ class Attachment extends Content {
      *
      * @return void
      */
-    public function __construct(Database $database, Collection $collection, Container $container) {
+    public function __construct(Database $database, Collection $collection, Container $container, User $user) {
 
-        parent::__construct($database);
+        parent::__construct($database, $collection, $container, $user);
 
         $this->collection = $collection;
         $this->input = $container->input;
@@ -198,9 +199,9 @@ class Attachment extends Content {
      * @param string $group A unique string representing the options group
      * @return boolean true. Will throw an exception upon any failure.
      */
-    public function store($file) {
+    public function store($uri = null) {
 
-        $fileHandler = \Library\Folder\Files::getInstance();
+        $fileHandler = $this->container->file;
         $uploadsFolder = $this->config->getParam('site-users-folder', '/users');
         $allowedTypes = $this->allowed;
         if (empty($allowedTypes)):

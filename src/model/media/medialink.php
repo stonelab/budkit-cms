@@ -188,7 +188,7 @@ final class MediaLink {
      */
     public static function getArray() {
 
-        $object = new \ReflectionClass(self);
+        $object = new \ReflectionClass(MediaLink::class);
         $properties = $object->getProperties(\ReflectionProperty::IS_PUBLIC);
         $array = array();
 
@@ -235,7 +235,7 @@ final class MediaLink {
      */
     public static function set($property, $value = NULL) {
 
-        $object = new \ReflectionClass(self);
+        $object = new \ReflectionClass(MediaLink::class);
         $object->setStaticPropertyValue($property, $value);
 
         return true;
@@ -249,7 +249,7 @@ final class MediaLink {
      */
     public static function get($property, $default = NULL) {
 
-        $object = new \ReflectionClass(self);
+        $object = new \ReflectionClass(MediaLink::class);
         $value = $object->getStaticPropertyValue($property);
 
         //If there is no value return the default
