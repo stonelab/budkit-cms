@@ -8,22 +8,38 @@
             <tpl:import name="alerts" />
             <div class="row">
                 <div class="form-group col-md-6">
+                    <label class="control-label"><?php echo _('Database Host') ; ?></label>
+
+
+                    <input type="text" name="dbhost" id="dbhost" class="form-control" value="localhost"/>
+                    <span class="help-block">The path to the server. It will most likely be localhost</span>
+
+                </div>
+                <div class="form-group col-md-3">
+                    <label class="control-label"><?php echo _('Database Port') ; ?></label>
+
+                    <input type="text" name="dbport" id="dbport" class="form-control" placeholder="3306"/>
+                    <span class="help-block">The database host port number</span>
+
+                </div>
+                <div class="form-group col-md-3">
                     <label class="control-label"><?php echo _('Database Name') ; ?></label>
 
                     <input type="text" name="dbname" id="dbname" class="form-control"/>
-                    <span class="help-block">The name of the existing database. We won't create the database for you</span>
+                    <span class="help-block">Existing DB name required</span>
 
                 </div>
-                <div class="form-group  col-md-6">
-                    <label class="control-label"><?php echo _('Database Server Username') ; ?></label>
 
-
-                    <input type="text" name="dbusername" id="dbusername" class="form-control" placeholder="e.g root"/>
-                    <span class="help-block">The Username used to access this database</span>
-
-                </div>
                 </div>
                 <div class="row">
+                    <div class="form-group  col-md-6">
+                        <label class="control-label"><?php echo _('Database Server Username') ; ?></label>
+
+
+                        <input type="text" name="dbusername" id="dbusername" class="form-control" placeholder="e.g root"/>
+                        <span class="help-block">The Username used to access this database</span>
+
+                    </div>
                 <div class="form-group col-md-6">
                     <label class="control-label"><?php echo _('Database Server User Password') ; ?></label>
 
@@ -32,14 +48,7 @@
                     <span class="help-block">The Password with which you use to access this database.</span>
 
                 </div>
-                <div class="form-group col-md-6">
-                    <label class="control-label"><?php echo _('Database Host') ; ?></label>
 
-
-                    <input type="text" name="dbhost" id="dbhost" class="form-control" value="localhost"/>
-                    <span class="help-block">The path to the server. It will most likely be localhost</span>
-
-                </div>
 
                 </div>
             <div class="row">

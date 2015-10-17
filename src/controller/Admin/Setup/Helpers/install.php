@@ -114,6 +114,7 @@ final class Install{
         $dbPref = $application->input->getString("dbtableprefix", "", "post");
         $dbUser = $application->input->getString("dbusername", "", "post");
         $dbDriver = $application->input->getString("dbdriver","MySQLi", "post");
+        $dbPort = $application->input->getInt("dbport","", "post");
         
         if(empty($dbName)){
             throw new \Exception(t("Database Name is required to proceed."));
@@ -137,6 +138,7 @@ final class Install{
         $config->set("setup.database.password", $dbPass );
         $config->set("setup.database.name", $dbName );
         $config->set("setup.database.driver", strtolower($dbDriver ) );
+        $config->set("setup.database.port", intval($dbPort) );
 
 
         //Try connect to the database with these details?
