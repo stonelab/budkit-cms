@@ -60,7 +60,7 @@ class Provider implements Service
         //$this->view->appendLayoutSearchPath( Provider::getPackageDir()."layouts/");
 
         //Sets global tokens
-        Route::setTokens(['format' => '(\.[^/]+)?', 'id' => '(\d+)([a-zA-Z0-9-_]+)?']);
+        Route::setTokens(['format' => '(\.[^/]+)?']);
 
 
         /*
