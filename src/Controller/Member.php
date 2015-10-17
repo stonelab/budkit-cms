@@ -176,7 +176,7 @@ class Member extends Controller {
                 }
 
                 //6. Store the user
-                if (!$this->user->store($this->application->input->data("post"))):
+                if (!$this->user->store($this->application->input->data("post"), true)):
                     $this->application->addAlert("We could not create your account", "error");
                     return false;
                 endif;

@@ -219,7 +219,7 @@ class User extends Entity implements AuthenticationUser{
      * @return boolean
      * @throws \Platform\Exception
      */
-    public function store($data) {
+    public function store($data, $isNew = false) {
 
         $encrypt = $this->encryptor;
 
@@ -231,7 +231,8 @@ class User extends Entity implements AuthenticationUser{
             $this->setPropertyValue($property, $value);
         endforeach;
 
-        if (!$this->saveObject($this->getPropertyValue("user_name_id"), "user")) {
+
+        if (!$this->saveObject( $this->getPropertyValue("user_name_id"), "user", null, $isNew)) {
             //There is a problem!
             return false;
         }

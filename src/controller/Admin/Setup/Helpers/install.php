@@ -65,11 +65,12 @@ final class Install{
         }
         
         //6. Store the user
-        if(!$account->store( $application->input->data("post"))){
+        if(!$account->store( $application->input->data("post") , true)){
             //Display a message telling them what can't be empty
             throw new Exception( t('Could not store the admin user account')  );
             return false;
         }
+
         //Add this user to the superadministrators group!
         //$adminObject    = $account->getObjectByURI( $usernameid );
         $adminAuthority = $this->config->get( "setup.site.superadmin-authority", NULL);
