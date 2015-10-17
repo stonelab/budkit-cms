@@ -3,7 +3,7 @@
     <html lang="en">
     <head>
         <tpl:import name="head"/>
-        <link href="/assets/js/vendor/ghost/ghostdown.css" rel="stylesheet"/>
+        <link href="/theme/assets/js/vendor/ghost/ghostdown.css" rel="stylesheet"/>
 
     </head>
     <body class="editor">
@@ -44,7 +44,7 @@
             </form>
         </div>
 
-    <script data-main="/assets/js/main">
+    <script data-main="/theme/assets/js/main">
         //<![CDATA[
         require(['config'], function () {
             require(['jquery', 'ghostdown'], function ($) {

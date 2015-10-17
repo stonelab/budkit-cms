@@ -112,7 +112,10 @@ class Page extends Controller
         //print_R($page->getPropertyData());
         //$parser  = new \Parsedown::instance();
         $editing = $page->getPropertyData();
-        $editing["media_content"] = html_entity_decode($editing["media_content"]);
+
+        if(isset($editing["media_content"])):
+            $editing["media_content"] = html_entity_decode($editing["media_content"]);
+        endif;
 
         //Editing Anouncement
         $onEdit = new  Event('Layout.onEdit', $this, ["editing" => $editing]);
