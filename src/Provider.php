@@ -7,10 +7,9 @@ use Budkit\Application\Support\Service;
 use Budkit\Dependency\Container;
 use Budkit\Cms\Controller;
 use Budkit\Cms\Helper\ErrorHandler;
-use Budkit\Protocol\Uri;
+use Budkit\Event\Event;
 use Route;
-use Whoops\Example\Exception;
-use Whoops\Handler\Handler;
+
 
 class Provider implements Service
 {
@@ -36,7 +35,7 @@ class Provider implements Service
         //The system has been installed;
         $this->application->observer->attach([$this, "onAfterRouteMatch"], "Dispatcher.afterRouteMatch");
         $this->application->observer->attach([$this, "onCompileLayoutData"], "Layout.onCompile.scheme.data");
-
+        $this->application->observer->attach([$this, "onRegisterThemes"], "app.register.themes");
         /*
         |--------------------------------------------------------------------------
         | Error Pages
@@ -57,7 +56,8 @@ class Provider implements Service
             //$this->application->error->register();
         }
 
-        //throw new Exception("something wong");
+
+        //$this->view->appendLayoutSearchPath( Provider::getPackageDir()."layouts/");
 
         //Sets global tokens
         Route::setTokens(['format' => '(\.[^/]+)?', 'id' => '(\d+)([a-zA-Z0-9-_]+)?']);
@@ -353,10 +353,29 @@ class Provider implements Service
 
     }
 
+
+    public function onRegisterThemes($event){
+
+        $themes     = $event->getResult();
+        $themes[]   = [
+            "provider" => "budkit/cms",
+            "name"  => "default",
+            "source"=> $this->getPackageDir()."themes/default"
+        ];
+
+        //Check if no default themes have been set and set budkit/cms as default;
+        $provider = $this->application->config->get("design.theme.provider", "budkit/cms");
+        $theme  = $this->application->config->get("design.theme.name", "default");
+
+        //$event      = new Event("App.init.themes", $this);
+        $event->setResult( $themes ); //all members who call this even need to append to the result;
+
+    }
+
     public function definition()
     {
         return [
-            "app.register" => "onRegister",
+            "app.register" => "onRegister"
         ];
     }
 }

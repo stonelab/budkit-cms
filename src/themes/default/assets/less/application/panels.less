@@ -1,0 +1,227 @@
+.panel {
+  border: 0;
+  border-radius: 2px;
+  margin-bottom: 20px;
+  background-color: white;
+  position: relative;
+  .box-shadow(none);
+
+  .panel-options {
+    float: right;
+    margin: 0px 5px 0;
+    padding-left: 0px;
+    z-index: 10;
+    li {
+      display: inline-block;
+      list-style: none;
+      font-size: 75%;
+      padding: 10px 5px;
+    }
+  }
+
+  .panel-heading {
+    padding: 15px;
+    p {
+      margin: 7px 0 0;
+      //font-size: 70%;
+    }
+    &:after {
+      content: "";
+      display: block;
+      border-bottom: 2px solid @text-color;
+      width: 15.5%;
+      margin: 5px 0 0px;
+    }
+  }
+
+  .panel-title {
+    //text-transform: uppercase;
+    font-weight: 600;
+    font-family: @font-family-base;
+    //font-size: 70%;
+  }
+
+  .panel-body {
+    &.light-text {
+      color: rgba(255, 255, 255, 0.72);
+    }
+  }
+  .panel-footer {
+    background-color: #fefefe;
+    border-color: transparent;
+  }
+}
+
+.panel-inverse {
+
+  .panel-title {
+    color: @headings-color
+  }
+  .panel-heading {
+    &:after {
+      border-bottom: 2px solid  @headings-color;
+    }
+  }
+}
+
+.panel-announcement {
+  .panel-title {
+    color: @pumpkin
+  }
+  .panel-heading {
+    &:after {
+      border-bottom: 2px solid  @pumpkin;
+    }
+  }
+}
+
+.panel-list{
+  .panel-heading{
+    background-color: white;
+    //border-top: 1px solid #E8E8E8;
+    border-bottom: 1px solid #E8E8E8;
+    padding: 8px 0px 5px;
+    &:after{
+      border-bottom-color: transparent;
+    }
+    label, form{
+      margin-bottom: 0px;
+      padding: 0px;
+    }
+  }
+}
+
+.panel-canvas {
+  padding: @grid-gutter-width;
+  .panel-title {
+    color: @brand-primary;
+    padding: 0 0 @grid-gutter-width * 0.5 ;
+    font-size: 100%;
+  }
+  .panel-heading {
+    &:after {
+      border-bottom: 2px solid  @brand-primary;
+    }
+  }
+}
+
+.panel-collapsible,
+.panel-statistic {
+  .panel-title {
+    color: @peter-river
+  }
+  .panel-heading {
+    &:after {
+      border-bottom: none;
+      margin: 0;
+    }
+  }
+  .panel-body {
+    .icon {
+      font-size: 25px;
+      text-align: center;
+      color: white;
+      margin-right: 20px;
+      border-radius: 2px;
+      width: 70px;
+      padding-top: 20px;
+      min-height: 70px;
+
+      &.icon-number {
+        background-color: @belize-hole;
+      }
+      &.icon-information {
+        background-color: @brand-secondary;
+      }
+      &.icon-time {
+        background-color: @turquoise;
+      }
+    }
+  }
+}
+
+.panel-statistic{
+  .panel-heading{
+    p {
+      margin: 7px 0 0;
+      font-size: 70%;
+    }
+  }
+  .panel-body {
+    .panel-title {
+      text-transform: uppercase;
+      font-weight: 600;
+      font-size: 70%;
+    }
+    h2 {
+      margin: 0 0 10px;
+      font-weight: 500;
+      font-size: 18px;
+      letter-spacing: normal;
+      line-height: 25px;
+    }
+    h3 {
+      font-size: 30px;
+      margin: 5px 0;
+    }
+    h5 {
+      font-size: 12px;
+    }
+  }
+}
+
+.panel-default, .panel-warning, .panel-success, .panel-danger, .panel-primary, .panel-info {
+  .panel-heading {
+    &:after {
+      content: "";
+      display: none;
+      border-bottom: none;
+      width: 0;
+      margin: 0;
+    }
+  }
+}
+
+.panel-weather {
+  .today-day {
+    font-weight: 200;
+    font-size: 20px;
+    color: #fff;
+    margin-top: 0;
+  }
+  .today-date {
+    font-weight: 200;
+    color: rgba(255, 255, 255, 0.6);
+  }
+  .today-cloud {
+    font-size: 72px;
+    text-align: center;
+    display: block;
+    margin-top: -10px;
+  }
+}
+
+// Contextual variations
+.panel-default {
+  .panel-variant(@panel-default-border; @panel-default-text; @panel-default-heading-bg; @panel-default-border);
+}
+
+.panel-primary {
+  .panel-variant(@panel-primary-border; @panel-primary-text; @panel-primary-heading-bg; @panel-primary-border);
+}
+
+.panel-success {
+  .panel-variant(@panel-success-border; @panel-success-text; @panel-success-heading-bg; @panel-success-border);
+}
+
+.panel-info {
+  .panel-variant(@panel-info-border; @panel-info-text; @panel-info-heading-bg; @panel-info-border);
+}
+
+.panel-warning {
+  .panel-variant(@panel-warning-border; @panel-warning-text; @panel-warning-heading-bg; @panel-warning-border);
+}
+
+.panel-danger {
+  .panel-variant(@panel-danger-border; @panel-danger-text; @panel-danger-heading-bg; @panel-danger-border);
+}

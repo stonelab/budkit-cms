@@ -48,17 +48,6 @@ class Controller extends RouteController {
         $this->permission = $application->createInstance( Authorize\Permission::class  );
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Look for layouts in a layouts subfolder in this package
-        |--------------------------------------------------------------------------
-        |
-        | Tells the View/Display class to look for additional layouts in the package
-        | directory. Of course, these layouts too are overwritten when added to
-        | /public/layouts
-        |
-        */
-        $this->view->appendLayoutSearchPath( Provider::getPackageDir()."layouts/");
 
 
 

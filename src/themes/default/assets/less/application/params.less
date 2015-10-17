@@ -1,0 +1,77 @@
+
+@dumpsite:          #2D2D29;
+@sugar-factory:     #215A6D;
+@nobody-loves-sugar:#3CA2A2;
+@wonderland:        #92C7A3;
+@brown-sugar:       #DFECE6;
+@gray-dark:          darken(@gray, 20%);
+
+@btn-default-bg:     lighten( @clouds, 3%);
+@btn-default-color:   @concrete;
+
+@btn-hover-bg:               mix(@btn-default-bg, white, 80%);
+@btn-active-bg:              mix(@btn-default-bg, black, 85%);
+
+////brand colors
+@brand-secondary: @nobody-loves-sugar;
+//
+////** Global textual link color.
+@link-color:           @brand-secondary;
+@link-hover-color:     darken(@link-color, 15%); ;
+
+//== Forms
+@input-border:                   #ccc;
+
+@border-radius-small: 1px;
+
+//== Scaffolding
+//
+//## Settings for some of the most global styles.
+
+@body-bg:                   white;
+@sidebar-bg:                @brand-primary;
+//@text-color:                #6C7C97;
+@container-width:           900px;
+@sidebar-width:             200px;
+
+@hero-padding:              100px;
+@hero-color:                white;
+@hero-bg:                   @brand-secondary;
+@hero-bg-img:               none;
+@hero-bg-pos:               50% 50%;
+@hero-bg-size:              cover;
+
+@hero-heading-color:        inherit;
+@hero-text-align:           center;
+
+//
+@grid-gutter-width:         20px;
+@fluid-grid-row-width:      percentage((@grid-columns/ @grid-columns));
+@fluid-grid-column-width:   percentage((1 / @grid-columns));
+@fluid-grid-gutter-width:   (@grid-gutter-width );
+//
+////Navbar
+@navbar-height-small:       40px;
+
+
+
+@dropdown-border-radius:    0px;
+
+//== Thumbnails
+//
+//##
+//** Thumbnail background color
+@thumbnail-bg:                lighten(@clouds, 3%);
+
+
+@screen-lg:                  1024px;
+
+
+
+
+//== Navbar
+//
+//##
+//
+// Basics of a navbar
+@navbar-height-base:         53px;

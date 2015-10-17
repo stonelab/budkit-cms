@@ -173,8 +173,8 @@ final class Schema{
                 (87, 0, 'Videos', '/video/gallery', NULL, 0, 1, 'link', NULL, 5, 10, 1),
                 (88, 0, 'Text', '/text/gallery', '', 23, 1, 'link', '', 6, 9, 1),
                 (73, 0, 'Dashboard', '/member/dashboard', '', 0, 2, 'link', NULL, 1, 2, 1),
-                (74, 0, 'Profile', '/member/profile', NULL, 0, 2, 'link', NULL, 3, 4, 1),
-                (75, 0, 'Messages', '/member/messages', NULL, 0, 2, 'link', NULL, 5, 6, 1),
+                (74, 0, 'Settings', '/member/settings', NULL, 0, 2, 'link', NULL, 3, 4, 1),
+                (75, 56, 'Inbox', '/member/messages', NULL, 0, 3, 'link', NULL, 5, 6, 1),
                 (25, 80, 'Maintenance', '/admin/settings/maintenance', '', 20, 3, 'link', '', 12, 13, 1),
                 (30, 80, 'Emails', '/admin/settings/emails', '', 20, 3, 'link', '', 10, 11, 1),
                 (32, 80, 'Localization', '/admin/settings/localization', '', 20, 3, 'link', '', 8, 9, 1),
@@ -182,10 +182,13 @@ final class Schema{
                 (34, 80, 'Server', '/admin/settings/server', '', 20, 3, 'link', '', 4, 5, 1),
                 (56, 0, 'Dashboard', '/member/dashboard', NULL, 0, 3, 'link', NULL, 1, 2, 1),
                 (78, 80, 'Permissions', '/admin/settings/permissions', '', 20, 3, 'link', '', 14, 15, 1),
-                (80, 0, 'Settings', '/admin/settings/configuration', '', 20, 3, 'link', '', 3, 16, 1),
+                (80, 0, 'Configuration', '/admin/settings/configuration', '', 20, 3, 'link', '', 3, 16, 1),
                 (98, 0, 'Appearance', '/admin/settings/appearance', NULL, 0, 3, 'link', NULL, 17, 18, 1),
                 (99, 0, 'Pages', '/admin/pages', NULL , 0, 3, 'link', NULL, 1, 2, 1),
-                (100,0, 'Posts', '/member/posts', NULL , 0, 3,  'link', NULL, 1, 2, 1);"
+                (100,0, 'Posts', '/member/posts', NULL , 0, 3,  'link', NULL, 1, 2, 1),
+                (101,0,	'Navigation', '/admin/settings/navigation',	NULL,	0,	3,	'link',	NULL,	17,	18,	1),
+                (102,0,	'Extensions', '/admin/settings/extensions',	NULL,	0,	3,	'link',	NULL,	17,	18,	1),
+                (103,0,	'Users', '/admin/users',	NULL,	0,	3,	'link',	NULL,	17,	18,	1);"
         );
     }
 

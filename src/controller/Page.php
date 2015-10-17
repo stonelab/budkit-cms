@@ -23,8 +23,12 @@ class Page extends Controller
 
     public function read($uri, $format = 'html')
     {
-
-        //echo "Reading {$uri} in {$format} format";
+        if (empty($uri)){
+            //Checks for a homepage in the settings
+            $uri = $this->application->config->get("setup.site.homepage");
+            //sets a default template, can be overwritten if a page is loaded;
+            $template = "homepage";
+        }
 
         //NO need to check read permission again
         //$this->checkPermission("execute");
@@ -40,8 +44,6 @@ class Page extends Controller
             //$editing = $page->getPropertyData();
             //$editing["media_content"] =  html_entity_decode($editing["media_content"]);
 
-
-
             //throw a not found exception if the page id does not exists
             if (!isset($page["items"]) || count($page["items"]) < 1) {
                 throw new ErrorNotFoundException("The requested page does not exist");
@@ -52,28 +54,42 @@ class Page extends Controller
 
             //lets fix the content;
             $read["media_content"] = Parsedown::instance()
-               // ->setBreaksEnabled(true) # enables automatic line breaks
+                // ->setBreaksEnabled(true) # enables automatic line breaks
                 ->text($read["media_content"]);
 
-            //if uri is null
-            // 1. check which page is the defined as homepage;
-            // 2. load the page;
-            $template = $read["media_template"]; //determine page template from
-
-            $layout = "pages/page";
-            $layout .= empty($template) ? "-default" : "-" . $template;
+            // 1. load the page;
+            $template = !empty($read["media_template"]) ? $read["media_template"] : null; //determine page template from
 
             //show a page or load custom page template
             $this->view->setData("title", (!empty($read["media_title"]) ? $read["media_title"] : "Page"));
             $this->view->setData("reading", $read);
 
-        else:
-
-            $this->view->setData("title", $this->application->config->get("setup.site.name"));
-            $layout = "pages/page-homepage";
-
 
         endif;
+
+        if (!empty($template)) {
+
+            //if uri is null
+            // 2. load a bunch of templates;
+            //Trigger Layout.onLoad.page.template.definitions
+            $templateDefinitions = [];
+            $loadPageTemplates = new Event('Layout.onLoad.page.template.definitions', $this);
+            $loadPageTemplates->setResult($templateDefinitions);
+
+            $this->observer->trigger($loadPageTemplates);
+
+            $definedTemplates = $loadPageTemplates->getResult();
+
+            foreach ($definedTemplates as $_ => $def) {
+                //add the look up paths to the layout so the view can be found
+                if(!isset($def["name"]) || !isset($def["source"])) continue;
+                if($def["name"] === $template) $this->view->appendLayoutSearchPath($def["source"]);
+            }
+        }
+
+        $layout = "pages/page";
+        $layout .= empty($template) ? "-default" : "-" . $template;
+
 
         $this->view->setLayout($layout);
 
@@ -98,17 +114,32 @@ class Page extends Controller
         $editing = $page->getPropertyData();
         $editing["media_content"] = html_entity_decode($editing["media_content"]);
 
+        //Editing Anouncement
+        $onEdit = new  Event('Layout.onEdit', $this, ["editing" => $editing]);
+        $onEdit->setResult($editing); //set initial result
+        $this->observer->trigger($onEdit); //Parse the Node;
+        $editing = $onEdit->getResult();
+
         //Load page templates
-        $onEdit = new  Event('Layout.onEdit', $this);
+        $templateDefinitions = [["name"=>"homepage","source"=>null]];
+        $loadPageTemplates = new Event('Layout.onLoad.page.template.definitions', $this);
+        $loadPageTemplates->setResult($templateDefinitions);
+        $this->observer->trigger($loadPageTemplates);
+        $templateDefinitions = $loadPageTemplates->getResult();
 
-        //Set the original as results
-        $onEdit->setResult(["editing" => $editing]); //set initial result
+        foreach($templateDefinitions as $tid=>$template){
 
-        $this->application->observer->trigger( $onEdit ); //Parse the Node;
+            if(!isset($template["name"])){
+                unset($templateDefinitions[$tid]);
+                continue;
+            }
+            $template["current"] =
+                ($template["name"] === $editing["media_template"]) ? "yes" : "no";
 
-        $onEditResult   =  $onEdit->getResult();
+            $templateDefinitions[$tid] = $template;
+        }
 
-
+        $this->view->setData("templates", $templateDefinitions);
         $this->view->setData("editor", "page");
         $this->view->setData("title", "Create New Page");
         $this->view->setData("editing", $editing);
