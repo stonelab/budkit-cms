@@ -53,15 +53,19 @@ class Page extends Controller
             $read = reset($page["items"]);
 
             //lets fix the content;
-            $read["media_content"] = Parsedown::instance()
-                // ->setBreaksEnabled(true) # enables automatic line breaks
-                ->text($read["media_content"]);
+            if(isset($read["media_content"])) {
+
+                $read["media_content"] = Parsedown::instance()
+                    // ->setBreaksEnabled(true) # enables automatic line breaks
+                    ->text($read["media_content"]);
+                
+            }
 
             // 1. load the page;
-            $template = !empty($read["media_template"]) ? $read["media_template"] : null; //determine page template from
+            $template =  ( isset($read["media_template"]) && !empty($read["media_template"]) ) ? $read["media_template"] : null; //determine page template from
 
             //show a page or load custom page template
-            $this->view->setData("title", (!empty($read["media_title"]) ? $read["media_title"] : "Page"));
+            $this->view->setData("title", (isset($read["media_template"]) && !empty($read["media_title"]) ? $read["media_title"] : "Page"));
             $this->view->setData("reading", $read);
 
 
@@ -136,8 +140,10 @@ class Page extends Controller
                 unset($templateDefinitions[$tid]);
                 continue;
             }
+
             $template["current"] =
-                ($template["name"] === $editing["media_template"]) ? "yes" : "no";
+                ( isset($editing["media_template"]) && $template["name"] === $editing["media_template"] )
+                    ? "yes" : "no";
 
             $templateDefinitions[$tid] = $template;
         }
