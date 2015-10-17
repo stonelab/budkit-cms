@@ -58,7 +58,7 @@ class Page extends Controller
                 $read["media_content"] = Parsedown::instance()
                     // ->setBreaksEnabled(true) # enables automatic line breaks
                     ->text($read["media_content"]);
-                
+
             }
 
             // 1. load the page;
