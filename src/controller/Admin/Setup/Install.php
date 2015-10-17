@@ -58,6 +58,7 @@ class Install extends Controller {
     protected function step1(){
 
         //this is step 1;
+        $this->view->addToBlock("form", "import://admin/setup/license");
         $this->view->setData("step", "1");
         $this->view->setData("title", t("Installation | EULA"));
 
@@ -73,6 +74,7 @@ class Install extends Controller {
      */
     protected function step2(){
 
+        $this->view->addToBlock("form", "import://admin/setup/requirements");
         $this->view->setData("step", "2");
         $this->view->setData("title", t("Installation | Requirements"));
 
@@ -128,6 +130,7 @@ class Install extends Controller {
      */
     protected function step3(){
 
+        $this->view->addToBlock("form", "import://admin/setup/database");
         $this->view->setData("step", "3");
         $this->view->setData("randomstring", getRandomString('5')."_");
         $this->view->setData("title", t("Installation | Database Settings"));
@@ -149,6 +152,7 @@ class Install extends Controller {
 
 
         //this is step 1;
+        $this->view->addToBlock("form", "import://admin/setup/user");
         $this->view->setData("step", "4");
         $this->view->setData("title", t("Installation | Install SuperUser"));
 

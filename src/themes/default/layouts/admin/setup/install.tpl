@@ -20,26 +20,7 @@
                 <div class="row mtl">
                     <div class="col-md-12">
                         <div class="panel panel-canvas">
-                            <tpl:condition on="step" test="equals" is="1" >
-                                <!--if test match replace node with children, if false remove node-->
-                                <tpl:import name="admin/setup/license" />
-                            </tpl:condition>
-
-                            <tpl:condition on="step" test="equals" is="2" >
-                                <!--if test match replace node with children, if false remove node-->
-                                <tpl:import name="admin/setup/requirements" />
-                            </tpl:condition>
-
-                            <tpl:condition on="step" test="equals" is="3" >
-                                <!--if test match replace node with children, if false remove node-->
-                                <tpl:import name="admin/setup/database" />
-                            </tpl:condition>
-
-                            <tpl:condition on="step" test="equals" is="4" >
-                                <!--if test match replace node with children, if false remove node-->
-                                <tpl:import name="admin/setup/user" />
-                            </tpl:condition>
-
+                           <tpl:block position="form" />
                         </div><!-- panel -->
                     </div><!-- col-md-9 -->
                 </div>
