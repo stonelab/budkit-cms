@@ -198,6 +198,7 @@ class Page extends Controller
 
         //2. are we patching or updating an existing?
         $input = $this->application->input;
+
         $user = new User($this->application, $this->application->database, $this->application->session);
 
         if ($input->methodIs("PATCH")) { //because we are updating;
