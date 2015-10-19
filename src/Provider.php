@@ -56,11 +56,11 @@ class Provider implements Service
             //$this->application->error->register();
         }
 
-
+       //print_R( $this->application->request->getAttributes() );
         //$this->view->appendLayoutSearchPath( Provider::getPackageDir()."layouts/");
 
         //Sets global tokens
-        Route::setTokens(['format' => '(\.[^/]+)?']);
+        Route::setTokens(['format' => '(\.[^/]+)?', 'page'=>'(\d)']);
 
 
         /*
@@ -102,7 +102,7 @@ class Provider implements Service
         |
         */
         Route::addGet("/admin", "admin", Controller\Admin::class);
-        Route::addGet("/admin/pages", "admin.pages", Controller\Admin\Pages::class);
+        Route::addGet("/admin/pages{format}{/page}", "admin.pages", Controller\Admin\Pages::class);
 
         Route::attach("/admin/settings", Controller\Admin\Settings::class, function ($route) {
 

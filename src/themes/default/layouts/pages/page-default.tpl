@@ -10,7 +10,7 @@
             <div class="container-navigation">
                 <tpl:import name="navigation" />
             </div>
-            <div id="content" class="container">
+            <div id="content" class="container page-content">
 
                 <tpl:condition on="reading.media_title" test="empty" is="false">
 

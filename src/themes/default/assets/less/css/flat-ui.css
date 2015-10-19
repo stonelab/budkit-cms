@@ -351,7 +351,7 @@ body {
   font-family: "Lato", Helvetica, Arial, sans-serif;
   font-size: 18px;
   line-height: 1.72222;
-  color: #34495e;
+  color: #555459;
   background-color: #ffffff;
 }
 a {
@@ -464,13 +464,13 @@ p {
 }
 .lead {
   margin-bottom: 30px;
-  font-size: 20px;
+  font-size: 19px;
   line-height: 1.46428571;
   font-weight: 300;
 }
 @media (min-width: 768px) {
   .lead {
-    font-size: 30.006px;
+    font-size: 19.926px;
   }
 }
 small,
@@ -672,7 +672,7 @@ a.thumbnail.active {
 }
 .thumbnail .caption {
   padding: 9px;
-  color: #34495e;
+  color: #555459;
 }
 .btn {
   border: none;
@@ -1308,8 +1308,8 @@ fieldset[disabled] .form-control,
 .select2-search input[type="text"][readonly],
 fieldset[disabled] .select2-search input[type="text"] {
   background-color: #f3f3f3;
-  border-color: #d5dbdb;
-  color: #d5dbdb;
+  border-color: #ebebeb;
+  color: #ebebeb;
   cursor: default;
   opacity: 0.7;
   filter: alpha(opacity=70);
@@ -1567,7 +1567,7 @@ fieldset[disabled] .form-control + .form-control-feedback,
 fieldset[disabled] .select2-search input[type="text"] + .form-control-feedback,
 .select2-search input[type="text"].disabled + .form-control-feedback {
   cursor: not-allowed;
-  color: #d5dbdb;
+  color: #ebebeb;
   background-color: transparent;
   opacity: 0.7;
   filter: alpha(opacity=70);
@@ -5836,7 +5836,7 @@ fieldset[disabled] .navbar-inverse .navbar-btn.active {
   color: #1abc9c;
 }
 .login-form .login-field-icon {
-  color: #bfc9ca;
+  color: #e0e0e0;
   font-size: 16px;
   position: absolute;
   right: 15px;
@@ -5844,7 +5844,7 @@ fieldset[disabled] .navbar-inverse .navbar-btn.active {
   transition: all .25s;
 }
 .login-link {
-  color: #bfc9ca;
+  color: #e0e0e0;
   display: block;
   font-size: 13px;
   margin-top: 15px;

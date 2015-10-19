@@ -103,8 +103,8 @@ require(["jquery","mes","jquery.cookie","jquery.chosen","jquery.bootstrap","boot
         }
 
         // Checkboxes and Radio buttons
-        $(':checkbox').radiocheck();
-        $('[data-toggle="radio"]').radiocheck();
+        $(':checkbox:not(.native)').radiocheck();
+        $(':radio:not(.native)').radiocheck();
 
         $(".dropdown-toggle").dropdown();
 

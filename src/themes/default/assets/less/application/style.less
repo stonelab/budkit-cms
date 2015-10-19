@@ -1,7 +1,6 @@
 //Colors Scheme
 @import "mixins";
 @import "grid";
-@import "params";
 @import "reset";
 @import "gridlist";
 @import "forms";
@@ -246,12 +245,12 @@
   background-color: @wisteria;
 }
 
-.btn-default {
-  color: @concrete;
-  &:hover {
-    color: darken(@concrete , 20%);
-  }
-}
+//.btn-default {
+//  color: @concrete;
+//  &:hover {
+//    color: darken(@concrete , 20%);
+//  }
+//}
 
 
 
@@ -278,6 +277,13 @@
       }
     }
   }
+  &.page-content{
+    max-width: 700px;
+    margin-bottom: 100px;
+    .page-header{
+      margin: @grid-gutter-width * 1.5 0 @grid-gutter-width;
+    }
+  }
   &-block {
     position: absolute;
     top:0;
@@ -285,7 +291,7 @@
     right:0;
     bottom:0;
   }
-  &-side, &-main, &-aside, &-sside {
+  &-side, &-main, &-aside, &-sside, &-iside {
     display: inline-block;
     //padding: 10px;
     height: 100%;
@@ -301,9 +307,18 @@
   &-sside {
     width: 3 * @sidebar-width;
     overflow-y: auto;
+    overflow-x: hidden;
     //position: fixed;
     &:not(.hide) ~ .container-main {
       margin-left: 3 * @sidebar-width;
+    }
+  }
+  &-iside {
+    width: 2 * @sidebar-width;
+    overflow-y: auto;
+    //position: fixed;
+    &:not(.hide) ~ .container-main {
+      margin-left: 2 * @sidebar-width;
     }
   }
   &-aside {
@@ -477,7 +492,7 @@
 // --------------------------------------------------
 
 .hero{
-  padding: @hero-padding * 0.5 0;
+  padding: 0 ;
   margin-bottom: @hero-padding * 0.5;
   background-color: @hero-bg;
   background-image: url(@hero-bg-img);
@@ -531,10 +546,11 @@
   }
   p {
     font-size: (@font-size-base *1.2 );
-    font-weight: 300;
-    color: @gray-light
+    //font-weight: 300;
+    //color: @gray-light
   }
   .featurette {
+    margin-top: 50px;
     margin-bottom: 50px;
     h2 {
       font-weight: 300;
@@ -542,7 +558,7 @@
     }
     p {
       font-size: 18px;
-      color: darken(@gray-light, 20%);
+      //color: darken(@gray-light, 20%);
     }
   }
   .featurette-divider {

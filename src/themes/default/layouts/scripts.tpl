@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<tpl:layout name="head" xmlns:tpl="http://budkit.org/tpl">
+<tpl:layout name="scripts" xmlns:tpl="http://budkit.org/tpl">
 
     <script data-main="/theme/assets/js/main" src="/theme/assets/js/require.js"></script>
 

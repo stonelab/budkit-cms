@@ -8,8 +8,20 @@ class Message extends Controller {
 
     public function index($format = 'html') {
         //echo "Browsing in {$format} format";
+        //echo "Browsing in {$format} format";
 
-        $this->display(Budkit\Cms\View\Index::class);
+        //echo "Searching... directory";
+        //print_r( $this->application->config );
+        $this->view->setData("title", "Messages");
+        $this->view->setData("page", ["body"=>["class"=>"container-block"]]);
+
+
+        //$this->view->addToBlock("navbar-button", 'import://messages/navbar-button');
+
+        //Tell the view where to find additional layouts
+        $this->view->addToBlock("main", 'import://messages/inbox');
+        $this->view->setLayout('messages/dashboard');
+
     }
 
 

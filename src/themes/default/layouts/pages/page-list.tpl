@@ -92,12 +92,9 @@
                     </table>
                 </div>
             </div>
-            <div class="btn-group">
-                <a href="#" class="btn btn-sm btn-default">Previous</a>
 
-                <a href="#" class="btn btn-sm btn-default">Next</a>
+            <tpl:import name="pagination" />
 
-            </div>
         </div>
     </div>
 </tpl:layout>

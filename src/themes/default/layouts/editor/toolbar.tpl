@@ -2,7 +2,7 @@
 <tpl:layout xmlns:tpl="http://budkit.org/tpl" extends="navigation">
     <tpl:replace path="//div[@role='navigator']">
 
-        <div class="navbar navbar-default  mvn" role="navigator">
+        <div class="" role="navigator">
             <form class="navbar-form" action="#">
 
 

@@ -8,7 +8,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <button class="navbar-btn btn btn-default sidebar-toggle mlm mts" data-switch="minimized" data-target=".sidebar">
+            <button class="navbar-btn btn btn-default sidebar-toggle" data-switch="minimized" data-target=".sidebar">
                 <i class="fa fa-bars"></i>
             </button>
             <tpl:block position="navbar-button" />

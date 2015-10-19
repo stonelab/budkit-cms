@@ -6,6 +6,7 @@ use Budkit\Cms\Helper\Controller;
 use Budkit\Cms\Helper\ErrorNotFoundException;
 use Budkit\Cms\Model\Media\Content;
 use Budkit\Cms\Model\User;
+use Budkit\Cms\Model;
 use Budkit\Datastore\Model\Entity;
 use Budkit\Event\Event;
 use Budkit\Helper\Time;
@@ -109,7 +110,7 @@ class Page extends Controller
         $this->checkPermission("execute");
 
         //2. load the page;
-        $page = $this->application->createInstance(Content::class);
+        $page = $this->application->createInstance(Model\Page::class);
         $page = $page->defineValueGroup("page");
         $page = $page->loadObjectByURI($uri);
 
@@ -176,8 +177,8 @@ class Page extends Controller
         $this->checkPermission("execute");
 
         //2. create a blank page and redirect to edit;
-        $page = $this->application->createInstance(Content::class);
-        $page = $page->defineValueGroup("page");
+        $page = $this->application->createInstance( Model\Page::class);
+        //$page = $page->defineValueGroup("page");
 
         if (!$page->store()) {
             // throw new Exception("could not create the page");
@@ -205,8 +206,8 @@ class Page extends Controller
 
 
             //3. load the page;
-            $page = $this->application->createInstance(Content::class);
-            $page = $page->defineValueGroup("page");
+            $page = $this->application->createInstance(Model\Page::class);
+           // $page = $page->defineValueGroup("page");
             $page = $page->loadObjectByURI($uri);
 
 
