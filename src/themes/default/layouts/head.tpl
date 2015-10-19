@@ -9,7 +9,8 @@
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
     <!--[if lt IE 9]>
-
+        <script src="/theme/assets/js/vendor/flat-ui/html5shiv.js"></script>
+        <script src="/theme/assets/js/vendor/flat-ui/respond.min.js"></script>
     <![endif]-->
 
     <tpl:import name="scripts" />
