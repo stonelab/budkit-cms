@@ -1,0 +1,59 @@
+.note-toolbar{
+  padding: 0px !important;
+}
+
+.note-editable{
+  height: 100%;
+}
+
+.editor{
+   z-index: 1;
+  .page-feature{
+    margin-bottom: @grid-gutter-width * 0.5;
+    padding-top: @grid-gutter-width * 0.5;
+    padding-bottom: @grid-gutter-width * 0.5;
+    border: 2px solid transparent;
+    &:hover{
+      border: 2px dashed @clouds;
+    }
+    &.placeholder{
+      min-height: 100px;
+      display: none;
+      border: 2px dashed @clouds;
+    }
+  }
+  .page-features{
+    padding: @grid-gutter-width * 0.5;
+    .page-feature{
+      padding: 0px;
+      margin: 0px;
+      .definition{
+        height: (@sidebar-width - @grid-gutter-width) * 0.5;
+        text-align: center;
+        border: 2px dashed transparent;
+        box-sizing: border-box;
+        cursor: pointer;
+        background: white;
+        padding: 12px;
+        color: @input-color;
+        &::selection{ background: transparent }
+        &:hover{
+          border-color: @brand-secondary;
+        }
+        span{
+          margin-top: 10px;
+          display: block;
+          font-size: 12px;
+          font-weight: bold;
+        }
+        i{
+          display: block;
+          font-size: 30px;
+        }
+      }
+      .template{
+        display: none;
+      }
+    }
+  }
+}

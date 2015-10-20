@@ -360,7 +360,7 @@ class Provider implements Service
         $themes[]   = [
             "provider" => "budkit/cms",
             "name"  => "default",
-            "source"=> $this->getPackageDir()."themes/default"
+            "source"=> $this->getPackageDir()."Themes/default"
         ];
 
         //Check if no default themes have been set and set budkit/cms as default;

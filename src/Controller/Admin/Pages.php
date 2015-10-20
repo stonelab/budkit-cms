@@ -10,6 +10,18 @@ class Pages extends Admin {
 
     public function index($format = 'html', $page="") {
 
+        // This is our new stuff
+        $context = new \ZMQContext();
+
+        $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'my pusher');
+        $socket->connect("tcp://localhost:5555");
+
+        $socket->send(json_encode([
+            "topic"=>"/admin/pages",
+            "message"=>"Admin page refreshed"
+        ]));
+
+
         //checks for a higher permission here, because there are links
         //to admin level actions
         $this->checkPermission("execute");

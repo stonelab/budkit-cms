@@ -1,0 +1,50 @@
+.person{
+  border-radius: 50%;
+  position:relative;
+  display: inline-block;
+  .person-photo{
+    border-radius: 50%;
+  }
+  .person-status{
+    position: absolute;
+    bottom: 2px;
+    right: -2px;
+    width: 10px; height: 10px;
+    background-color: transparent;
+    border-radius: 50%;
+    &.online{
+      background-color: @turquoise;
+    }
+    &.offline{
+      background-color: @alizarin;
+    }
+  }
+}
+
+
+.page-header{
+  &.profile-header{
+    //margin: -@grid-gutter-width;
+    padding: 0;
+
+    .profile-cover{
+      display: block;
+      height: @grid-gutter-width * 12;
+      margin: 0 -@grid-gutter-width -130px;
+      background-color: @midnight-blue;
+    }
+     h1{
+       //vertical-align: top;
+       color: white;
+       text-rendering: optimizelegibility;
+       text-shadow: 0 0 3px rgba(0,0,0,.8);
+       font-weight: 600;
+     }
+    .person, h1{ display: inline-block; }
+    .person{
+      margin-right: @grid-gutter-width;
+      .person-status{ right: 15px }
+    }
+    .navbar-tabs{ margin-top: 2*@grid-gutter-width; }
+  }
+}
