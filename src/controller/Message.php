@@ -16,6 +16,10 @@ class Message extends Controller {
         $this->view->setData("page", ["body"=>["class"=>"container-block"]]);
 
 
+        $this->view->addData("action", ["title"=>"Compose","link"=>"/message/create", "class"=>"btn-primary"]);
+        //$this->view->addData("action", ["title"=>"Compose","link"=>"/message/create", "class"=>"btn-primary"]);
+
+
         //$this->view->addToBlock("navbar-button", 'import://messages/navbar-button');
 
         //Tell the view where to find additional layouts

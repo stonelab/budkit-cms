@@ -10,13 +10,6 @@
                 <div class="page-header">
                     <h1 class="mvn">
                         <span><tpl:data value="title" /></span>
-                        <tpl:condition on="action" test="empty" is="false">
-                            <div class="btn-group mlm">
-                                <tpl:loop foreach="action">
-                                    <a tpl:class="btn btn-sm btn-embossed ${class}" tpl:href="${link}"><tpl:data value="title" /></a>
-                                </tpl:loop>
-                            </div>
-                        </tpl:condition>
 
                         <tpl:condition on="alerts" test="empty" is="false">
 

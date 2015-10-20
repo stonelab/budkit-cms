@@ -8,16 +8,26 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <button class="navbar-btn btn btn-default sidebar-toggle" data-switch="minimized" data-target=".sidebar">
-                <i class="fa fa-bars"></i>
-            </button>
-            <tpl:block position="navbar-button" />
         </div>
-        <div class="navbar-collapse collapse navbar-inverse-collapse" role="navbar-collapse">
+        <div class="navbar-collapse collapse navbar-inverse-collapse pln" role="navbar-collapse">
 
             <tpl:menu uid="usermenu" class="nav navbar-nav navbar-right" />
 
-            <form class="navbar-form navbar-left" action="#" role="search">
+            <button class="navbar-btn btn btn-default sidebar-toggle navbar-left" data-switch="minimized" data-target=".sidebar">
+                <i class="fa fa-bars"></i>
+            </button>
+
+            <tpl:condition on="action" test="empty" is="false">
+                <div class="btn-group navbar-left  mlm">
+                    <tpl:loop foreach="action">
+                        <a tpl:class="btn navbar-btn btn-sm btn-embossed ${class}" tpl:href="${link}"><tpl:data value="title" /></a>
+                    </tpl:loop>
+                </div>
+            </tpl:condition>
+
+            <tpl:block position="navbar-button" />
+
+            <form class="navbar-form navbar-left plm prn" action="#" role="search">
                 <div class="form-group">
                     <div class="input-group">
                         <input class="form-control flat" id="navbarInput-01" type="search" placeholder="Search"/>

@@ -11912,6 +11912,9 @@ body {
   margin-top: 10px;
   margin-left: 10px;
 }
+.navbar-btn.btn-sm {
+  margin-top: 10px;
+}
 .navbar-fixed-top {
   width: 100%;
 }

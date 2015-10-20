@@ -5,13 +5,13 @@
         <ul class="stream">
             <li class="stream-title">Today</li>
             <li class="stream-item">
+                <span class="stream-label"></span>
                 <div class="stream-line"/>
                 <div class="link has-featured-img">
                     <tpl:link rel="person" href="#" status="offline" src="/theme/assets/img/avatars/me.png"
                               class="featured-img person" width="50" height="50"/>
                     <h3 class="subject heading">
                         <a href="#" class="subject">Livingstone Fultang</a>
-
                         <a href="#" class="time">
                             <span>2 hours ago</span>
                         </a>
@@ -19,7 +19,7 @@
                             <span class="fa fa-cog"/>
                         </a>
                     </h3>
-                    <div class="summary">Is offering a flat</div>
+                    <div class="summary">Is offering a flat with 5 rooms</div>
                     <div class="body clearfix">
                         <div class="content clearfix">
                             <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis
