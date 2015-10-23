@@ -13354,8 +13354,8 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
   content: "\f018";
 }
 .icon-pages:before,
-.iconandroid-document:before {
-  content: "\f381";
+.iconios-paper:before {
+  content: "\f472";
 }
 .icon-navigation:before,
 .iconandroid-compass:before {
