@@ -6,7 +6,7 @@
             <div class="container-navigation">
                 <tpl:import name="admin/navigation" />
             </div>
-            <div class="pts prs pbs pls container-block">
+            <div class="container-block">
 
                 <tpl:block position="main" />
 

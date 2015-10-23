@@ -257,8 +257,9 @@
 //Layouts
 .container {
   &-search {
-    background: @clouds;
+    background: #FDFCFC;
     padding: 5px @grid-gutter-width 0;
+    border-bottom: 1px solid @clouds;
     label {
       font-size: @font-size-base * 0.5;
       font-weight: 800;
@@ -309,16 +310,18 @@
     overflow-y: auto;
     overflow-x: hidden;
     //position: fixed;
+    border-right: 1px solid @clouds;
     &:not(.hide) ~ .container-main {
       margin-left: 3 * @sidebar-width;
     }
   }
   &-iside {
-    width: 2 * @sidebar-width;
+    width: 2.5 * @sidebar-width;
     overflow-y: auto;
     //position: fixed;
+    border-right: 1px solid @clouds;
     &:not(.hide) ~ .container-main {
-      margin-left: 2 * @sidebar-width;
+      margin-left: 2.5 * @sidebar-width;
     }
   }
   &-aside {
@@ -351,20 +354,21 @@
 
   &-navigation{
     border-bottom: 1px solid @clouds;
+   // margin-bottom: 1px;
     background: white;
     .fixed {
       .navbar{
         //.navbar-fixed-top;
       }
       & ~ .container-main {
-        margin-top: @navbar-height-base;
+        margin-top: @navbar-height-base + 1px; //adding 1px to account for the bottom border
       }
       & ~ .container-sside, & ~ .container-side, & ~ .container-aside{
-        top: @navbar-height-base;
+        top: @navbar-height-base +1px;
       }
     }
     & ~ .container-block{
-      top: @navbar-height-base;
+      top: @navbar-height-base + 1px;
     }
   }
 }
@@ -495,11 +499,11 @@
   padding: 0 ;
   margin-bottom: @hero-padding * 0.5;
   background-color: @hero-bg;
-  background-image: url(@hero-bg-img);
+  //background-image: url(@hero-bg-img);
   background-position: @hero-bg-pos;
   background-size: @hero-bg-size;
 
-  .container & {
+  .container{
     border-radius: @border-radius-large; // Only round corners at higher resolutions if contained in a container
   }
   .unit {

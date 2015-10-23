@@ -3,7 +3,7 @@
 
     <div class="container-iside sidestream background-white" role="stream">
         <div class="stream-collapsed">
-            <tpl:import name="stream"/>
+            <tpl:import name="messages/stream"/>
         </div>
     </div>
     <div class="container-main" role="main">

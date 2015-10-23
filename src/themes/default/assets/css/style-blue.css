@@ -13370,7 +13370,7 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
   content: "\f39e";
 }
 .icon-inbox:before {
-  content: "\f374";
+  content: "\f2ac";
 }
 .icon-bookmarked:before,
 .icon-enrolled:before,
@@ -13752,8 +13752,9 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
   background-color: #8e44ad;
 }
 .container-search {
-  background: #ecf0f1;
+  background: #FDFCFC;
   padding: 5px 30px 0;
+  border-bottom: 1px solid #ecf0f1;
 }
 .container-search label {
   font-size: 8px;
@@ -13804,16 +13805,18 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
   width: 600px;
   overflow-y: auto;
   overflow-x: hidden;
+  border-right: 1px solid #ecf0f1;
 }
 .container-sside:not(.hide) ~ .container-main {
   margin-left: 600px;
 }
 .container-iside {
-  width: 400px;
+  width: 500px;
   overflow-y: auto;
+  border-right: 1px solid #ecf0f1;
 }
 .container-iside:not(.hide) ~ .container-main {
-  margin-left: 400px;
+  margin-left: 500px;
 }
 .container-aside {
   width: 250px;
@@ -13842,15 +13845,15 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
   background: white;
 }
 .container-navigation .fixed ~ .container-main {
-  margin-top: 53px;
+  margin-top: 54px;
 }
 .container-navigation .fixed ~ .container-sside,
 .container-navigation .fixed ~ .container-side,
 .container-navigation .fixed ~ .container-aside {
-  top: 53px;
+  top: 53px 1px;
 }
 .container-navigation ~ .container-block {
-  top: 53px;
+  top: 54px;
 }
 .navbar-toggler {
   margin-right: -9px;
@@ -14249,25 +14252,38 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
 }
 .stream li .actions .nav li {
   display: inline-block;
+  border-bottom: none;
 }
 .stream li .actions .nav li > a {
   padding: 5px;
   line-height: 1;
   font-size: 90%;
   display: inline-block;
+  color: gainsboro;
+  background: none;
+}
+.stream li .actions .nav li > a > i {
+  font-size: 20.8px;
+  position: relative;
+  bottom: -2px;
+  margin-right: 3px;
+}
+.stream li .actions .nav li > a:hover {
+  color: #19232d;
 }
 .stream li .meta {
   margin: 15px 0;
 }
 .stream li .extra,
 .stream li .extra-plus {
-  width: 60px;
+  width: 40px;
   align-content: center;
   text-align: center;
   text-transform: uppercase;
   font-size: 8px;
   line-height: 12px;
   top: 30px;
+  left: 5px;
 }
 .stream li .extra ~ .extra,
 .stream li .extra-plus ~ .extra,
@@ -14287,7 +14303,7 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
 .stream li .featured-img ~ .extra-plus,
 .stream li .featured-media ~ .extra-plus,
 .stream li .cover-img ~ .extra-plus {
-  top: 70px;
+  top: 50px;
 }
 .stream li .featured-img ~ .extra ~ .extra,
 .stream li .featured-media ~ .extra ~ .extra,
@@ -14301,7 +14317,7 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
 .stream li .featured-img ~ .extra-plus ~ .extra-plus,
 .stream li .featured-media ~ .extra-plus ~ .extra-plus,
 .stream li .cover-img ~ .extra-plus ~ .extra-plus {
-  top: 110px;
+  top: 70px;
 }
 .stream li .select {
   position: absolute;
@@ -14319,12 +14335,6 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
 .stream li .meta {
   color: #bdc3c7;
 }
-.stream li .title .author,
-.stream li .meta .author {
-  color: #cfcfcf;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
 .stream li .title .time,
 .stream li .meta .time {
   margin: 0 5px;
@@ -14334,6 +14344,7 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
   margin-bottom: 5px;
   /* font-family: Lato */
   font-size: 15.2px;
+  position: relative;
 }
 .stream li .subject.heading {
   line-height: 1.1em;
@@ -14343,6 +14354,7 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
 .stream li .subject .pins {
   position: absolute;
   right: 0;
+  top: 2px;
 }
 .stream li .subject .subject,
 .stream li .subject .target {
@@ -14357,12 +14369,16 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
 }
 .stream li .subject .time {
   font-weight: 400;
-  color: #bdc3c7;
+  color: gainsboro;
   margin-left: 20px;
+}
+.stream li .subject .profile {
+  font-weight: normal;
+  color: gainsboro;
 }
 .stream li .subject .privacy {
   margin-left: 20px;
-  color: #bdc3c7;
+  color: #dcdcdc;
 }
 .stream li .summary {
   margin-bottom: 5px;
@@ -14370,7 +14386,7 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
 }
 .stream li .content {
   clear: both;
-  color: #828282;
+  color: #a8a8a8;
   font-size: 15.2px;
 }
 .stream li .content p {
@@ -14650,25 +14666,34 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
   opacity: 0.5;
   filter: alpha(opacity=50);
 }
-.stream-collapsed .stream-list .stream-line,
-.stream-collapsed .stream-list .stream-title {
+.container-iside {
+  border-right: 1px solid #ecf0f1;
+}
+.stream-collapsed .stream-list .stream-line {
   display: none;
 }
+.stream-collapsed .stream-list .stream-title {
+  background-color: #FDFCFC;
+  width: 100%;
+  border-bottom: 1px solid #ecf0f1;
+}
 .stream-collapsed .stream-list .stream li {
-  border-bottom: 1px solid #f7f7f7;
+  cursor: pointer;
+  border-bottom: 1px solid #ecf0f1;
+}
+.stream-collapsed .stream-list .stream li:hover {
+  background: #FDFDFD;
 }
 .stream-collapsed .stream-list .stream li .person img.person-photo {
   width: 32px;
   height: 32px;
 }
 .stream-collapsed .stream-list .stream li .subject .pins {
-  top: 18px;
+  top: 2px;
 }
 .stream-collapsed .stream-list .stream li .body,
-.stream-collapsed .stream-list .stream li .actions,
-.stream-collapsed .stream-list .stream li .extra,
-.stream-collapsed .stream-list .stream li .extra-plus,
-.stream-collapsed .stream-list .stream li .time {
+.stream-collapsed .stream-list .stream li .actions .edit,
+.stream-collapsed .stream-list .stream li .extra-plus {
   display: none;
 }
 .stream-collapsed .stream-list .stream li:last-child {
@@ -14857,11 +14882,10 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
   padding: 0 ;
   margin-bottom: 50px;
   background-color: #6bacd3;
-  background-image: url(none);
   background-position: 50% 50%;
   background-size: cover;
 }
-.container .hero {
+.hero .container {
   border-radius: 1px;
 }
 .hero .unit {

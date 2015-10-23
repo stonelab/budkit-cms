@@ -4,7 +4,8 @@
         <div class="stream-line"/>
         <ul class="stream">
             <li class="stream-title">Today</li>
-            <li class="stream-item">
+            <tpl:loop repeat="10">
+                <li class="stream-item">
                 <span class="stream-label"></span>
                 <div class="stream-line"/>
                 <div class="link has-featured-img">
@@ -12,14 +13,10 @@
                               class="featured-img person" width="50" height="50"/>
                     <h3 class="subject heading">
                         <a href="#" class="subject">Livingstone Fultang</a>
-                        <a href="#" class="time">
-                            <span>2 hours ago</span>
-                        </a>
-                        <a class="privacy" href="#">
-                            <span class="fa fa-cog"/>
-                        </a>
+                        <a href="#" class="author"> @livingstonef</a>
+                        <a href="#" class="time"><span>2 hours ago</span> </a>
                     </h3>
-                    <div class="summary">Is offering a flat with 5 rooms</div>
+                    <div class="summary">Good result for <a href="">@Hugh_Small</a> and <a href="">@wclgreens</a> in Westminster by election: nearly 10% of vote, more than double both Lib Dems and Ukip.</div>
                     <div class="body clearfix">
                         <div class="content clearfix">
                             <p>Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis
@@ -85,28 +82,38 @@
                         </div>
                     </div>
                     <div class="actions clearfix">
-                        <ul class="nav nav-pills pull-left">
+                        <ul class="nav pull-left">
                             <li>
-                                <a href="#">Like</a>
+                                <a href="#" class="like">
+                                    <i class="ionicons ion-android-star" />
+                                   <span> Like</span>
+                                </a>
                             </li>
                             <li>
-                                <a href="#">Comment</a>
+                                <a href="#" class="share">
+                                    <i class="ionicons ion-android-share" />
+                                    <span>Share</span>
+                                </a>
                             </li>
                             <li>
-                                <a href="#">Share</a>
-                            </li>
-                            <li>
-                                <a href="#">Edit</a>
+                                <a href="#" class="edit">
+                                    <i class="ionicons ion-compose" />
+                                    <span>Edit</span>
+                                </a>
                             </li>
                         </ul>
-                        <ul class="nav nav-pills pull-right">
+                        <ul class="nav  pull-right">
                             <li>
-                                <a href="#">Delete</a>
+                                <a href="#" class="delete">
+                                    <i class="ion-android-delete" />
+                                    <span>Delete</span>
+                                </a>
                             </li>
                         </ul>
                     </div>
                 </div>
             </li>
+            </tpl:loop>
             <li class="stream-title">Yesterday</li>
             <li class="stream-item">
                 <div class="link has-featured-img">
@@ -117,9 +124,6 @@
                         <span class="action">run shelter</span>
                         <a href="#" class="time">
                             <span>3 hours ago</span>
-                        </a>
-                        <a class="privacy" href="#">
-                            <span class="fa fa-cog"/>
                         </a>
                     </h3>
 
@@ -146,7 +150,10 @@
                                 <a href="#">Comment</a>
                             </li>
                             <li>
-                                <a href="#">Share</a>
+                                <a href="#">
+                                    <i class="ionicons ion-share"></i>
+                                    <span>Share</span>
+                                </a>
                             </li>
                             <li>
                                 <a href="#">Edit</a>
@@ -171,9 +178,6 @@
 	task</span>
                         <a href="#" class="time">
                             <span>3 hours ago</span>
-                        </a>
-                        <a class="privacy" href="#">
-                            <span class="fa fa-cog"/>
                         </a>
                     </h3>
                     <span class="extra label label-warning">Task</span>
@@ -220,9 +224,6 @@
                         <span class="action">uploaded new files</span>
                         <a href="#" class="time">
                             <span>2 hours ago</span>
-                        </a>
-                        <a class="privacy" href="#">
-                            <span class="fa fa-cog"/>
                         </a>
                     </h3>
 
