@@ -13,11 +13,11 @@ class Pages extends Admin {
         // This is our new stuff
         $context = new \ZMQContext();
 
-        $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'my pusher');
-        $socket->connect("tcp://localhost:5555");
+        $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'pubsub');
+        $socket->connect("tcp://127.0.0.1:5555");
 
         $socket->send(json_encode([
-            "topic"=>"/admin/pages",
+            "topic"=>"admin.pages",
             "message"=>"Admin page refreshed"
         ]));
 
