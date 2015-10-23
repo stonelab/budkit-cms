@@ -10,6 +10,7 @@
 
                 <tpl:block position="main" />
 
+
             </div>
         </div>
     </tpl:replace>

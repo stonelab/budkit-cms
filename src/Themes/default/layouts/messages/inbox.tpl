@@ -7,8 +7,11 @@
         </div>
     </div>
     <div class="container-main" role="main">
-        <div class="mls mts mrs mbs">
-
+        <div class="mls mts mrs mbs container-block">
+            <div class="container-empty-state">
+                <i class="ionic ion-radio-waves"></i>
+                <p>Select an Item on the right to begin</p>
+            </div>
         </div>
     </div>
 

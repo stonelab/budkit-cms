@@ -13840,6 +13840,21 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
 .container-main.admin {
   background: #fbfcfc;
 }
+.container-empty-state {
+  width: 33%;
+  text-align: center;
+  vertical-align: middle;
+  margin: auto;
+  position: absolute;
+  left: 33%;
+  top: 40%;
+  height: 20%;
+  color: gainsboro;
+  text-shadow: 1px 2px 0px white;
+}
+.container-empty-state > i {
+  font-size: 100px;
+}
 .container-navigation {
   border-bottom: 1px solid #ecf0f1;
   background: white;
