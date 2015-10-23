@@ -257,6 +257,7 @@
 //Layouts
 .container {
   &-search {
+
     background: #FDFCFC;
     padding: 5px @grid-gutter-width 0;
     border-bottom: 1px solid @clouds;
@@ -291,11 +292,15 @@
     left:0;
     right:0;
     bottom:0;
+    -ms-overflow-style: none;
+    overflow: auto;
   }
   &-side, &-main, &-aside, &-sside, &-iside {
     display: inline-block;
     //padding: 10px;
     height: 100%;
+    -ms-overflow-style: none;
+    overflow: auto;
   }
   &-side {
     width: @sidebar-width;

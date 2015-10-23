@@ -1,7 +1,7 @@
 /**
  * Created by livingstonefultang on 10/27/13.
  */
-require(["jquery","mes","jquery.cookie","jquery.chosen","jquery.bootstrap","bootstrap.flat-ui"], function() {
+require(["jquery","mes","jquery.cookie", "jquery.chosen","jquery.bootstrap","bootstrap.flat-ui"], function() {
 
     var activeTabs = {};
 

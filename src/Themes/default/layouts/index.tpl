@@ -5,13 +5,13 @@
             <tpl:import name="head" />
         </head>
         <body tpl:class="${page.body.class}">
-            <div class="container-side minimized sidebar" role="side"><!-- add "minimized" class to minimize-->
+            <div class="container-side minimized sidebar scrl" role="side"><!-- add "minimized" class to minimize-->
                 <tpl:import name="sidebar" />
             </div>
-            <div class="container-aside sidebar" role="aside">
+            <div class="container-aside sidebar scrl" role="aside">
                 <tpl:import name="asidebar" />
             </div>
-            <div class="container-main" role="main">
+            <div class="container-main scrl" role="main">
                 <div class="container-navigation">
                     <tpl:import name="navigation" />
                 </div>
