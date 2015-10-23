@@ -4,6 +4,8 @@ namespace Budkit\Cms\Controller\Admin;
 
 use Budkit\Cms\Controller\Admin;
 use Budkit\Cms\Model\Page;
+use ZMQContext;
+use ZMQ;
 
 class Pages extends Admin {
 
@@ -11,9 +13,9 @@ class Pages extends Admin {
     public function index($format = 'html', $page="") {
 
         // This is our new stuff
-        $context = new \ZMQContext();
+        $context = new ZMQContext();
 
-        $socket = $context->getSocket(\ZMQ::SOCKET_PUSH, 'pubsub');
+        $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'pubsub');
         $socket->connect("tcp://127.0.0.1:5555");
 
         $socket->send(json_encode([
