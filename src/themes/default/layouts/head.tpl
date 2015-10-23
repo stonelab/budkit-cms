@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
     <link rel="shortcut icon" href="/theme/assets/img/favicon.png" type="image/x-icon" />
+    <link href="/theme/assets/css/vendor/bootstrap.min.css" rel="stylesheet"/>
     <link href="/theme/assets/css/style-blue.css" rel="stylesheet"/>
 
     <!-- HTML5 shim, for IE6-8 support of HTML5 elements. All other JS at the end of file. -->
