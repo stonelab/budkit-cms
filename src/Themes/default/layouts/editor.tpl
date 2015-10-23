@@ -12,13 +12,13 @@
         </div>
         <div class="container-main admin" role="main" style="z-index: 1">
             <form tpl:action="/page/${object_uri}/update" method="post" class="container-block mbn clearfix">
-            <div class="container-block">
+            <div class="container-block no-scroll">
                 <div class="container-navigation">
                     <tpl:import name="editor/toolbar"/>
                 </div>
-                <div class="features container-block">
-                    <section class="editor container-block">
-                        <div class="outer container-block">
+                <div class="features container-block no-scroll">
+                    <section class="editor container-block no-scroll">
+                        <div class="outer container-block no-scroll">
                             <div><tpl:import name="alerts" /></div>
                             <div class="editorwrap">
                                 <section class="entry-markdown">

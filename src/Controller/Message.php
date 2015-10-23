@@ -13,7 +13,7 @@ class Message extends Controller {
         //echo "Searching... directory";
         //print_r( $this->application->config );
         $this->view->setData("title", "Messages");
-        $this->view->setData("page", ["body"=>["class"=>"container-block"]]);
+       // $this->view->setData("page", ["body"=>["class"=>"container-block"]]);
 
 
         $this->view->addData("action", ["title"=>"Compose","link"=>"/message/create", "class"=>"btn-primary"]);

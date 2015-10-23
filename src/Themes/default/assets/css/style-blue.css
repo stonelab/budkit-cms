@@ -1,4 +1,4 @@
-@import url('style-blue-blessed1.css?z=1445621272359');
+@import url('style-blue-blessed1.css?z=1445623222820');
 
 .media-list .media-grid-row-fluid .media-grid-col12:before,
 .media-list .media-grid-row-fluid .media-grid-col12:after {
@@ -1507,10 +1507,16 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
   position: absolute;
   top: 0;
   left: 0;
-  right: 0;
+  right: -20px;
   bottom: 0;
-  -ms-overflow-style: none;
-  overflow: auto;
+  overflow-y: auto;
+}
+.container-block.no-scroll {
+  right: 0;
+  padding-right: inherit;
+}
+.container-block:not(.no-scroll) {
+  padding-right: 20px;
 }
 .container-side,
 .container-main,
@@ -1518,13 +1524,12 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
 .container-sside,
 .container-iside {
   display: inline-block;
+  position: relative;
   height: 100%;
-  -ms-overflow-style: none;
-  overflow: auto;
+  overflow: hidden;
 }
 .container-side {
   width: 200px;
-  overflow-y: auto;
   position: fixed;
 }
 .container-side:not(.hide) ~ .container-main {
@@ -1532,8 +1537,7 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
 }
 .container-sside {
   width: 600px;
-  overflow-y: auto;
-  overflow-x: hidden;
+  position: relative;
   border-right: 1px solid #ecf0f1;
 }
 .container-sside:not(.hide) ~ .container-main {
@@ -1541,7 +1545,7 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
 }
 .container-iside {
   width: 500px;
-  overflow-y: auto;
+  position: relative;
   border-right: 1px solid #ecf0f1;
 }
 .container-iside:not(.hide) ~ .container-main {
@@ -1549,7 +1553,6 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
 }
 .container-aside {
   width: 250px;
-  overflow-y: auto;
   position: fixed;
   right: 0;
 }
@@ -1655,8 +1658,6 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
 }
 .sidebar {
   background: #2b3c4e;
-  overflow: visible;
-  overflow-y: scroll;
   z-index: 3;
   font-size: 95%;
 }

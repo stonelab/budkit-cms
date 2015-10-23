@@ -7,10 +7,7 @@
                 <tpl:import name="admin/navigation" />
             </div>
             <div class="container-block">
-
                 <tpl:block position="main" />
-
-
             </div>
         </div>
     </tpl:replace>
