@@ -35,7 +35,8 @@ class ErrorHandler implements HandlerInterface
         $view = $this->application->createInstance("view",
             [
                 $this->application->response,
-                $this->application->createInstance("viewengine", [$this->application->response])
+                $this->application->createInstance("viewengine", [$this->application->response]),
+                $this->application
             ]
         );
 
