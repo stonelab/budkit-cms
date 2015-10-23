@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <tpl:layout xmlns:tpl="http://budkit.org/tpl" name="index">
-    <html lang="en">
-        <head>
+    <html class="no-js lt-ie10  lt-ie9 lt-ie8 lt-ie7" lang="en">
+    <head>
             <tpl:import name="head" />
         </head>
         <body tpl:class="${page.body.class}">

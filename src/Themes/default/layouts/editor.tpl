@@ -6,7 +6,7 @@
         <link href="/theme/assets/js/vendor/ghost/ghostdown.css" rel="stylesheet"/>
 
     </head>
-    <body class="editor">
+    <body class="editing">
         <div class="container-side minimized sidebar" role="side"><!-- add "minimized" class to minimize-->
             <tpl:import name="sidebar" />
         </div>
@@ -17,9 +17,9 @@
                     <tpl:import name="editor/toolbar"/>
                 </div>
                 <div class="features container-block">
-                    <section class="editor">
-                        <div class="outer">
-                            <div style="position: relative; z-index: 10;" class="mlm mrm"><tpl:import name="alerts" /></div>
+                    <section class="editor container-block">
+                        <div class="outer container-block">
+                            <div><tpl:import name="alerts" /></div>
                             <div class="editorwrap">
                                 <section class="entry-markdown">
                                     <section class="entry-markdown-content">

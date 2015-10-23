@@ -11691,15 +11691,15 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
   background: white;
 }
 .container-navigation .fixed ~ .container-main {
-  margin-top: 54px;
+  margin-top: 56px;
 }
 .container-navigation .fixed ~ .container-sside,
 .container-navigation .fixed ~ .container-side,
 .container-navigation .fixed ~ .container-aside {
-  top: 53px 1px;
+  top: 56px;
 }
 .container-navigation ~ .container-block {
-  top: 54px;
+  top: 56px;
 }
 .navbar-toggler {
   margin-right: -9px;
