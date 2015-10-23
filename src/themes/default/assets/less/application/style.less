@@ -374,6 +374,7 @@
     border-bottom: 1px solid @clouds;
    // margin-bottom: 1px;
     background: white;
+    z-index: @zindex-navbar-fixed;
     .fixed {
       .navbar{
         //.navbar-fixed-top;
@@ -387,6 +388,11 @@
     }
     & ~ .container-block{
       top: @navbar-height-base + 3px;
+    }
+    &.lg{
+      & ~ .container-block{
+        top: @navbar-height-large + 3px;
+      }
     }
   }
 }

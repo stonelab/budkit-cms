@@ -6,7 +6,7 @@
             <div class="container-navigation">
                 <tpl:import name="admin/navigation" />
             </div>
-            <div class="container-fluid padding-top">
+            <div class="container-block prm plm">
                 <div class="page-header">
                     <h1 class="mvn">
                         <span><tpl:data value="title" /></span>

@@ -1,4 +1,4 @@
-@import url('style-blue-blessed1.css?z=1445623222820');
+@import url('style-blue-blessed1.css?z=1445623661967');
 
 .media-list .media-grid-row-fluid .media-grid-col12:before,
 .media-list .media-grid-row-fluid .media-grid-col12:after {
@@ -1590,6 +1590,7 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
 .container-navigation {
   border-bottom: 1px solid #ecf0f1;
   background: white;
+  z-index: 1030;
 }
 .container-navigation .fixed ~ .container-main {
   margin-top: 56px;
@@ -1601,6 +1602,9 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
 }
 .container-navigation ~ .container-block {
   top: 56px;
+}
+.container-navigation.lg ~ .container-block {
+  top: 79px;
 }
 .navbar-toggler {
   margin-right: -9px;
