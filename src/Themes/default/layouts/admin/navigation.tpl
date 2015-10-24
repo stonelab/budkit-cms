@@ -13,7 +13,7 @@
 
             <tpl:menu uid="usermenu" class="nav navbar-nav navbar-right" />
 
-            <button class="navbar-btn btn btn-default sidebar-toggle navbar-left" data-switch="minimized" data-target=".sidebar">
+            <button class="navbar-btn btn btn-sm btn-default sidebar-toggle navbar-left" data-switch="minimized" data-target=".sidebar">
                 <i class="fa fa-bars"></i>
             </button>
 

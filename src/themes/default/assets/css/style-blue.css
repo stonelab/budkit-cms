@@ -1,4 +1,4 @@
-@import url('style-blue-blessed1.css?z=1445623661967');
+@import url('style-blue-blessed1.css?z=1445676719342');
 
 .media-list .media-grid-row-fluid .media-grid-col12:before,
 .media-list .media-grid-row-fluid .media-grid-col12:after {
@@ -1883,7 +1883,7 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
 }
 .stream li .link.unread,
 .stream li .item.unread {
-  background: #d9edf7;
+  background: #fffdfa;
 }
 .stream li .link.open,
 .stream li .item.open {
@@ -1891,7 +1891,7 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
 }
 .stream li .link.has-featured-img,
 .stream li .item.has-featured-img {
-  padding-left: 80px;
+  padding-left: 60px;
   min-height: 60px;
 }
 .stream li .link:before,
@@ -1963,7 +1963,7 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
   max-height: 50px;
   max-width: 50px;
   position: absolute;
-  left: 9px;
+  left: 12px;
   z-index: 2;
 }
 .stream li .featured-img label,
@@ -2033,7 +2033,7 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
   font-size: 8px;
   line-height: 12px;
   top: 30px;
-  left: 5px;
+  left: 10px;
 }
 .stream li .extra ~ .extra,
 .stream li .extra-plus ~ .extra,
@@ -2252,13 +2252,13 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
   padding: 0px;
 }
 .stream li .stream-content.unread {
-  background: #d9edf7;
+  background: #fffdfa;
 }
 .stream li .stream-content.open {
   background: rgba(52, 152, 219, 0.1);
 }
 .stream li .stream-content.has-featured-img {
-  padding-left: 80px;
+  padding-left: 60px;
   min-height: 60px;
 }
 .stream li .stream-content:before,
@@ -2448,11 +2448,6 @@ select[multiple].chosen-container-multi .chosen-choices li.search-field input[ty
 }
 .stream-collapsed .stream-list .stream li:last-child {
   border-bottom: none;
-}
-.stream-collapsed .stream-list .stream li .item,
-.stream-collapsed .stream-list .stream li .link {
-  padding-left: 60px !important;
-  min-height: 60px !important;
 }
 .note-toolbar {
   padding: 0px !important;
