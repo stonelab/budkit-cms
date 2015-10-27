@@ -35,7 +35,7 @@ class Provider implements Service
         //The system has been installed;
         $this->application->observer->attach([$this, "onAfterRouteMatch"], "Dispatcher.afterRouteMatch");
         $this->application->observer->attach([$this, "onCompileLayoutData"], "Layout.onCompile.scheme.data");
-        $this->application->observer->attach([$this, "onRegisterThemes"], "app.register.themes");
+        //$this->application->observer->attach([$this, "onRegisterThemes"], "app.register.themes");
         /*
         |--------------------------------------------------------------------------
         | Error Pages
@@ -354,23 +354,23 @@ class Provider implements Service
     }
 
 
-    public function onRegisterThemes($event){
-
-        $themes     = $event->getResult();
-        $themes[]   = [
-            "provider" => "budkit/cms",
-            "name"  => "default",
-            "source"=> $this->getPackageDir()."Themes/default"
-        ];
-
-        //Check if no default themes have been set and set budkit/cms as default;
-        $provider = $this->application->config->get("design.theme.provider", "budkit/cms");
-        $theme  = $this->application->config->get("design.theme.name", "default");
-
-        //$event      = new Event("App.init.themes", $this);
-        $event->setResult( $themes ); //all members who call this even need to append to the result;
-
-    }
+//    public function onRegisterThemes($event){
+//
+//        $themes     = $event->getResult();
+//        $themes[]   = [
+//            "provider" => "budkit/cms",
+//            "name"  => "default",
+//            "source"=> $this->getPackageDir()."Themes/default"
+//        ];
+//
+//        //Check if no default themes have been set and set budkit/cms as default;
+//        $provider = $this->application->config->get("design.theme.provider", "budkit/cms");
+//        $theme  = $this->application->config->get("design.theme.name", "default");
+//
+//        //$event      = new Event("App.init.themes", $this);
+//        $event->setResult( $themes ); //all members who call this even need to append to the result;
+//
+//    }
 
     public function definition()
     {
