@@ -8,14 +8,15 @@
 
 namespace Budkit\Cms\Helper;
 
+use Budkit\Cms\Helper\Authorize\Permission;
 use Budkit\Cms\Model\User;
 use Budkit\Datastore\Database;
-use Budkit\Cms\Helper\Authorize\Permission;
 use Budkit\Protocol\Http\Request;
 use Budkit\Protocol\Uri;
 
 
-class Menu{
+class Menu
+{
 
     protected $database;
 
@@ -90,33 +91,91 @@ class Menu{
 
     }
 
-    public function extendUserMenu($event){
+    public function extendUserMenu($event)
+    {
 
-        $menuId    = $event->getData("uid");
+        $menuId = $event->getData("uid");
 
         //We only process the usermenu;
-        if($menuId !== "usermenu") return;
+        if ($menuId !== "usermenu") return;
 
         $menuItems = $event->getResult();
-        $menuUser  = $this->user->getCurrentUser();
+        $menuUser = $this->user->getCurrentUser();
 
-        if( $menuUser->isAuthenticated() ){
+        if ($menuUser->isAuthenticated()) {
             array_push($menuItems, array(
                     "menu_title" => "Sign out",
                     "menu_url" => "/member/signout",
                 )
             );
-        }else{
+        } else {
             array_push($menuItems, array(
                     "menu_title" => "Sign In",
                     "menu_url" => "/member/signin",
                 )
             );
         }
-        $event->setResult( $menuItems );
+        $event->setResult($menuItems);
     }
 
-    public function hasPermission($event){
+    public function extendDashboardMenu($event)
+    {
+
+
+        $menuId = $event->getData("uid");
+
+        //We only process the usermenu;
+        if ($menuId !== "dashboardmenu") return;
+
+        $menuItems = $event->getResult();
+        $menuUser = $this->user->getCurrentUser();
+
+        //will need to load this from the DB!
+        $labels = [
+            [
+                "menu_title" => "Information",
+                "menu_classes" => "link-label",
+                "menu_url" => "/member/messages/filter/information"
+            ],
+            [
+                "menu_title" => "Urgent",
+                "menu_classes" => "link-label",
+                "menu_url" => "/member/messages/filter/urgent"
+            ],
+            [
+                "menu_title" => "Task",
+                "menu_classes" => "link-label",
+                "menu_url" => "/member/messages/filter/task"
+            ],
+            [
+                "menu_title" => "Done",
+                "menu_classes" => "link-label",
+                "menu_url" => "/member/messages/filter/done"
+            ],
+            [
+                "menu_title" => "New label",
+                "menu_classes" => "link-label",
+                "menu_url" => "/member/messages/filter/create"
+            ]
+        ];
+
+        //merge the children;
+        foreach ($menuItems as $id => $menuItem) {
+            if ($menuItem["menu_url"] == "/member/messages") {
+                $menuItem['children'] = array_merge($menuItem['children'], $labels);
+                $menuItems[$id] = $menuItem;
+                break;
+            }
+            continue;
+        }
+
+        //print_R($menuItems);
+
+        $event->setResult($menuItems);
+    }
+
+    public function hasPermission($event)
+    {
 
         $item = $event->getData("item");
 
@@ -128,17 +187,17 @@ class Menu{
 
         //@TODO mandate that a permission is set for every menu item url created in the console, as routes cannot be used to chek permissions;
 
-        if($this->permission->isAllowed($item["menu_url"])){
+        if ($this->permission->isAllowed($item["menu_url"])) {
 
             $item["menu_viewable"] = true;
         }
 
         //Check whether the current menu is active;
-        if($item["menu_url"] == $this->request->getPathInfo()){
+        if ($item["menu_url"] == $this->request->getPathInfo()) {
             $item["menu_isactive"] = true;
         }
 
 
-        $event->setResult( $item );
+        $event->setResult($item);
     }
 }

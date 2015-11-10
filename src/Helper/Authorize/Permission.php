@@ -158,7 +158,9 @@ class Permission{
             $authority["permission"] = in_array($authority['permission'],array("allow"))? true : false;
 
             //If we were previously granted permission to a parent of this area, i.e if we were granted permission on /xy/* but denied on /xy/z/k
-            if( (isset($permissionTree[$authority['authority_id']]) )  && !$authority["permission"] && ($permissionTypes[$authority['permission_type']] <= $permissionTypes[$permissionTree[$authority['authority_id']]['permission_type']]) ){
+            if( (isset($permissionTree[$authority['authority_id']]) )
+                && !$authority["permission"]
+                && ($permissionTypes[$authority['permission_type']] <= $permissionTypes[$permissionTree[$authority['authority_id']]['permission_type']]) ){
                 unset($permissionTree[$authority['authority_id']]);
                 $denied[$authority['authority_id']] = array(
                     't' => $authority['permission_type'],
@@ -193,6 +195,7 @@ class Permission{
 
         $currentUser = $this->user->getCurrentUser();
 
+
         //determine what kind of permission is being requested;
         //foreach authority permission in map, check
         //print_R($currentUser);
@@ -212,7 +215,19 @@ class Permission{
                     //If the authority group is defined on the 'guest list' of allowed permissions
                     //Then we are sure that this user is granted permissions so...
                     //if group id is/or is parent to denied group then deny)'
-                    $allowed = true;
+
+                    //031115 - Err No! This is not right;
+                    //There is a lot more than checking for the group_id in the tree.
+                    //We need to make sure that the permission that is being granter corresponds to the required level!
+                    //$allowed = true;
+
+                    //First we need to check that the granted permission type for this group Id is correct!
+                    $grantedType = $permissionTree[$group['authority_id']]['permission_type'];
+
+                    if( (int)$permissionTypes[$forPermission] <= (int)$permissionTypes[$grantedType] ){
+                        $allowed = true;
+                    }
+
                     foreach($denied as $i=>$deny):
                         //Looking for parent left right boundaries
                         if(($group['lft'] < $deny['l']) && ($group['rgt'] > $deny['r'])):
@@ -226,7 +241,10 @@ class Permission{
                 //This is looking for inheritance! NOTE: YOU Cannot grant a permission to a parent which you deny to a child!!
                 foreach($permissionTree as $k=>$definition):
                     //Looking for left right boundaries
-                    if(($group['lft'] > $definition['lft']) && ($group['rgt'] < $definition['rgt'])):
+                    if(($group['lft'] > $definition['lft'])
+                        && ($group['rgt'] < $definition['rgt'])
+                         && ( (int)$permissionTypes[$forPermission] <= (int)$permissionTypes[$definition['permission_type']] )   ):
+
                         $allowed = true;
                         break;
                     endif;

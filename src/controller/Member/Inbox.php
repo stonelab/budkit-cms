@@ -3,9 +3,9 @@
 namespace Budkit\Cms\Controller\Member;
 
 use Budkit\Cms\Controller\Member;
-use Budkit\Cms\Controller\Message;
+use Budkit\Cms\Controller\Post;
 
-class Inbox extends Message {
+class Inbox extends Post {
 
 
 

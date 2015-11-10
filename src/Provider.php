@@ -85,7 +85,7 @@ class Provider implements Service
         |
         */
         Route::attachResource("/page", Controller\Page::class); //a collection of streams;
-        Route::attachResource("/message", Controller\Message::class); //controller should extend post;
+        //Route::attachResource("/message", Controller\Message::class); //controller should extend post;
         Route::attachResource("/notification", Controller\Notification::class);
         Route::attachResource("/post", Controller\Post::class); //notes?
         Route::attachResource("/event", Controller\Event::class); //multiple event types and status, e.g proposed meting
@@ -258,9 +258,29 @@ class Provider implements Service
 
             $route->add('/settings{/group}{format}', Controller\Member\Settings::class);
             $route->add("/account", "member.account", Controller\Member\Account::class);
-            $route->addGet("/posts", "member.posts", Controller\Member\Posts::class);
             $route->add("/profile", "member.profile", Controller\Member\Profile::class);
-            $route->addGet("/messages", "member.messages", Controller\Member\Inbox::class); //a collection of streams;
+
+
+            $route->attach("/messages", Controller\Member\Inbox::class, function($route){
+
+                $route->addGet("{format}", 'index');
+
+                $route->attach("/filter", Controller\Member\Inbox\Filters::class, function($route){
+                    $route->setTokens(array(
+                        'name' => '[a-zA-Z0-9-_]+?',
+                        'format' => '(\.[^/]+)?'
+                    ));
+                    $route->addPost('/new', 'add');
+                    $route->addPost('/create{format}', 'create');
+                    $route->addGet('{/name}{format}', "read");
+                    $route->add('{/name}/edit{format}', "edit");
+                    $route->addDelete('{/name}/delete{format}', "delete");
+
+                });
+
+            }); //a collection of streams;
+
+
 
         });
     }

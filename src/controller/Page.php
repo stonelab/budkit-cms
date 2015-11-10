@@ -215,7 +215,7 @@ class Page extends Controller
             if ($page->getObjectId()) { //if we have a page;
 
                 //Checks if the current user is the owner of this page or has special permissions to edit pages
-                if ($page->getPropertyValue("media_owner") == $user->getCurrentUser()->getPropertyValue("user_name_id") || $this->permission("/page/edit", null, "special")) {
+                if ($page->getPropertyValue("media_owner") == $user->getCurrentUser()->getPropertyValue("user_name_id") || $this->checkPermission( "special", "/page/edit")) {
 
                     //we will save the content as HTML
                     $page = $this->bindData($page); //binds input data;

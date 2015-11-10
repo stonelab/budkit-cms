@@ -9,6 +9,7 @@
 namespace Budkit\Cms\Helper;
 
 use Budkit\Cms\Provider;
+use Budkit\Event\Event;
 use Budkit\Routing\Controller as RouteController;
 use Budkit\Dependency\Container as Application;
 
@@ -49,7 +50,20 @@ class Controller extends RouteController {
 
 
 
+        /*
+        |--------------------------------------------------------------------------
+        | Attach custom post Events
+        |--------------------------------------------------------------------------
+        |
+        | This is for adding new actions to the new post button. Actions should be
+        | registered before this view is called!
+        |
+        */
+        $loadPostExtensions = new Event("Layout.load.post.extensions");
 
+        $this->observer->trigger( $loadPostExtensions );
+
+        $this->view->setData("newactions", $loadPostExtensions->getResult());
 
         /*
         |--------------------------------------------------------------------------
@@ -67,6 +81,9 @@ class Controller extends RouteController {
         //Extend the user menu
         $this->observer->attach([$menu, "extendUserMenu"], "Layout.onCompile.menu.data");
 
+        //Extend the user menu
+        $this->observer->attach([$menu, "extendDashboardMenu"], "Layout.onCompile.menu.data");
+
         //Check has permission
         $this->observer->attach([$menu, "hasPermission"], "Layout.beforeRender.menu.item");
 
@@ -77,6 +94,7 @@ class Controller extends RouteController {
     function checkPermission( $level="view", $path = ''){
 
         $path = empty($path)? $this->request->getPathInfo() : $path;
+
 
         if (!$this->permission->isAllowed( $path, null, $level)) {
 
@@ -93,6 +111,8 @@ class Controller extends RouteController {
             //exit("You are not allowed to view this resource");
 
             $this->application->dispatcher->redirect("/member/signin", HTTP_FOUND, $message, $this->response->getAlerts());
+
+            return false;
 
         }
 
