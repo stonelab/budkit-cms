@@ -23,10 +23,10 @@ class Navigation extends Settings {
         //echo "Browsing in {$format} format";
 
         // echo "Pages admin";
-        $this->view->setData("title", t("Settings » Menus"));
+        $this->view->setData("title", t("Navigation"));
 
-        $this->view->addToBlock("main", "import://admin/settings/navigation");
-        //$this->view->setData("name", "Livingstone");
+//        $this->view->addToBlock("main", "import://admin/settings/navigation");
+//        //$this->view->setData("name", "Livingstone");
         $this->view->setLayout("member/dashboard");
 
     }

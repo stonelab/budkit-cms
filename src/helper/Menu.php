@@ -135,33 +135,33 @@ class Menu
             [
                 "menu_title" => "Information",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/messages/filter/information"
+                "menu_url" => "/member/timeline/filter/information"
             ],
             [
                 "menu_title" => "Urgent",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/messages/filter/urgent"
+                "menu_url" => "/member/timeline/filter/urgent"
             ],
             [
                 "menu_title" => "Task",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/messages/filter/task"
+                "menu_url" => "/member/timeline/filter/task"
             ],
             [
                 "menu_title" => "Done",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/messages/filter/done"
+                "menu_url" => "/member/timeline/filter/done"
             ],
             [
                 "menu_title" => "New label",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/messages/filter/create"
+                "menu_url" => "/member/timeline/filter/create"
             ]
         ];
 
         //merge the children;
         foreach ($menuItems as $id => $menuItem) {
-            if ($menuItem["menu_url"] == "/member/messages") {
+            if ($menuItem["menu_url"] == "/member/timeline") {
                 $menuItem['children'] = array_merge($menuItem['children'], $labels);
                 $menuItems[$id] = $menuItem;
                 break;

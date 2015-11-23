@@ -189,6 +189,60 @@ class Provider implements Service
 
             });
 
+
+            /*
+            |--------------------------------------------------------------------------
+            | Maintenance settings
+            |--------------------------------------------------------------------------
+            */
+            $route->attach('/appearance', Controller\Admin\Settings\Appearance::class, function ($route) {
+
+                //$route->setAction(Controller\Admin\Settings\Permissions::class);
+                $route->addGet('{format}', 'index');
+
+
+            });
+
+            /*
+            |--------------------------------------------------------------------------
+            | Navigation settings
+            |--------------------------------------------------------------------------
+            */
+            $route->attach('/navigation', Controller\Admin\Settings\Navigation::class, function ($route) {
+
+                //$route->setAction(Controller\Admin\Settings\Permissions::class);
+                $route->addGet('{format}', 'index');
+
+
+            });
+
+
+            /*
+            |--------------------------------------------------------------------------
+            | Extensions settings
+            |--------------------------------------------------------------------------
+            */
+            $route->attach('/extensions', Controller\Admin\Settings\Extensions::class, function ($route) {
+
+                //$route->setAction(Controller\Admin\Settings\Permissions::class);
+                $route->addGet('{format}', 'index');
+
+
+            });
+
+        });
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Members management
+        |--------------------------------------------------------------------------
+        */
+        Route::attach('/admin/members', Controller\Admin\Members::class, function ($route) {
+
+            //$route->setAction(Controller\Admin\Settings\Permissions::class);
+            $route->addGet('{format}', 'index');
+
             /*
             |--------------------------------------------------------------------------
             | Access Control settings
@@ -204,21 +258,8 @@ class Provider implements Service
 
             });
 
-            /*
-            |--------------------------------------------------------------------------
-            | Maintenance settings
-            |--------------------------------------------------------------------------
-            */
-            $route->attach('/appearance', Controller\Admin\Settings\Appearance::class, function ($route) {
-
-                //$route->setAction(Controller\Admin\Settings\Permissions::class);
-                $route->addGet('{format}', 'index');
-
-
-            });
-
-
         });
+
 
         /*
         |--------------------------------------------------------------------------
@@ -242,11 +283,12 @@ class Provider implements Service
 
         Route::attach("/member", Controller\Member::class, function ($route) {
             $route->setTokens(array(
-                'id' => '(\d+)[a-zA-Z0-9-_]+?',
+                'id' => '(\d+):[a-zA-Z0-9-_]+?', //username and userId
                 'format' => '(\.[^/]+)?'
             ));
             //subroutes
             $route->addGet('/dashboard{format}', 'index');
+
             $route->add('/signin{format}', 'signin');
             $route->add('/signup{format}', 'signup');
             $route->add('/signout{format}', 'signout');
@@ -261,11 +303,17 @@ class Provider implements Service
             $route->add("/profile", "member.profile", Controller\Member\Profile::class);
 
 
-            $route->attach("/messages", Controller\Member\Inbox::class, function($route){
+            $route->attach("/timeline", Controller\Member\Timeline::class, function($route){
+
+                $route->setTokens(array(
+                    'id' => '(\d+)[a-zA-Z0-9-_]+?', //post I'ds must start with a number
+                    'format' => '(\.[^/]+)?'
+                ));
 
                 $route->addGet("{format}", 'index');
+                $route->addGet('{/id}{format}', "read");
 
-                $route->attach("/filter", Controller\Member\Inbox\Filters::class, function($route){
+                $route->attach("/filter", Controller\Member\Timeline\Filters::class, function($route){
                     $route->setTokens(array(
                         'name' => '[a-zA-Z0-9-_]+?',
                         'format' => '(\.[^/]+)?'

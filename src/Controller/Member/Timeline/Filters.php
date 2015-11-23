@@ -1,10 +1,10 @@
 <?php
 
-namespace Budkit\Cms\Controller\Member\Inbox;
+namespace Budkit\Cms\Controller\Member\Timeline;
 
 use Budkit\Cms\Controller\Member;
 
-class Filters extends Member\Inbox {
+class Filters extends Member\Timeline {
 
     public function read($name, $format = 'html') {
         echo "Reading {$name} in {$format} format";

@@ -6,32 +6,30 @@ use Budkit\Cms\Helper\Controller;
 
 class Post extends Controller {
 
+
     public function index($format = 'html') {
-        //echo "Browsing in {$format} format";
-        //echo "Browsing in {$format} format";
 
-        //echo "Searching... directory";
-        //print_r( $this->application->config );
-        $this->view->setData("title", "Inbox");
-       // $this->view->setData("page", ["body"=>["class"=>"container-block"]]);
+        $this->view->setData("title", "Timeline");
+        //$this->view->addToBlock("stream", '');
 
-
-        $this->view->addData("action", ["title"=>"New Post","link"=>"/post/create", "class"=>"btn-primary"]);
-        //$this->view->addData("action", ["title"=>"Compose","link"=>"/message/create", "class"=>"btn-primary"]);
-
-
-        //$this->view->addToBlock("navbar-button", 'import://messages/navbar-button');
-
-        //Tell the view where to find additional layouts
-        $this->view->addToBlock("main", 'import://posts/inbox');
-        $this->view->setLayout('posts/dashboard');
+        $this->timeline();
 
     }
 
 
     public function read($id, $format = 'html') {
-        echo "Reading {$id} in {$format} format";
 
+        //We are going to add a single Item;
+        //$this->index();
+
+        //Change the title
+        $title = "Reading {$id} in {$format} format";
+
+        $this->view->setData("title", $title );
+
+        //add the single stream
+        $this->view->addToBlock("main", 'import://posts/single');
+        $this->view->setLayout('posts/dashboard');
 
     }
 
@@ -65,5 +63,13 @@ class Post extends Controller {
 
     public function options() {
         echo "Options...";
+    }
+
+
+    private function timeline(){
+
+        $this->view->addToBlock("main", 'import://posts/inbox');
+        $this->view->setLayout('posts/dashboard');
+
     }
 }

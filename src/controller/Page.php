@@ -149,6 +149,8 @@ class Page extends Controller
             $templateDefinitions[$tid] = $template;
         }
 
+        //print_R($templateDefinitions);
+
         $this->view->setData("templates", $templateDefinitions);
         $this->view->setData("editor", "page");
         $this->view->setData("title", "Create New Page");

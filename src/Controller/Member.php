@@ -26,7 +26,10 @@ class Member extends Controller {
         $this->user = $user;
     }
 
-    public function view(){
+    public function view($id, $format = "html"){
+
+        echo "viewing profile with Id". $id;
+
         return $this->index();
     }
 

@@ -125,7 +125,7 @@ final class Schema{
                 (3,	4,	'^/page(/[a-z0-9-]*)*',	'allow',	'execute',	'Content'),
                 (4,	2,	'^/member(/[a-z0-9-]*)*',	'allow',	'execute',	'Member Pages'),
                 (5,	1,	'^/member/sign([a-z0-9-]*)*',	'allow',	'execute',	'Authentication'),
-                (6,	2,	'^/message(/[a-z0-9-]*)*',	'allow',	'execute',	'Messages'),
+                (6,	2,	'^/timeline(/[a-z0-9-]*)*',	'allow',	'execute',	'Timeline'),
                 (7,	1,	'^/search(/[a-z0-9-]*)*',	'allow',	'execute',	'Search'),
                 (8,	4,	'^/listing(/[a-z0-9-]*)*',	'allow',	'special',	'Directory'),
                 (9,	2,	'^/notification(/[a-z0-9-]*)*',	'allow',	'execute',	'Messages'),
@@ -174,20 +174,20 @@ final class Schema{
                 (88, 0, 'Text', '/text/gallery', '', 23, 1, 'link', '', 6, 9, 1),
                 (73, 0, 'Dashboard', '/member/dashboard', '', 0, 2, 'link', NULL, 1, 2, 1),
                 (74, 0, 'Settings', '/member/settings', NULL, 0, 2, 'link', NULL, 3, 4, 1),
-                (75, 0, 'Inbox', '/member/messages', NULL, 0, 3, 'link', NULL, 2, 3, 1),
+                (75, 0, 'Timeline', '/member/timeline', NULL, 0, 3, 'link', NULL, 2, 3, 1),
                 (25, 80, 'Maintenance', '/admin/settings/maintenance', '', 20, 3, 'link', '', 12, 13, 1),
                 (30, 80, 'Emails', '/admin/settings/emails', '', 20, 3, 'link', '', 10, 11, 1),
                 (32, 80, 'Localization', '/admin/settings/localization', '', 20, 3, 'link', '', 8, 9, 1),
                 (33, 80, 'Input', '/admin/settings/input', '', 20, 3, 'link', '', 6, 7, 1),
                 (34, 80, 'Server', '/admin/settings/server', '', 20, 3, 'link', '', 4, 5, 1),
                 (56, 0, 'Dashboard', '/member/dashboard', NULL, 0, 3, 'link', NULL, 1, 2, 1),
-                (78, 80, 'Permissions', '/admin/settings/permissions', '', 20, 3, 'link', '', 14, 15, 1),
                 (80, 0, 'Configuration', '/admin/settings/configuration', '', 20, 3, 'link', '', 3, 16, 1),
                 (98, 0, 'Appearance', '/admin/settings/appearance', NULL, 0, 3, 'link', NULL, 17, 18, 1),
                 (99, 0, 'Pages', '/admin/pages', NULL , 0, 3, 'link', NULL, 3, 4, 1),
                 (101,0,	'Navigation', '/admin/settings/navigation',	NULL,	0,	3,	'link',	NULL,	17,	18,	1),
                 (102,0,	'Extensions', '/admin/settings/extensions',	NULL,	0,	3,	'link',	NULL,	17,	18,	1),
-                (103,0,	'Users', '/admin/users',	NULL,	0,	3,	'link',	NULL,	17,	18,	1);"
+                (103,0,	'Members', '/admin/members',	NULL,	0,	3,	'link',	NULL,	17,	20,	1),
+                (104, 80, 'Permissions', '/admin/members/permissions', '', 0, 3, 'link', '', 18, 19, 1);"
         );
     }
 

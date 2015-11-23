@@ -23,7 +23,7 @@ class Settings extends Admin {
         $this->view->setData("authorities", $authorities);
 
        // echo "Pages admin";
-        $this->view->setData("title", t("Settings » Site"));
+        $this->view->setData("title", t("Configurations"));
 
         $this->view->addToBlock("main", "import://admin/settings/configuration");
         //$this->view->setData("name", "Livingstone");

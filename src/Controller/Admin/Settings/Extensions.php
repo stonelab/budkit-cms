@@ -18,6 +18,16 @@ use Budkit\Cms\Controller\Admin\Settings;
  */
 class Extensions extends Settings {
 
+    public function index($format = 'html', $id="") {
+        //echo "Browsing in {$format} format";
 
+        // echo "Pages admin";
+        $this->view->setData("title", t("Extensions"));
+
+        //$this->view->setData("name", "Livingstone");
+        //$this->view->addToBlock("main", "import://admin/settings/navigation");
+        $this->view->setLayout("member/dashboard");
+
+    }
 }
 
