@@ -12,10 +12,14 @@ class Admin extends Controller {
         //echo "Browsing in {$format} format";
 
 
+        //echo "Browsing in {$format} format";
+        $this->view->setData("title", "Dashboard");
 
-        //print_R($this->application->database);
 
-        $this->view->setData("title", "Console");
+        //We can add content to Block or just import more content;
+        //$this->view->addToBlock("main", "This content");
+        $this->view->addToBlock("main", "import://admin/console/widgets");
+
         $this->view->setLayout("member/dashboard");
 
     }

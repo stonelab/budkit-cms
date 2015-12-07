@@ -101,164 +101,180 @@ class Provider implements Service
         | All member actions
         |
         */
-        Route::addGet("/admin", "admin", Controller\Admin::class);
-        Route::addGet("/admin/pages{format}{/page}", "admin.pages", Controller\Admin\Pages::class);
-
-        Route::attach("/admin/settings", Controller\Admin\Settings::class, function ($route) {
+        Route::attach("/admin",  Controller\Admin::class, function($route){
 
             $route->setTokens(array(
                 'format' => '(\.[^/]+)?'
             ));
 
-
-            /*
-            |--------------------------------------------------------------------------
-            | Save global settings
-            |--------------------------------------------------------------------------
-            */
-            $route->addPost('/save{format}', 'save');
-
-            /*
-            |--------------------------------------------------------------------------
-            | Global System Configuration
-            |--------------------------------------------------------------------------
-            */
-            $route->addGet('/configuration{format}', 'index');
-
-            /*
-            |--------------------------------------------------------------------------
-            | Server settings settings
-            |--------------------------------------------------------------------------
-            */
-            $route->attach('/server', Controller\Admin\Settings\Server::class, function ($route) {
-
-                //$route->setAction(Controller\Admin\Settings\Permissions::class);
-                $route->addGet('{format}', 'index');
-
-
-            });
-            /*
-            |--------------------------------------------------------------------------
-            | Input settings settings
-            |--------------------------------------------------------------------------
-            */
-            $route->attach('/input', Controller\Admin\Settings\Input::class, function ($route) {
-
-                //$route->setAction(Controller\Admin\Settings\Permissions::class);
-                $route->addGet('{format}', 'index');
-
-
-            });
-            /*
-            |--------------------------------------------------------------------------
-            | Language settings
-            |--------------------------------------------------------------------------
-            */
-            $route->attach('/localization', Controller\Admin\Settings\Localization::class, function ($route) {
-
-                //$route->setAction(Controller\Admin\Settings\Permissions::class);
-                $route->addGet('{format}', 'index');
-
-
-            });
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Email Settings
-            |--------------------------------------------------------------------------
-            */
-            $route->attach('/emails', Controller\Admin\Settings\Emails::class, function ($route) {
-
-                //$route->setAction(Controller\Admin\Settings\Permissions::class);
-                $route->addGet('{format}', 'index');
-
-
-            });
-
-            /*
-            |--------------------------------------------------------------------------
-            | Maintenance settings
-            |--------------------------------------------------------------------------
-            */
-            $route->attach('/maintenance', Controller\Admin\Settings\Maintenance::class, function ($route) {
-
-                //$route->setAction(Controller\Admin\Settings\Permissions::class);
-                $route->addGet('{format}', 'index');
-
-
-            });
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Maintenance settings
-            |--------------------------------------------------------------------------
-            */
-            $route->attach('/appearance', Controller\Admin\Settings\Appearance::class, function ($route) {
-
-                //$route->setAction(Controller\Admin\Settings\Permissions::class);
-                $route->addGet('{format}', 'index');
-
-
-            });
-
-            /*
-            |--------------------------------------------------------------------------
-            | Navigation settings
-            |--------------------------------------------------------------------------
-            */
-            $route->attach('/navigation', Controller\Admin\Settings\Navigation::class, function ($route) {
-
-                //$route->setAction(Controller\Admin\Settings\Permissions::class);
-                $route->addGet('{format}', 'index');
-
-
-            });
-
-
-            /*
-            |--------------------------------------------------------------------------
-            | Extensions settings
-            |--------------------------------------------------------------------------
-            */
-            $route->attach('/extensions', Controller\Admin\Settings\Extensions::class, function ($route) {
-
-                //$route->setAction(Controller\Admin\Settings\Permissions::class);
-                $route->addGet('{format}', 'index');
-
-
-            });
-
-        });
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Members management
-        |--------------------------------------------------------------------------
-        */
-        Route::attach('/admin/members', Controller\Admin\Members::class, function ($route) {
-
-            //$route->setAction(Controller\Admin\Settings\Permissions::class);
+            //subroutes
             $route->addGet('{format}', 'index');
+            $route->addGet('/dashboard{format}', 'index');
+
+            $route->attach('/pages', Controller\Admin\Pages::class, function($route){
+
+                $route->addGet("{format}{/page}", "index");
+
+            });
 
             /*
             |--------------------------------------------------------------------------
-            | Access Control settings
+            | Members management
             |--------------------------------------------------------------------------
             */
-            $route->attach('/permissions', Controller\Admin\Settings\Permissions::class, function ($route) {
+            $route->attach('/members', Controller\Admin\Members::class, function ($route) {
 
                 //$route->setAction(Controller\Admin\Settings\Permissions::class);
                 $route->addGet('{format}', 'index');
-                $route->addPost('/rule', 'updaterule');
-                $route->addPost('/authority', 'updateauthority');
 
+                /*
+                |--------------------------------------------------------------------------
+                | Access Control settings
+                |--------------------------------------------------------------------------
+                */
+                $route->attach('/permissions', Controller\Admin\Settings\Permissions::class, function ($route) {
+
+                    //$route->setAction(Controller\Admin\Settings\Permissions::class);
+                    $route->addGet('{format}', 'index');
+                    $route->addPost('/rule', 'updaterule');
+                    $route->addPost('/authority', 'updateauthority');
+
+
+                });
+
+            });
+
+            $route->attach("/settings", Controller\Admin\Settings::class, function ($route) {
+
+                $route->setTokens(array(
+                    'format' => '(\.[^/]+)?'
+                ));
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Save global settings
+                |--------------------------------------------------------------------------
+                */
+                $route->addPost('/save{format}', 'save');
+
+                /*
+                |--------------------------------------------------------------------------
+                | Global System Configuration
+                |--------------------------------------------------------------------------
+                */
+                $route->addGet('/configuration{format}', 'index');
+
+                /*
+                |--------------------------------------------------------------------------
+                | Server settings settings
+                |--------------------------------------------------------------------------
+                */
+                $route->attach('/server', Controller\Admin\Settings\Server::class, function ($route) {
+
+                    //$route->setAction(Controller\Admin\Settings\Permissions::class);
+                    $route->addGet('{format}', 'index');
+
+
+                });
+                /*
+                |--------------------------------------------------------------------------
+                | Input settings settings
+                |--------------------------------------------------------------------------
+                */
+                $route->attach('/input', Controller\Admin\Settings\Input::class, function ($route) {
+
+                    //$route->setAction(Controller\Admin\Settings\Permissions::class);
+                    $route->addGet('{format}', 'index');
+
+
+                });
+                /*
+                |--------------------------------------------------------------------------
+                | Language settings
+                |--------------------------------------------------------------------------
+                */
+                $route->attach('/localization', Controller\Admin\Settings\Localization::class, function ($route) {
+
+                    //$route->setAction(Controller\Admin\Settings\Permissions::class);
+                    $route->addGet('{format}', 'index');
+
+
+                });
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Email Settings
+                |--------------------------------------------------------------------------
+                */
+                $route->attach('/emails', Controller\Admin\Settings\Emails::class, function ($route) {
+
+                    //$route->setAction(Controller\Admin\Settings\Permissions::class);
+                    $route->addGet('{format}', 'index');
+
+
+                });
+
+                /*
+                |--------------------------------------------------------------------------
+                | Maintenance settings
+                |--------------------------------------------------------------------------
+                */
+                $route->attach('/maintenance', Controller\Admin\Settings\Maintenance::class, function ($route) {
+
+                    //$route->setAction(Controller\Admin\Settings\Permissions::class);
+                    $route->addGet('{format}', 'index');
+
+
+                });
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Maintenance settings
+                |--------------------------------------------------------------------------
+                */
+                $route->attach('/appearance', Controller\Admin\Settings\Appearance::class, function ($route) {
+
+                    //$route->setAction(Controller\Admin\Settings\Permissions::class);
+                    $route->addGet('{format}', 'index');
+
+
+                });
+
+                /*
+                |--------------------------------------------------------------------------
+                | Navigation settings
+                |--------------------------------------------------------------------------
+                */
+                $route->attach('/navigation', Controller\Admin\Settings\Navigation::class, function ($route) {
+
+                    //$route->setAction(Controller\Admin\Settings\Permissions::class);
+                    $route->addGet('{format}', 'index');
+
+
+                });
+
+
+                /*
+                |--------------------------------------------------------------------------
+                | Extensions settings
+                |--------------------------------------------------------------------------
+                */
+                $route->attach('/extensions', Controller\Admin\Settings\Extensions::class, function ($route) {
+
+                    //$route->setAction(Controller\Admin\Settings\Permissions::class);
+                    $route->addGet('{format}', 'index');
+
+
+                });
 
             });
 
         });
+
+
 
 
         /*
@@ -267,6 +283,9 @@ class Provider implements Service
         |--------------------------------------------------------------------------
         |
         | The installation route accepts POST so enable all methods
+        |
+        | NOTE: This has to be a separate route because it is a named route that is
+        |       used by permissions to check install paths
         |
         */
         Route::add("/admin/setup/install{/step}", "install.admin", Controller\Admin\Setup\Install::class);
@@ -286,8 +305,6 @@ class Provider implements Service
                 'id' => '(\d+):[a-zA-Z0-9-_]+?', //username and userId
                 'format' => '(\.[^/]+)?'
             ));
-            //subroutes
-            $route->addGet('/dashboard{format}', 'index');
 
             $route->add('/signin{format}', 'signin');
             $route->add('/signup{format}', 'signup');

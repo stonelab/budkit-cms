@@ -35,15 +35,7 @@ class Member extends Controller {
 
 
     public function index($format = 'html') {
-        //echo "Browsing in {$format} format";
-        $this->view->setData("title", "Dashboard");
 
-
-        //We can add content to Block or just import more content;
-        //$this->view->addToBlock("main", "This content");
-        $this->view->addToBlock("main", "import://admin/console/widgets");
-
-        $this->view->setLayout("member/dashboard");
     }
 
     final public function resetPassword(){
@@ -117,7 +109,7 @@ class Member extends Controller {
                         //Redirect to dashboard or to last url?
                         $session        = $this->application->session;
                         $interceptedURL = $session->get("interceptedPath");
-                        $redirectTo     = !empty($interceptedURL) && $this->permission->isAllowed( $interceptedURL, null, "view") ? $interceptedURL :  "/member/dashboard";
+                        $redirectTo     = !empty($interceptedURL) && $this->permission->isAllowed( $interceptedURL, null, "view") ? $interceptedURL :  "/member/timeline";
 
                         //remove the interceptedPath var.
                         $session->remove("interceptedPath");
