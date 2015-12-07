@@ -39,6 +39,7 @@ class Page extends Controller
             $page = $this->application->createInstance(Content::class);
             $page = $page->defineValueGroup("page");
             $page = $page->getMedia("page", $uri);
+
             //echo "Browsing in {$format} format";
 
             //$parser  = new \Parsedown::instance();
@@ -106,7 +107,6 @@ class Page extends Controller
         //page-templates
 
         //1. check this uer has permission to execute /page/create
-
         $this->checkPermission("execute");
 
         //2. load the page;
@@ -184,9 +184,7 @@ class Page extends Controller
 
         if (!$page->store()) {
             // throw new Exception("could not create the page");
-
-            echo "page not created";
-            die;
+            $this->response->addAlert("Page could not be created", "error");
 
         }
 
@@ -221,6 +219,7 @@ class Page extends Controller
 
                     //we will save the content as HTML
                     $page = $this->bindData($page); //binds input data;
+
                     $page->setPropertyValue("media_published", Time::stamp());
                     $page->defineValueGroup("page");
                     if ($page->saveObject($page->getObjectURI(), $page->getObjectType())) {

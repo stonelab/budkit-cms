@@ -7,8 +7,6 @@ use Budkit\Cms\Model\User;
 use Budkit\Datastore\Database;
 use Budkit\Datastore\Model\Entity;
 use Budkit\Dependency\Container;
-use Budkit\Helper\Time;
-use Budkit\Protocol\Input;
 
 /**
  * Media stream object model
@@ -59,8 +57,8 @@ class Content extends Entity {
         //"label"=>"","datatype"=>"","charsize"=>"" , "default"=>"", "index"=>TRUE, "allowempty"=>FALSE
         $this->definePropertyModel(array(
             "media_published" => array("Published", "datetime", 50),
-            "media_content" => array("Content", "varchar", 1000),
-            "media_title" => array("Title", "mediumtext", 50, NULL),
+            "media_content" => array("Content", "varchar", 5000),
+            "media_title" => array("Title", "mediumtext", 1000, NULL),
             "media_summary" => array("Summary", "mediumtext", 50, NULL),
             "media_comment_status" => array("Allow Comments", "tinyint", 1, 0), //*
             "media_parent" => array("Parent", "smallint", 10, 0), //*
@@ -343,7 +341,7 @@ class Content extends Entity {
      */
     public function store($objectURI = null)
     {
-        //@TODO determine the user has permission to post;
+        //@TODO determine the user has permission to post or store this object;
         $this->setPropertyValue("media_owner", $this->user->getPropertyValue("user_name_id"));
 
         //Determine the target

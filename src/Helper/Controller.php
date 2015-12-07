@@ -104,6 +104,16 @@ class Controller extends RouteController {
 //                $response->setStatusMessage( $message );
 //                $response->addContent( $message );
 //                $response->send();
+
+                //store the intercepted Path so we can check after login
+                $session = $this->application->session;
+                $session->set("interceptedPath", $path, "default");
+                //$session->update( $session->getId() );
+
+                //$session->update( $session->getId() );
+
+            print_R($session); die;
+
             $this->response->addAlert($message, "warning");
 
 

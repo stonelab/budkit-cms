@@ -14,7 +14,8 @@
         "erusev/parsedown": "*",
         "voryx/thruway": "0.3.*",
         "react/zmq": "0.3.*",
-        "budkit/frontend" : "*"
+        "budkit/frontend" : "*",
+        "budkit/framework": "*"
     },
     "autoload": {
         "psr-4": { "Budkit\\Cms\\": "src/"}

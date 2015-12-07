@@ -115,7 +115,14 @@ class Member extends Controller {
                         $this->application->log->tick("login", ["ip"=>$currentUserIp,"user"=>$currentUser->getObjectId() ]);
 
                         //Redirect to dashboard or to last url?
-                        $this->application->dispatcher->redirect("/member/dashboard", HTTP_FOUND, null, $this->response->getAlerts());
+                        $session        = $this->application->session;
+                        $interceptedURL = $session->get("interceptedPath");
+                        $redirectTo     = !empty($interceptedURL) && $this->permission->isAllowed( $interceptedURL, null, "view") ? $interceptedURL :  "/member/dashboard";
+
+                        //remove the interceptedPath var.
+                        $session->remove("interceptedPath");
+
+                        $this->application->dispatcher->redirect($redirectTo, HTTP_FOUND, null);
 
                         //return;
                     }else{

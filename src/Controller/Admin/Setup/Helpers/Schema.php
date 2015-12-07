@@ -127,7 +127,7 @@ final class Schema{
                 (5,	1,	'^/member/sign([a-z0-9-]*)*',	'allow',	'execute',	'Authentication'),
                 (6,	2,	'^/timeline(/[a-z0-9-]*)*',	'allow',	'execute',	'Timeline'),
                 (7,	1,	'^/search(/[a-z0-9-]*)*',	'allow',	'execute',	'Search'),
-                (8,	4,	'^/listing(/[a-z0-9-]*)*',	'allow',	'special',	'Directory'),
+                (8,	4,	'^/directory(/[a-z0-9-]*)*',	'allow',	'special',	'Directory'),
                 (9,	2,	'^/notification(/[a-z0-9-]*)*',	'allow',	'execute',	'Messages'),
                 (10,	1,	'^/post(/[a-z0-9-]*)*',	'allow',	'view',	'Content'),
                 (11,	1,	'^/event(/[a-z0-9-]*)*',	'allow',	'view',	'Content'),

@@ -395,13 +395,18 @@ class Provider implements Service
 //                $response->setStatusMessage( $message );
 //                $response->addContent( $message );
 //                $response->send();
+
+                //Store the intercepted path, in case we can redirect to it later on.
+                $session = $this->application->session;
+                $session->set("interceptedPath", $request->getPathInfo(), "default");
+
                 $response->addAlert($message, "warning");
 
 
                 //@TODO maybe redirect to a public page or just post a message
                 //exit("You are not allowed to view this resource");
 
-                $this->application->dispatcher->redirect("/member/signin", HTTP_FOUND, $message, $response->getAlerts());
+                $this->application->dispatcher->redirect("/member/signin", HTTP_FOUND, $message);
 
             }
         }
