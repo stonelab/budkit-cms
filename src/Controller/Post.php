@@ -37,15 +37,15 @@ class Post extends Controller {
         echo "Editing {$id} in {$format} format";
     }
 
-    public function add() {
+    public function add($uri, $format = 'html') {
         echo "Adding...";
     }
 
-    public function delete() {
+    public function delete($uri, $format = 'html') {
         echo "Delete...";
     }
 
-    public function create() {
+    public function create($uri, $format = 'html') {
 
         $this->view->setData("editor", "post");
         $this->view->setData("title", "Create New Post");
@@ -53,15 +53,15 @@ class Post extends Controller {
         $this->view->setLayout("editor");
     }
 
-    public function update() {
+    public function update($uri, $format = 'html') {
         echo "Updating...";
     }
 
-    public function replace() {
+    public function replace($uri, $format = 'html') {
         echo "Replacing...";
     }
 
-    public function options() {
+    public function options($uri, $format = 'html') {
         echo "Options...";
     }
 
