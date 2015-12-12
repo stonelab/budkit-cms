@@ -15,7 +15,8 @@
         "voryx/thruway": "0.3.*",
         "react/zmq": "0.3.*",
         "budkit/frontend" : "*",
-        "budkit/framework": "*"
+        "budkit/framework": "*",
+        "nette/mail": "*"
     },
     "autoload": {
         "psr-4": { "Budkit\\Cms\\": "src/"}
