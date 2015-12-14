@@ -734,6 +734,7 @@ final class Schema{
         $this->createPropertyValuesProxyTable("media"); //The media table
         $this->createPropertyValuesProxyTable("user"); //The users table
         $this->createPropertyValuesProxyTable("page"); //The users table
+        $this->createPropertyValuesProxyTable("story"); //The users table
         //$this->createUsermetaTable();
         //$this->createUsersTable();
         //$this->createUsersView();
