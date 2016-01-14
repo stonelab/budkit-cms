@@ -12,11 +12,12 @@ class Members extends Admin {
         //echo "Browsing in {$format} format";
 
 
+        $this->view->addData("action", ["title"=>"Add Member","link"=>"/member/create", "class"=>"btn-primary"]);
+
        // echo "Pages admin";
         $this->view->setData("title", t("Members"));
 
-        //$this->view->addToBlock("main", "import://admin/settings/configuration");
-        //$this->view->setData("name", "Livingstone");
+        $this->view->addToBlock("main", "import://member/member-list");
         $this->view->setLayout("member/dashboard");
     }
 

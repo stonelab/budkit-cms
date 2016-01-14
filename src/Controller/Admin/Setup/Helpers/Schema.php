@@ -166,13 +166,13 @@ final class Schema{
             "
         );
         //Default menu data input;
+        //               (73, 0, 'Inbox', '/member/timeline', '', 0, 2, 'link', NULL, 1, 2, 1),
         $this->database->query(
             "INSERT INTO `?menu` (`menu_id`, `menu_parent_id`, `menu_title`, `menu_url`, `menu_classes`, `menu_order`, `menu_group_id`, `menu_type`, `menu_callback`, `lft`, `rgt`, `menu_iscore`) VALUES
                 (85, 0, 'Photos', '/photo/gallery', NULL, 0, 1, 'link', NULL, 3, 12, 1),
                 (86, 0, 'Audio', '/audio/gallery', NULL, 0, 1, 'link', NULL, 4, 11, 1),
                 (87, 0, 'Videos', '/video/gallery', NULL, 0, 1, 'link', NULL, 5, 10, 1),
                 (88, 0, 'Text', '/text/gallery', '', 23, 1, 'link', '', 6, 9, 1),
-                (73, 0, 'Inbox', '/member/timeline', '', 0, 2, 'link', NULL, 1, 2, 1),
                 (74, 0, 'Settings', '/member/settings', NULL, 0, 2, 'link', NULL, 3, 4, 1),
                 (75, 0, 'Timeline', '/member/timeline', NULL, 0, 3, 'link', NULL, 2, 3, 1),
                 (25, 80, 'Maintenance', '/admin/settings/maintenance', '', 20, 3, 'link', '', 12, 13, 1),

@@ -329,6 +329,7 @@ class Provider implements Service
 
                 $route->addGet("{format}", 'index');
                 $route->addGet('{/id}{format}', "read");
+                $route->add('/filters{format}', "filters");
 
                 $route->attach("/filter", Controller\Member\Timeline\Filters::class, function($route){
                     $route->setTokens(array(
@@ -336,7 +337,6 @@ class Provider implements Service
                         'format' => '(\.[^/]+)?'
                     ));
                     $route->addPost('/new', 'add');
-                    $route->addPost('/create{format}', 'create');
                     $route->addGet('{/name}{format}', "read");
                     $route->add('{/name}/edit{format}', "edit");
                     $route->addDelete('{/name}/delete{format}', "delete");

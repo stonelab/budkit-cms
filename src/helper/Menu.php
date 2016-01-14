@@ -153,9 +153,9 @@ class Menu
                 "menu_url" => "/member/timeline/filter/done"
             ],
             [
-                "menu_title" => "New label",
+                "menu_title" => "More filters",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/timeline/filter/create"
+                "menu_url" => "/member/timeline/filters"
             ]
         ];
 

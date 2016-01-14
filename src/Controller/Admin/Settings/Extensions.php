@@ -24,8 +24,10 @@ class Extensions extends Settings {
         // echo "Pages admin";
         $this->view->setData("title", t("Extensions"));
 
+        $this->view->addData("action", ["title"=>"Add Extension","link"=>"/admin/extension/create", "class"=>"btn-primary"]);
+
         //$this->view->setData("name", "Livingstone");
-        //$this->view->addToBlock("main", "import://admin/settings/navigation");
+        $this->view->addToBlock("main", "import://admin/console/extensions");
         $this->view->setLayout("member/dashboard");
 
     }
