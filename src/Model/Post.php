@@ -41,6 +41,27 @@ class Post extends Content
         );
     }
 
+    public  function bindData(Entity $post)
+    {
+
+        $inputModel = $this->getPropertyModel();
+
+        // print_R($_POST);
+        foreach ($inputModel as $property => $definition):
+            $value = $this->application->input->getString($property, "", "post");
+            if (!empty($value)):
+                $post->setPropertyValue($property, $value);
+            endif;
+        endforeach;
+
+        //Allow some HTML in media content;
+        $mediaContent = $this->application->input->getFormattedString("media_content", "", "post", true);
+
+        $post->setPropertyValue("media_content", $mediaContent);
+
+        return $post;
+
+    }
 
     public function getMessages($active = NULL)
     {

@@ -101,7 +101,7 @@ class Member extends Controller {
                         $currentUser    = $this->user->getCurrentUser();
                         $currentUserIp  = $this->application->input->getVar('REMOTE_ADDR', \IS\STRING, '', 'server');
 
-                        $this->response->addAlert(t("{$currentUser->getPropertyValue("user_first_name")}!!! Welcome back :)"), "info");
+                        $this->response->addAlert(t("Welcome back {$currentUser->getPropertyValue('user_first_name')}"), "info");
 
                         //Record a login event;
                         $this->application->log->tick("login", ["ip"=>$currentUserIp,"user"=>$currentUser->getObjectId() ]);

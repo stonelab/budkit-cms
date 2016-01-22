@@ -135,22 +135,22 @@ class Menu
             [
                 "menu_title" => "Information",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/timeline/filter/information"
+                "menu_url" => "/member/timeline/filter/Information"
             ],
             [
                 "menu_title" => "Urgent",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/timeline/filter/urgent"
+                "menu_url" => "/member/timeline/filter/Urgent"
             ],
             [
                 "menu_title" => "Task",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/timeline/filter/task"
+                "menu_url" => "/member/timeline/filter/Task"
             ],
             [
                 "menu_title" => "Done",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/timeline/filter/done"
+                "menu_url" => "/member/timeline/filter/Done"
             ],
             [
                 "menu_title" => "More filters",

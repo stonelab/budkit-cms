@@ -3,6 +3,7 @@
 namespace Budkit\Cms\Controller;
 
 use Budkit\Cms\Helper\Controller;
+use Budkit\Cms\Model\Media\Content;
 
 class Post extends Controller {
 
@@ -28,8 +29,11 @@ class Post extends Controller {
         $this->view->setData("title", $title );
 
         //add the single stream
-        $this->view->addToBlock("main", 'import://posts/single');
-        $this->view->setLayout('posts/dashboard');
+
+        //$this->view->setData("object_uri", $uri);
+        $this->view->setData("csrftoken", $this->application->session->getCSRFToken());
+        $this->view->addToBlock("main", 'import://posts/post-single');
+        $this->view->setLayout('posts/post-dashboard');
 
     }
 
@@ -37,8 +41,31 @@ class Post extends Controller {
         echo "Editing {$id} in {$format} format";
     }
 
-    public function add($uri, $format = 'html') {
-        echo "Adding...";
+    public function put($format = 'html') {
+
+        //1. check this uer has permission to execute /page/create
+        $this->checkPermission("execute");
+
+        //2. are we patching or updating an existing?
+        $input = $this->application->input;
+
+        if ($input->methodIs("post")) { //because we are updating;
+
+
+            //3. load the page;
+            $content = $this->application->createInstance(Content::class);
+            // $page = $page->defineValueGroup("page");
+            //$page = $page->loadObjectByURI($uri);
+
+            print_r($input->data("post"));
+
+        }
+
+        //Is the user authenticated?
+        // $this->requireAuthentication();
+        //Is the input method submitted via POST;
+
+
     }
 
     public function delete($uri, $format = 'html') {
@@ -68,8 +95,13 @@ class Post extends Controller {
 
     private function timeline(){
 
-        $this->view->addToBlock("main", 'import://posts/inbox');
-        $this->view->setLayout('posts/dashboard');
+
+        //$this->view->addData("action", ["title"=>"Map","link"=>"/member/timeline/map", "class"=>"btn-primary"]);
+
+        //$this->view->setData("object_uri", $uri);
+        $this->view->setData("csrftoken", $this->application->session->getCSRFToken());
+        $this->view->addToBlock("main", 'import://posts/post-inbox');
+        $this->view->setLayout('posts/post-dashboard');
 
     }
 }

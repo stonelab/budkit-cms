@@ -327,9 +327,11 @@ class Provider implements Service
                     'format' => '(\.[^/]+)?'
                 ));
 
+                $route->addPost('/put', 'put');
                 $route->addGet("{format}", 'index');
                 $route->addGet('{/id}{format}', "read");
                 $route->add('/filters{format}', "filters");
+                $route->add('/map{/id}{format}', "map");
 
                 $route->attach("/filter", Controller\Member\Timeline\Filters::class, function($route){
                     $route->setTokens(array(
@@ -342,11 +344,7 @@ class Provider implements Service
                     $route->addDelete('{/name}/delete{format}', "delete");
 
                 });
-
             }); //a collection of streams;
-
-
-
         });
     }
 

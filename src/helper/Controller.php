@@ -8,6 +8,7 @@
 
 namespace Budkit\Cms\Helper;
 
+use Budkit\Cms\Model\User;
 use Budkit\Cms\Provider;
 use Budkit\Event\Event;
 use Budkit\Routing\Controller as RouteController;
@@ -17,10 +18,11 @@ use Budkit\Dependency\Container as Application;
 class Controller extends RouteController {
 
 
+    protected $user;
+
 
 
     public function __construct(Application $application, Menu $menu) {
-
 
         /*
         |--------------------------------------------------------------------------
@@ -35,6 +37,16 @@ class Controller extends RouteController {
 
         parent::__construct($application);
 
+        /*
+        |--------------------------------------------------------------------------
+        | The Current User
+        |--------------------------------------------------------------------------
+        |
+        | Creates an instance of the User glass. to make sure you are always using
+        | the current user, user $this->user->getCurrentUser()
+        |
+        */
+        $this->user = new User($this->application, $this->application->database, $this->application->session);
 
         /*
         |--------------------------------------------------------------------------
