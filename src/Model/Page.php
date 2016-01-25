@@ -37,6 +37,22 @@ class Page extends Content{
     }
 
 
+    /**
+     * Adds a new media object to the database
+     * @return boolean Returns true on save, or false on failure
+     */
+    public function store($objectURI = null)
+    {
+        //@TODO determine the user has permission to post or store this object;
+        $this->setPropertyValue("media_owner", $this->user->getPropertyValue("user_name_id"));
+
+        //Determine the target
+        if (!$this->saveObject($objectURI, "page")) {
+            //There is a problem! the error will be in $this->getError();
+            return false;
+        }
+        return true;
+    }
 
 
     /**
