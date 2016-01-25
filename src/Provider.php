@@ -315,9 +315,16 @@ class Provider implements Service
             $route->add('{/id}/edit{format}', "edit");
             $route->addDelete('{/id}/delete{format}', "delete");
 
-            $route->add('/settings{/group}{format}', Controller\Member\Settings::class);
-            $route->add("/account", "member.account", Controller\Member\Account::class);
-            $route->add("/profile", "member.profile", Controller\Member\Profile::class);
+            //Member settings
+            $route->attach("/settings", Controller\Member\Settings::class, function($route){
+                $route->addGet("{/group}{format}", 'index');
+            });
+
+
+            //Member settings
+            $route->attach("/profile", Controller\Member\Profile::class, function($route){
+                $route->addGet("{/id}{format}", 'index');
+            });
 
 
             $route->attach("/timeline", Controller\Member\Timeline::class, function($route){
