@@ -63,7 +63,7 @@ class Settings extends Admin {
             }
         }
         //Report on state saved
-        $this->application->dispatcher->redirect($referer, HTTP_FOUND, null, $this->response->getAlerts());
+        $this->application->dispatcher->redirect($referer, HTTP_FOUND, null);
 
         return true;
     }
