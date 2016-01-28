@@ -208,18 +208,19 @@ class Member extends Controller {
                     );
 
                     //Sending an email;
-                    $this->application->mailer
+                    if(!$this->application->mailer
                         ->compose("Hi {$username}. Verify your email with this link {$mail['verification_link']}", $this->user->getPropertyValue("user_email"))
                         ->setSubject( $mail['subject'] )
-                        ->send();
+                        ->send()){
+                        $this->response->addAlert(t("We were unable to send out a verification email. Please contact us with your username and password in order to activate your account."), "error");
+                    }else{
+                        $this->response->addAlert(t("Before you can login, please check your inbox ({$useremail}), and click on a special link we've sent you to verify your account."), "warning");
+                    }
 
                 }
 
-                $this->response->addAlert(t("Before you can login, please check your inbox ({$useremail}), and click on a special link we've sent you to verify your account."), "warning");
-
-
                 //Redirect to the sign up page;
-                $this->application->dispatcher->redirect("/member/signin", HTTP_FOUND, null, $this->response->getAlerts());
+                $this->application->dispatcher->redirect("/member/signin", HTTP_FOUND, null);
             }else{
                 //You need to be logged out!
                 $this->response->addAlert(t('You are already logged in and cannot create another account.'), "error");
