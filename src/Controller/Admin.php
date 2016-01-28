@@ -17,10 +17,17 @@ class Admin extends Controller {
 
 
       //Sending an email;
-            $this->application->mailer
+            try{
+
+                $this->application->mailer
                 ->compose("Test message default why is this not being sent?", "livingstonefultang@gmail.com")
                 ->setSubject("This is a subject")
                 ->send();
+
+            }catch (\Exception $e){
+                $this->response->addAlert(t("We were unable to send out a verification email."), "error");
+                $this->application->dispatcher->returnToReferrer();
+            }
 
         //We can add content to Block or just import more content;
         //$this->view->addToBlock("main", "This content");
