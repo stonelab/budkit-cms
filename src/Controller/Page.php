@@ -24,11 +24,15 @@ class Page extends Controller
 
     public function read($uri, $format = 'html')
     {
+        $isHomePage = false;
+
         if (empty($uri)){
             //Checks for a homepage in the settings
             $uri = $this->application->config->get("setup.site.homepage");
             //sets a default template, can be overwritten if a page is loaded;
             $template = "homepage";
+
+            $isHomePage = true;
         }
 
         //NO need to check read permission again
@@ -65,6 +69,13 @@ class Page extends Controller
 
             // 1. load the page;
             $template =  ( isset($read["media_template"]) && !empty($read["media_template"]) ) ? $read["media_template"] : null; //determine page template from
+
+            //If this is the homepage, lets add some more data;
+            if($isHomePage){
+                //set homepage data;
+                $onHomePage = new Event('Page.onHomePage', $this, $read);
+                $this->observer->trigger( $onHomePage ); //Parse the Node;
+            }
 
             //show a page or load custom page template
             $this->view->setData("title", (isset($read["media_template"]) && !empty($read["media_title"]) ? $read["media_title"] : "Page"));
