@@ -16,11 +16,11 @@ class Admin extends Controller {
         $this->view->setData("title", "Dashboard");
 
 
-    //  Sending an email;
-    //        $this->application->mailer
-    //            ->compose("Test message default why is this not being sent?", "livingstonefultang@gmail.com")
-    //            ->setSubject("This is a subject")
-    //            ->send();
+      //Sending an email;
+            $this->application->mailer
+                ->compose("Test message default why is this not being sent?", "livingstonefultang@gmail.com")
+                ->setSubject("This is a subject")
+                ->send();
 
         //We can add content to Block or just import more content;
         //$this->view->addToBlock("main", "This content");
