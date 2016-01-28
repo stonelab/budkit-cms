@@ -65,12 +65,35 @@ class User extends Entity implements AuthenticationUser{
                 "user_google_token" => array("Google AccessToken", "varchar", 2000),
                 "user_dropbox_uid" => array("Dropbox Account Id", "mediumtext", 50),
                 "user_dropbox_token" => array("Dropbox AccessToken", "varchar", 2000),
+                "user_verified" => array("User Verified", "mediumint", 2)
             ), "user"
         );
         //$this->definePropertyModel( $dataModel ); use this to set a new data models
         $this->defineValueGroup("user"); //Tell the system we are using a proxy table
     }
 
+
+    /**
+     *
+     * Generates and stores a new verification code to the user object
+     *
+     * @return bool
+     * @throws \Whoops\Example\Exception
+     */
+    public function reGenerateVerificationCode(){
+
+        if($this->getObjectId() == null ) return false;
+
+        //Create a user verifcation code;
+        $this->setPropertyValue("user_verification", getRandomString(30, false, true) );
+
+        if (!$this->saveObject( $this->getPropertyValue("user_name_id"), "user", $this->getObjectId(), false)) {
+            //There is a problem!
+            return false;
+        }
+
+        return true;
+    }
 
     /**
      * Returns the current Session user
@@ -230,6 +253,10 @@ class User extends Entity implements AuthenticationUser{
         foreach ($data as $property => $value):
             $this->setPropertyValue($property, $value);
         endforeach;
+
+        if($isNew){
+            $this->setPropertyValue("user_verification", getRandomString(30, false, true) );
+        }
 
 
         if (!$this->saveObject( $this->getPropertyValue("user_name_id"), "user", null, $isNew)) {

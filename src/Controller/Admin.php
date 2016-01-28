@@ -16,6 +16,9 @@ class Admin extends Controller {
         $this->view->setData("title", "Dashboard");
 
 
+        //Sending an email;
+        $this->application->mailer->compose("Test message", "livingstonefultang@gmail.com")->send();
+
         //We can add content to Block or just import more content;
         //$this->view->addToBlock("main", "This content");
         $this->view->addToBlock("main", "import://admin/console/widgets");

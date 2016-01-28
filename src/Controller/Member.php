@@ -11,6 +11,9 @@ use Budkit\Authentication\Authenticate;
 use Budkit\Authentication\Type\DbAuth;
 use Budkit\Authentication\Type\Ldap;
 use Budkit\Authentication\Type\Openid;
+use Budkit\Event\Event;
+use Nette\Mail\Message;
+use Nette\Mail\SendmailMailer;
 use Whoops\Example\Exception;
 
 class Member extends Controller {
@@ -186,7 +189,32 @@ class Member extends Controller {
                 //Account successfully created. Redirect to sign in page;
                 $this->response->addAlert(t('You account has been successfully created.'), "info");
 
+                //@TODO attach post user sign up event;
+
+
+                $onSignUp = new Event('Member.onSignUp', $this, $this->user);
+                $this->observer->trigger( $onSignUp ); //Parse the Node;
+
+
                 //@TODO if email verification is required;
+                $this->user = $this->user->loadObjectByURI( $usernameid, [], true);
+
+                if( $this->user->getPropertyValue("user_verification") !== null ) {
+
+
+                    $mail = array(
+                        "subject"=>"Welcome to ".$this->application->config->get("setup.site.name", "Budkit"),
+                        "verification_link"=> $this->application->uri->externalize("/member/verify/{$this->user->getPropertyValue("user_verification")}")
+                    );
+
+                    //Sending an email;
+                    $this->application->mailer
+                        ->compose("Hi {$username}. Verify your email with this link {$mail['verification_link']}", $this->user->getPropertyValue("user_email"))
+                        ->setSubject( $mail['subject'] )
+                        ->send();
+
+                }
+
                 $this->response->addAlert(t("Before you can login, please check your inbox ({$useremail}), and click on a special link we've sent you to verify your account."), "warning");
 
 

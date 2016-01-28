@@ -59,6 +59,14 @@ class Provider implements Service
        //print_R( $this->application->request->getAttributes() );
         //$this->view->appendLayoutSearchPath( Provider::getPackageDir()."layouts/");
 
+        $this->instantiateHelpers();
+        $this->registerRoutes();
+
+
+    }
+
+    public function registerRoutes(){
+
         //Sets global tokens
         Route::setTokens(['format' => '(\.[^/]+)?', 'page'=>'(\d)']);
 
@@ -353,7 +361,25 @@ class Provider implements Service
                 });
             }); //a collection of streams;
         });
+
     }
+
+
+    public function instantiateHelpers(){
+
+        /*
+        |--------------------------------------------------------------------------
+        | Attach the mailer to the application container
+        |--------------------------------------------------------------------------
+        |
+        | Mailer used by the CMS is powered by Nette/Mail
+        |
+        */
+        $this->application->shareInstance(
+            $this->application->createInstance( Helper\Mailer::class), 'mailer');
+
+    }
+
 
     public function onAfterRouteMatch($afterRouteMatch)
     {
