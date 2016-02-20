@@ -97,6 +97,19 @@ final class Schema{
         );
     }
 
+
+    public function createStoriesView(){
+        $this->database->query(
+            "CREATE OR REPLACE VIEW `GhpMA_stories` AS (
+                SELECT e.edge_head_object, e.edge_name, e.edge_tail_object, m.value_data, p.property_name, o.object_id, o.object_uri, o.object_type, o.object_created_on, o.object_updated_on, o.object_status
+                FROM `?objects_edges` AS e
+                LEFT JOIN ?objects AS o ON o.object_uri = e.edge_tail_object
+                LEFT JOIN ?media_property_values AS m ON m.object_id = o.object_id
+                LEFT JOIN ?properties AS p ON p.property_id = m.property_id
+            );"
+        );
+    }
+
     /**
      * Creates the authority permission table
      * @return void
@@ -663,12 +676,12 @@ final class Schema{
 
     /**
      * SQL query for creating the user views table
-     * @deprecated 21/02/2012 v1.0.0
+     *
      * @return void
      */
     private function createUsersView() {
         $this->database->query(
-            "CREATE OR REPLACE VIEW `?users_` AS
+            "CREATE OR REPLACE VIEW `?users` AS
                 SELECT
                     o.object_id,
                     o.object_uri,
@@ -737,7 +750,9 @@ final class Schema{
         $this->createPropertyValuesProxyTable("story"); //The users table
         //$this->createUsermetaTable();
         //$this->createUsersTable();
-        //$this->createUsersView();
+        $this->createUsersView();
+        $this->createStoriesView();
+
 
         if (!$this->database->commitTransaction()) {
 

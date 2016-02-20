@@ -103,6 +103,30 @@ class Menu
         $menuUser = $this->user->getCurrentUser();
 
         if ($menuUser->isAuthenticated()) {
+
+            //will need to load this from the DB!
+            $labels = [
+                [
+                    "menu_title" => "About you",
+                    "menu_url" => "/member/settings/profile"
+                ],
+                [
+                    "menu_title" => "Notifications",
+                    "menu_url" => "/member/settings/notifications"
+                ]
+                //@TODO maybe a more page for extra settings?
+            ];
+
+            //merge the children;
+            foreach ($menuItems as $id => $menuItem) {
+                if ($menuItem["menu_url"] == "/member/settings") {
+                    $menuItem['children'] = array_merge($menuItem['children'], $labels);
+                    $menuItems[$id] = $menuItem;
+                    break;
+                }
+                continue;
+            }
+
             array_push($menuItems, array(
                     "menu_title" => "Sign out",
                     "menu_url" => "/member/signout",
@@ -128,7 +152,7 @@ class Menu
         if ($menuId !== "dashboardmenu") return;
 
         $menuItems = $event->getResult();
-        $menuUser = $this->user->getCurrentUser();
+        //$menuUser = $this->user->getCurrentUser();
 
         //will need to load this from the DB!
         $labels = [

@@ -30,6 +30,7 @@ use Budkit\Datastore\Database;
 use Budkit\Datastore\Model\Entity;
 use Budkit\Parameter\Manager as Config;
 use Budkit\Protocol\Request;
+use Budkit\Routing\Dispatcher;
 use Budkit\Routing\Route;
 
 /**
@@ -61,11 +62,12 @@ class Permission{
     protected $config;
 
 
-    public function __construct(Database $database, User $user, Config $config){
+    public function __construct(Dispatcher $dispatcher, Database $database, User $user, Config $config){
 
         $this->database = $database;
         $this->user = $user;
         $this->config = $config;
+        $this->dispatcher = $dispatcher;
 
     }
     
@@ -103,8 +105,7 @@ class Permission{
 
     public function isAllowedObject(Entity $object, $basedOn = []) {}
 
-
-
+    protected function isAllowedIfInAuthority( $authorityId ){ }
 
     public function isAllowed($path, $routePath = null, $forPermission = "view", $basedOn = []){
 
@@ -157,7 +158,8 @@ class Permission{
             $authority["indent"] = sizeof($right);
             $authority["permission"] = in_array($authority['permission'],array("allow"))? true : false;
 
-            //If we were previously granted permission to a parent of this area, i.e if we were granted permission on /xy/* but denied on /xy/z/k
+            //If we were previously granted permission to a parent of this area,
+            //i.e if we were granted permission on /xy/* but denied on /xy/z/k
             if( (isset($permissionTree[$authority['authority_id']]) )
                 && !$authority["permission"]
                 && ($permissionTypes[$authority['permission_type']] <= $permissionTypes[$permissionTree[$authority['authority_id']]['permission_type']]) ){
@@ -271,7 +273,11 @@ class Permission{
 
         //Login and sign-up pages;
         //@TODO may need to get them via named routes;
-        if (in_array( $path , array("/", "/member/signin", "/member/signup", "/member/signin-reset" )) ){
+        if (
+            in_array( $path , array("/", "/member/signin", "/member/signup", "/member/signin/reset" ))||
+           //@TODO a better way to whitewash soume routes;
+            preg_match( "@^\\/member\\/signin\\/verify\\/.*@i", $path)
+        ){
             $allowed = true;
         }
 
@@ -298,7 +304,19 @@ class Permission{
      * @param array $basedOn could either be user age, user authority, user location, user responsibility.  If $basedOn is empty, all of these are checked in that order for any restrictions
      * @return bool
      */
-    public function isAllowedRoute(Route $route, Request $request, $forPermission = "view", $basedOn = []) {
+    public function isAllowedRoute(Route $route, Request $request, $forPermission = null, $basedOn = []) {
+
+        //requiredpermisison;
+        $forPermission = empty($forPermission) ? $route->requiredPermission : $forPermission ;
+
+        //If we have a callback to use in checking this permission for this route, execute it now
+        if(isset($route->permissions) && isset($route->permissions[$forPermission])){
+
+            $callback = $this->dispatcher->resolveActionMethodWithAttributes($route->permissions[$forPermission], $route->params );
+
+            return $this->dispatcher->dispatchActionMethodWithAttributes( $callback, $route->params );
+
+        }
 
         return $this->isAllowed($request->getPathInfo(), $route->getPath(), $forPermission, $basedOn);
     }

@@ -9,18 +9,21 @@ class Admin extends Controller {
 
 
     public function index($format="html") {
-        //echo "Browsing in {$format} format";
-
 
         //echo "Browsing in {$format} format";
         $this->view->setData("title", "Dashboard");
-
-
-      //Sending an email;
+            //Sending an email;
             try{
 
+                //echo "Browsing in {$format} format";
+                $renderer = $this->view;
+                $renderer->setData("email-body", $this->application->config->get("email.verification.text" , 'could not find message'));
+                $message = $renderer->render("email", true); //partial must be set to true
+
+
+                //Send the message
                 $this->application->mailer
-                ->compose("Test message default why is this not being sent?", "livingstonefultang@gmail.com")
+                ->compose($message, "livingstonefultang@gmail.com", ['recipient'=>'Livingstone', 'link'=>'http://budkit.com'], true )
                 ->setSubject("This is a subject")
                 ->send();
 
@@ -32,7 +35,6 @@ class Admin extends Controller {
         //We can add content to Block or just import more content;
         //$this->view->addToBlock("main", "This content");
         $this->view->addToBlock("main", "import://admin/console/widgets");
-
         $this->view->setLayout("member/dashboard");
 
     }

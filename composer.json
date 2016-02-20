@@ -16,7 +16,8 @@
         "react/zmq": "0.3.*",
         "budkit/frontend" : "*",
         "budkit/framework": "*",
-        "nette/mail": "*"
+        "nette/mail": "*",
+        "composer/composer": "*"
     },
     "autoload": {
         "psr-4": { "Budkit\\Cms\\": "src/"}

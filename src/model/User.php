@@ -9,14 +9,16 @@
 namespace Budkit\Cms\Model;
 
 
-use Budkit\Datastore\Database;
 use Budkit\Authentication\Authenticate;
+use Budkit\Authentication\User as AuthenticationUser;
+use Budkit\Datastore\Database;
 use Budkit\Datastore\Model\Entity;
 use Budkit\Dependency\Container;
-use Budkit\Authentication\User as AuthenticationUser;
+use Budkit\Event\Event;
 use Budkit\Session\Store as Session;
 
-class User extends Entity implements AuthenticationUser{
+class User extends Entity implements AuthenticationUser
+{
 
     protected $name = "users";
 
@@ -30,16 +32,20 @@ class User extends Entity implements AuthenticationUser{
 
     protected $authority;
 
+    private $application;
 
-    public function __construct(Container $application, Database $database, Session $session) {
+
+    public function __construct(Container $application, Database $database, Session $session)
+    {
 
         $this->encryptor = $application->encrypt;
         $this->config = $application->config;
-        $this->database =   $database;
-        $this->session =   $session;
+        $this->database = $database;
+        $this->session = $session;
+        $this->application = $application;
 
         parent::__construct($database, $application);
-        
+
         //"label"=>"","datatype"=>"","charsize"=>"" , "default"=>"", "index"=>TRUE, "allowempty"=>FALSE
         $this->extendPropertyModel(
             array(
@@ -47,16 +53,20 @@ class User extends Entity implements AuthenticationUser{
                 "user_middle_name" => array("Middle Name", "mediumtext", 50),
                 "user_last_name" => array("Last Name", "mediumtext", 50),
                 "user_name_id" => array("Username", "mediumtext", 50),
-                "user_password" => array("Password", "varchar", 2000),
+                "user_password" => array("Password", "varchar", 1000),
                 "user_api_key" => array("API Key", "varchar", 100),
                 "user_email" => array("Email", "varchar", 100),
+                "user_gender" => array("Gender", "varchar", 10), //Male or Female
                 "user_dob_day" => array("Day of Birth", "varchar", 10),
                 "user_dob_month" => array("Month of Birth", "varchar", 10),
                 "user_dob_year" => array("Year of Birth", "varchar", 10),
                 "user_timezone" => array("Timezone", "varchar", 10),
                 "user_locale" => array("Locale", "varchar", 10),
                 "user_verification" => array("Verification Code", "varchar", 50),
-                "user_photo" => array("Profile Photo", "mediumtext", 10, 'placeholder'),
+                "user_biography" => array("Biography", "varchar", 2000),
+                "user_photo" => array("Profile photo", "mediumtext", 10, 'placeholder'),
+                "user_cover_photo" => array("Cover photo", "varchar", 100),
+                "user_headline" => array("Headline", "varchar", 100),
                 "user_twitter_uid" => array("Twitter Account Id", "mediumtext", 50),
                 "user_facebook_uid" => array("Facebook Account Id", "mediumtext", 50),
                 "user_twitter_token" => array("Twitter AccessToken", "varchar", 2000),
@@ -65,11 +75,72 @@ class User extends Entity implements AuthenticationUser{
                 "user_google_token" => array("Google AccessToken", "varchar", 2000),
                 "user_dropbox_uid" => array("Dropbox Account Id", "mediumtext", 50),
                 "user_dropbox_token" => array("Dropbox AccessToken", "varchar", 2000),
-                "user_verified" => array("User Verified", "mediumint", 2)
+                "user_website" => array("Website", "varchar", 100),
+                "user_verified" => array("User Verified", "mediumtext", 20)
             ), "user"
         );
         //$this->definePropertyModel( $dataModel ); use this to set a new data models
         $this->defineValueGroup("user"); //Tell the system we are using a proxy table
+    }
+
+    public function createUserWithValidatedData(array $data)
+    {
+
+
+        //2. Prevalidate passwords and other stuff;
+        $username = $data["user_first_name"];
+        $usernameid = $data["user_name_id"];
+        $userpass = $data["user_password"];
+        $userpass2 = $data["user_password_2"];
+        $useremail = $data["user_email"];
+        //3. Encrypt validated password if new users!
+        //4. If not new user, check user has update permission on this user
+        //5. MailOut
+
+        if (empty($userpass) || empty($username) || empty($usernameid) || empty($useremail)) {
+            //Display a message telling them what can't be empty
+            $this->application->response->addAlert(t('Please provide us with at least your first name, a unique alphanumeric username, e-mail address and password'), "error");
+            return false;
+        }
+
+        //3. Encrypt validated password if new users!
+        //4. If not new user, check user has update permission on this user
+        //5. MailOut
+
+        if (empty($userpass) || empty($username) || empty($usernameid) || empty($useremail)) {
+            //Display a message telling them what can't be empty
+            $this->application->response->addAlert(t('Please provide at least a Name, Username, E-mail and Password'), "error");
+            return false;
+        }
+
+        //Validate the passwords
+        if ($userpass <> $userpass2) {
+            $this->application->response->addAlert(t('The user passwords do not match'), "error");
+            return false;
+        }
+
+        //6. Store the user
+        if (!$this->store($data, true)):
+            $this->application->response->addAlert("A user account could not be created", "error");
+            return false;
+        endif;
+
+        //Account successfully created. Redirect to sign in page;
+        $this->application->response->addAlert(t('An account was successfully created.'), "info");
+
+        //@TODO attach post user sign up event;
+
+
+        //@TODO if email verification is required;
+        $user = $this->loadObjectByURI($usernameid, [], true);
+
+        //When finished create an event;
+        $onSignUp = new Event('Member.onSignUp', $this, $user);
+        $this->application->observer->trigger($onSignUp); //Parse the Node;
+
+
+        return $user;
+
     }
 
 
@@ -80,14 +151,15 @@ class User extends Entity implements AuthenticationUser{
      * @return bool
      * @throws \Whoops\Example\Exception
      */
-    public function reGenerateVerificationCode(){
+    public function reGenerateVerificationCode()
+    {
 
-        if($this->getObjectId() == null ) return false;
+        if ($this->getObjectId() == null) return false;
 
         //Create a user verifcation code;
-        $this->setPropertyValue("user_verification", getRandomString(30, false, true) );
+        $this->setPropertyValue("user_verification", getRandomString(30, false, true));
 
-        if (!$this->saveObject( $this->getPropertyValue("user_name_id"), "user", $this->getObjectId(), false)) {
+        if (!$this->saveObject($this->getPropertyValue("user_name_id"), "user", $this->getObjectId(), false)) {
             //There is a problem!
             return false;
         }
@@ -95,12 +167,67 @@ class User extends Entity implements AuthenticationUser{
         return true;
     }
 
+
+    public function isMemberOfAuthorityGroup($groupId, $inheritance = true)
+    {
+
+        //get this userAuthority;
+        //What about the public?
+        $publicAuthority = $this->config->get("setup.site.public-authority", NULL);
+
+        //Will always be a member of the public
+        if ($groupId == $publicAuthority) return true;
+
+        $authorities = $this->getUserAuthorities();
+        $authorityGroup = null;
+
+
+        foreach ($authorities as $group) {
+            //1.The easiest thing to do is check if we have the authority group defined
+            if ($group['authority_id'] == $groupId) {
+                return true;
+            }
+            //checking for inheritance
+            if ($inheritance) {
+                if (is_null($authorityGroup)) {
+                    $authority = $this->application->createInstance(Authority::class);
+                    $authorityGroup = $authority->load($groupId);
+                }
+                if (is_array($authorityGroup)) {
+                    // compare lft and rgt to find children
+                    if ($group['lft'] > $authorityGroup['lft'] && $group['rgt'] < $authorityGroup['rgt']) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        die;
+
+        return false;
+
+    }
+
+
+    public function getUserAuthorities()
+    {
+
+        $authoritiesSQLc = "SELECT o.authority_id, a.lft, a.rgt, a.authority_name,a.authority_parent_id FROM ?objects_authority AS o LEFT JOIN ?authority AS a ON o.authority_id=a.authority_id WHERE o.object_id = {$this->database->quote((int)$this->getCurrentUser()->getObjectId())} ORDER BY a.lft ASC";
+        $authoritiesSQL = $this->database->prepare($authoritiesSQLc);
+
+        return $authoritiesSQL->execute()->fetchAll();
+
+    }
+
     /**
      * Returns the current Session user
      *
-     * @return $this
+     * @param array $withVars
+     * @param bool $overwrite overwrites loaded params into current object
+     * @return $this|Entity
      */
-    public function getCurrentUser(){
+    public function getCurrentUser(array $withVars = [], $overwrite = true)
+    {
 
 //      //@TODO Rework the userid, use case, if user id is not provided or is null
         //Get the authenticated user
@@ -119,7 +246,7 @@ class User extends Entity implements AuthenticationUser{
                 //Does this actually do anything?
                 $this->authority = $this->session->getAuthority();
 
-                return $this->loadObjectByURI($authenticate->get("user_name_id"), [], true);
+                return $this->loadObjectByURI($authenticate->get("user_name_id"), $withVars , $overwrite);
 
             }
         }
@@ -136,7 +263,8 @@ class User extends Entity implements AuthenticationUser{
      * @param type $last The default Last Name
      * @return type
      */
-    public function getFullName($first = NULL, $middle = NULL, $last = NULL) {
+    public function getFullName($first = NULL, $middle = NULL, $last = NULL)
+    {
 
         $user_first_name = $this->getPropertyValue("user_first_name");
         $user_middle_name = $this->getPropertyValue("user_middle_name");
@@ -154,13 +282,16 @@ class User extends Entity implements AuthenticationUser{
      * @param type $username
      * @param type $data
      */
-    public function update($usernameId, $data = array()) {
+    public function update($usernameId, $data = array())
+    {
+
+        //print_R($data);
 
         if (empty($usernameId))
             return false;
 
-        $existing = (array) $this->getPropertyData();
-        $data = empty($data) ? $existing : array_merge($data, $existing);
+        //These properties have specific ways in which they are updated
+        $protected = ['user_password','user_verification','user_verified','user_api_key','user_name_id'];
 
         //Load the username;
         $profile = $this->loadObjectByURI($usernameId, array_keys($this->getPropertyModel()));
@@ -169,16 +300,20 @@ class User extends Entity implements AuthenticationUser{
 
         $profileData = $profile->getPropertyData();
 
-        $updatedProfile = array_merge($profileData, $data);
-        foreach ($updatedProfile as $property => $value):
-            $this->setPropertyValue($property, $value);
+        //update the user profile data;
+        $updated = array_merge($profileData, $data);
+
+        foreach ($updated as $property => $value):
+            if(!in_array($property, $protected)) {
+                $this->setPropertyValue($property, $value);
+            }
         endforeach;
         //$data = $this->getPropertyData();
         $this->defineValueGroup("user");
         //die;
         if (!$this->saveObject($this->getPropertyValue("user_name_id"), "user", $this->getObjectId())) {
             //Null because the system can autogenerate an ID for this attachment
-            $profile->setError("Could not save the profile data");
+            throw new \Exception( t("Could not save the profile data") );
             return false;
         }
 
@@ -191,7 +326,8 @@ class User extends Entity implements AuthenticationUser{
      * @param type $query
      * @param type $results
      */
-    public function search($query, &$results = array()) {
+    public function search($query, &$results = array())
+    {
 
         if (!empty($query)):
             $words = explode(' ', $query);
@@ -242,7 +378,8 @@ class User extends Entity implements AuthenticationUser{
      * @return boolean
      * @throws \Platform\Exception
      */
-    public function store($data, $isNew = false) {
+    public function store($data, $isNew = false)
+    {
 
         $encrypt = $this->encryptor;
 
@@ -250,16 +387,20 @@ class User extends Entity implements AuthenticationUser{
 
         $data['user_password'] = $encrypt->hash($data['user_password']);
 
+        if(!isset($data['user_photo'])|| empty($data['user_photo'])){
+            $data['user_photo'] = 'placeholder';
+        }
+
         foreach ($data as $property => $value):
             $this->setPropertyValue($property, $value);
         endforeach;
 
-        if($isNew){
-            $this->setPropertyValue("user_verification", getRandomString(30, false, true) );
+        if ($isNew) {
+            $this->setPropertyValue("user_verification", getRandomString(30, false, true));
         }
 
 
-        if (!$this->saveObject( $this->getPropertyValue("user_name_id"), "user", null, $isNew)) {
+        if (!$this->saveObject($this->getPropertyValue("user_name_id"), "user", null, $isNew)) {
             //There is a problem!
             return false;
         }
@@ -278,7 +419,8 @@ class User extends Entity implements AuthenticationUser{
      *
      * @return type
      */
-    public function isAuthenticated(){
+    public function isAuthenticated()
+    {
         return (bool)$this->authenticated;
     }
 
@@ -288,7 +430,8 @@ class User extends Entity implements AuthenticationUser{
      * @todo User EAV model load
      * @return void
      */
-    protected function load( $objectId ) {
+    protected function load($objectId)
+    {
 
     }
 
@@ -297,7 +440,8 @@ class User extends Entity implements AuthenticationUser{
      * @todo User delete
      * @return void
      */
-    public function delete() {
+    public function delete()
+    {
 
     }
 
@@ -306,12 +450,14 @@ class User extends Entity implements AuthenticationUser{
      * @todo User data validate
      * @return void
      */
-    public function validate() {
+    public function validate()
+    {
 
     }
 
 
-    public function getSession(){
+    public function getSession()
+    {
         return $this->session;
     }
 

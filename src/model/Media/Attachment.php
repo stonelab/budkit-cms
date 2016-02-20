@@ -6,6 +6,7 @@ use Budkit\Cms\Model\User;
 use Budkit\Datastore\Database;
 use Budkit\Datastore\Model\Entity;
 use Budkit\Dependency\Container;
+use Budkit\Filesystem\Image;
 
 /**
  * Attachment management model
@@ -32,7 +33,7 @@ class Attachment extends Content {
      * Characters allowed in the file name
      * (in a Regular Expression format)
      */
-    private $_validChars = '.A-Z0-9_ !@#$%^&()+={}\[\]\',~`-';
+    private $_validChars = '.A-Z0-9_ !@$%^&()+={}\[\]\',~`-';
 
     /**
      * The upload file type
@@ -82,6 +83,7 @@ class Attachment extends Content {
         parent::__construct($database, $collection, $container, $user);
 
         $this->collection = $collection;
+        $this->container  = $container;
         $this->input = $container->input;
 
         //"label"=>"","datatype"=>"","charsize"=>"" , "default"=>"", "index"=>TRUE, "allowempty"=>FALSE
@@ -116,57 +118,6 @@ class Attachment extends Content {
      */
     public static function search($query, &$results = array()) {
 
-        $attachments = static::getInstance();
-
-        if (!empty($query)):
-            $words = explode(' ', $query);
-            foreach ($words as $word) {
-                $_results =
-                    $attachments->setListLookUpConditions("attachment_name", $word, 'OR')
-                        ->setListLookUpConditions("attachment_title", $word, 'OR')
-                        ->setListLookUpConditions("attachment_description", $word, 'OR')
-                        ->setListLookUpConditions("attachment_tags", $word, 'OR');
-            }
-
-            $_results = $attachments
-                ->setListLookUpConditions("attachment_owner", array($attachments->user->get("user_name_id")),"AND",true)
-                ->setListOrderBy("o.object_created_on", "DESC")
-                ->getObjectsList("attachment");
-            $rows = $_results->fetchAll();
-
-            $browsable = array("image/jpg", "image/jpeg", "image/png", "image/gif");
-            //Include the members section
-            $documents = array(
-                "filterid" => "attachments",
-                "title" => "Documents",
-                "results" => array()
-            );
-            //Loop through fetched attachments;
-            //@TODO might be a better way of doing this, but just trying
-            foreach ($rows as $attachment) {
-                $document = array(
-                    "title" => $attachment['attachment_title'], //required
-                    "description" => "", //required
-                    "type" => $attachment['object_type'],
-                    "object_uri" => $attachment['object_uri']
-                );
-                if (in_array($attachment['attachment_type'], $browsable)):
-                    $document['icon'] = "/system/object/{$attachment['object_uri']}/resize/170/170";
-                    $document['link'] = "/system/media/photo/view/{$attachment['object_uri']}";
-                else:
-                    $document['media_uri'] = $attachment['object_uri'];
-                    $document['link'] = "/system/object/{$attachment['object_uri']}";
-                endif;
-
-                $documents["results"][] = $document;
-            }
-            //Add the members section to the result array, only if they have items;
-            if (!empty($documents["results"]))
-                $results[] = $documents;
-
-        endif;
-
-        return true;
     }
 
     /**
@@ -188,10 +139,19 @@ class Attachment extends Content {
      * 8
      * @param string $name
      */
-    public function setOwnerNameId($name) {
-        $this->_owner = $name;
+    public function setOwnerNameId($username) {
+        $this->_owner = $username;
     }
 
+
+    /**
+     * Returns the results of the store method call.
+     *
+     * @return array
+     */
+    public function getLastSaved(){
+        return [];
+    }
     /**
      * Saves options to the database, inserting if none exists or updating on duplicate key
      *
@@ -199,13 +159,20 @@ class Attachment extends Content {
      * @param string $group A unique string representing the options group
      * @return boolean true. Will throw an exception upon any failure.
      */
-    public function store($uri = null) {
+    public function save( $file ) {
 
         $fileHandler = $this->container->file;
-        $uploadsFolder = $this->config->getParam('site-users-folder', '/users');
+        $uploadsFolder =  PATH_DATA.DS.$this->container->config->get('content.input.uploads-folder', 'uploads');
         $allowedTypes = $this->allowed;
+
         if (empty($allowedTypes)):
-            $attachmentTypes = $this->config->getParamSection("attachments");
+            $attachmentTypes = [
+                $this->config->get("mimetypes.application"),
+                $this->config->get("mimetypes.image"),
+                $this->config->get("mimetypes.video"),
+                $this->config->get("mimetypes.audio"),
+                $this->config->get("mimetypes.text")
+            ];
             foreach ($attachmentTypes as $group => $types):
                 $allowedTypes = array_merge($allowedTypes, $types);
             endforeach;
@@ -213,70 +180,90 @@ class Attachment extends Content {
         //Check User Upload Limit;
         //Check File upload limit;
         //Validate the file
-
         $fileName = preg_replace('/[^' . $this->_validChars . ']|\.+$/i', "", basename($file['name']));
         if (strlen($fileName) == 0 || strlen($fileName) > $this->_maxNameLength) {
-            $this->setError(_("Invalid file name"));
-            throw new \Platform\Exception($this->getError());
+            throw new \Exception(t("Invalid file name"));
+            return false;
         }
         //Check that the file has a valid extension
         $fileExtension = $fileHandler->getExtension($fileName);
 
         if (!array_key_exists(strtolower($fileExtension), $allowedTypes)) {
-            $this->setError(_("Attempting to upload an invalid file type"));
-            throw new \Platform\Exception($this->getError());
+            throw new \Exception(t("Attempting to upload an invalid file type"));
+            return false;
         }
         //The target folder
         //Check that folder exists, otherwise create it and set the appropriate permission;
-        $uploadsFolder = FSPATH . $uploadsFolder;
         if (isset($this->_owner)) {
             $uploadsFolder .= DS . $this->_owner;
+        }else{
+            $uploadsFolder .= DS . "temp"; //otherwise put it in the temp folder.
         }
-        $uploadsFolder .= DS . "attachments"; //All uploads are saved in the attachments folder
+        $uploadsFolder .= DS . "attachments"; //All uploads are saved in the uploads folder
         $uploadsFolder = str_replace(array('/', '\\'), DS, $uploadsFolder);
 
         if (!$fileHandler->is($uploadsFolder, true)) { //if its not a folder
-            $folderHandler = \Library\Folder::getInstance();
+            $folderHandler = $this->container->directory;
             if (!$folderHandler->create($uploadsFolder)) {
-                $this->setError(_("Could not create the target uploads folder. Please check that you have write permissions"));
-                throw new \Platform\Exception($this->getError());
+                throw new \Exception(t("Could not create the target uploads folder. Please check that you have write permissions"));
+                return false;
             }
         }
 
         $_uploadFileName = str_replace(array(" "), "_", $fileName);
         $uploadFileName = $uploadsFolder . DS . time().$_uploadFileName; //adding a timestamp to avoid name collisions
+
         if (!move_uploaded_file($file['tmp_name'], $uploadFileName)) {
-            $this->setError(_("Could not move the uploaded folder to the target directory"));
-            throw new \Platform\Exception($this->getError());
+            throw new \Exception(t("Could not move the uploaded folder to the target directory"));
+            return false;
         }
 
         //Get the uploaded file extension type.
-        $this->_fileType = $fileHandler::getMimeType($uploadFileName);
+        $this->_fileType = $fileHandler->getMimeType($uploadFileName);
         //Validate the file MimeType against the allowed extenion type, if fails,
         //delete the file and throw an error.
-
         foreach (
             array(
                 "media_title" => basename($file['name']),
-                "media_actor"=> $this->user->get("user_id"),
+                "media_actor" => $this->_owner,
                 "attachment_name" => $fileName,
                 "attachment_title" => basename($file['name']), //@todo Wil need to check $file[title],
                 "attachment_size" => $file['size'],
-                "attachment_src" => str_replace(FSPATH, '', $uploadFileName),
+                //Protect the data store path from spoofing;
+                "attachment_src" => base64_encode( str_replace( PATH_DATA.DS, '', $uploadFileName) ),
                 "attachment_ext" => $fileExtension,
-                "attachment_owner" => $this->user->get("user_name_id"),
+                "attachment_owner" => $this->_owner,
                 "attachment_type" => $this->_fileType
             ) as $property => $value):
             $this->setPropertyValue($property, $value);
         endforeach;
 
-        if (!$this->saveObject(NULL, "attachment")) { //Null because the system can autogenerate an ID for this attachment
-            $fileHandler->delete($uploadFileName);
-            $this->setError(_("Could not store the attachment properties to the database"));
-            throw new \Platform\Exception($this->getError());
+        if(isset($this->_owner)) {
+
+            if (!$this->saveObject(NULL, "attachment")) { //Null because the system can autogenerate an ID for this attachment
+                $fileHandler->delete($uploadFileName);
+                throw new \Exception(t("Could not store the attachment properties to the database"));
+                return false;
+            }
+            return array_merge( $this->getPropertyData(), ["object_uri"=>$this->getLastSavedObjectURI()] );
         }
 
-        return true;
+        return $this->getPropertyData();
+    }
+
+
+    /**
+     * Sometimes when files are uploaded if the user is not signed in,
+     * it does not create an object in the datastore. Use this method to
+     * move a temp file to a user folder;
+     *
+     * @param $source
+     * @return string
+     */
+    final public function setTempFileOwner($source){
+
+        //return an object_uri;
+        return '';
     }
 
     /**
@@ -441,28 +428,28 @@ class Attachment extends Content {
      * @param type $contentType
      * @param type $params
      */
-    final public static function place($fileId="", $filePath="", $contentType="image/png", $params=array()){
+    final public function place($fileId="", $filePath="", $contentType="image/png", $modifiers=[]){
 
-        $attachments    = static::getInstance();
-        $fullPath       = empty($filePath) ? FSPATH.$attachments->config->getParam("placeholder", "" , "content") : $filePath;
+        $attachments    = $this;
+        $fullPath       = empty($filePath) ? PATH_DATA.$this->config->get("content.posts.figure-placeholder", "") : $filePath;
 
         $browsable = array("image/jpg", "image/jpeg", "image/png", "image/gif");
 
         //Commands
-        if (is_array($params)):
-            $modifiers  = $params;
-            $modifier   = array_shift($modifiers);
-            $allowed    = array("resize"); //a list of allowed modifies
-            if (in_array($modifier, $allowed) && method_exists($attachments, $modifier)) { //make 
-                $fullPath = $attachments::$modifier($fullPath, $modifiers);
-                $fd = fopen($fullPath, "rb");
+        if (!empty($modifiers)):
+            $allowed    = ["resize"]; //a list of allowed modifies
+            foreach($modifiers as $modifier=>$params ){
+                if(!in_array($modifier, $allowed) || !method_exists($this, $modifier)) continue;
+
+                $fullPath =  $this->$modifier($fullPath, $params);
             }
         endif;
 
         //Attempt to determine the files mimetype
-        $ftype = !empty($contentType) ? $contentType : \Library\Folder\Files::getMimeType($fullPath);
+        $ftype = !empty($contentType) ? $contentType : $this->container->file->getMimeType( $fullPath );
 
         //Get the file stream
+        $fd = fopen($fullPath, "rb");
         if (!$fd) {
             $fd = fopen($fullPath, "rb");
         }
@@ -470,27 +457,33 @@ class Attachment extends Content {
         if ($fd) {
             $fsize = filesize($fullPath);
             $fname = basename($fullPath);
-            $headers = array(
-                "Pragma" => null,
-                "Cache-Control" => "",
-                "Content-Type" => $ftype,
-            );
-            foreach ($headers as $name => $value) {
-                $attachments->output->unsetHeader($name);
-                $attachments->output->setHeader($name, $value);
-            }
+
+            $this->container->response->setContentType($ftype, "utf-8", true);
+            $this->container->response->setContentLength( $fsize);
+
+
             if (in_array($ftype, $browsable)):
+
+
+                $this->container->response->sendHeaders($this->container->response->getHeaders()->getAll());
+
                 fpassthru($fd);
                 fclose($fd);
-                $attachments->output->setFormat('raw', array()); //Headers must be set before output 
-                $attachments->output->display();
+                //$this->container->response->setFormat('raw', array()); //Headers must be set before output
+                //$this->container->response->sendBuffer( null , $headers);
+
+                //$this->container->response->sendBuffer();
+
             else: //If the file is not browsable, force the browser to download the original file;
                 //Move the file to the temp public download directory
-                $downloadPath = FSPATH . "public" . DS . "downloads" . DS . $fileId;
+                $downloadPath = PATH_DATA . "temp" . DS . "downloads" . DS . $fileId;
                 //For personalized link we will need to randomize the filename.
-                $downloadPath.= Platform\Framework::getRandomString(5); //So people won't be guessing!;;
-                $downloadPath.= "." . \Library\Folder\Files::getExtension($fname);
-                if (\Library\Folder\Files::copy($fullPath, $downloadPath)) {
+                $downloadPath.= getRandomString(5); //So people won't be guessing!;;
+                $downloadPath.= "." . $this->container->file->getExtension($fname);
+
+
+                if ($this->container->file->copy($fullPath, $downloadPath)) {
+
                     if (file_exists($downloadPath)):
 
                         //We still want to delete the file even after the user
@@ -499,25 +492,30 @@ class Attachment extends Content {
                         //$attachment->output->setHeader("Expires", "0");
                         //Content-Disposition is not part of HTTP/1.1
                         $downloadName = basename($downloadPath);
-                        $attachments->output->setHeader("Content-Disposition", "inline; filename={$downloadName}");
+
+                        $this->container->response->addHeader("Content-Disposition", "inline; filename={$downloadName}");
                         //Will need to restart the outputbuffer with no gziphandler
-                        $noGzip = $attachments->output->restartBuffer(null); //use null rather than "" for no gzip handler;
+                        //$noGzip = $attachments->output->restartBuffer(null); //use null rather than "" for no gzip handler;
                         ob_end_clean(); //ob level 0; output buffering and binary transfer is a nightmare
 
-                        $attachments->output->setHeader("Cache-Control", "must-revalidate");
-                        $attachments->output->setHeader("Content-Length", $fsize);
+                        $this->container->response->addHeader("Cache-Control", "must-revalidate");
+                        $this->container->response->addHeader("Content-Length", $fsize);
+
                         readfile($downloadPath);
 
                         //Delete after download.
                         unlink($downloadPath);
                         //$attachment->output->abort();
-                        $attachments->output->setFormat('raw', array()); //Headers must be set before output 
-                        $attachments->output->display();
+
+                        $this->container->response->sendHeaders($this->container->response->getHeaders()->getAll());
+
+                        //$this->container->response->setFormat('raw', array()); //Headers must be set before output
+                        $this->container->response->sendBuffer();
                     endif;
                 }
                 fclose($fd);
-                $attachments->output->setFormat('raw', array()); //Headers must be set before output 
-                $attachments->output->display();
+                //$attachments->output->setFormat('raw', array()); //Headers must be set before output
+                //$this->container->response->sendBuffer();
             endif;
             //$attachment->output->setHeader("Content-Disposition", "attachment; filename=\"" . $fname . "\"");
             //$attachment->output->setHeader("Content-length", $fsize);
@@ -527,32 +525,6 @@ class Attachment extends Content {
         //print_r($attachment->getPropertyValue("attachment_src"));
     }
 
-    /**
-     * Displays an attachment
-     *
-     * @param type $object
-     * @param type $params
-     */
-    final public static function load(&$object, &$params) {
-        //Relaod the object
-        $attachments = static::getInstance();
-        $attachment = & $object;
-        //if is object $object
-        if (!is_a($attachment, Entity::class)) {
-            //Attempt to determine what type of object this is or throw an error
-            $attachment = $attachments->loadObjectByURI($attachment);
-            //Make sure its an object;
-        }
-
-        if ($attachment->getObjectType() !== "attachment")
-            return false; //we only deal with attachments, let others deal withit
-
-        $fileId   = $attachment->getObjectType();
-        $filePath = FSPATH . DS . $attachment->getPropertyValue("attachment_src");
-        $contentType = $attachment->getPropertyValue("attachment_type");
-
-        static::place($fileId, $filePath, $contentType, $params);
-    }
 
     /**
      * Resizes an image
@@ -560,9 +532,10 @@ class Attachment extends Content {
      * @param type $file
      * @param type $params
      */
-    final public static function resize($file, $params) {
+    final public function resize($file, $params) {
         //die;
-        $fileHandler = \Library\Folder\Files::getInstance('image');
+        $fileHandler = $this->container->createInstance( Image::class );
+
         $resizable = array("jpg", "gif", "png", "jpeg");
 
         //If there is no file
@@ -574,15 +547,13 @@ class Attachment extends Content {
         if (!in_array(strtolower($fileExtension), $resizable))
             return $file; //If we can't resize it just return the file
 
-
-
-
-
         //We need at least the width or height to resize;
         if (empty($params))
             return false;
         $width = isset($params[0]) ? $params[0] : null;
         $height = isset($params[1]) ? $params[1] : null;
+
+
 
         $isSquare = ($width == $height) ? true : false;
         //NewName = OriginalName-widthxheight.OriginalExtension

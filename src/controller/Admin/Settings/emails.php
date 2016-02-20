@@ -24,6 +24,8 @@ class Emails extends Settings{
         // echo "Pages admin";
         $this->view->setData("title", t("Settings » Emails"));
 
+        $this->view->setData("emails", $this->application->config->load("email"));
+
         $this->view->addToBlock("main", "import://admin/settings/emails");
         //$this->view->setData("name", "Livingstone");
         $this->view->setLayout("member/dashboard");

@@ -178,11 +178,16 @@ class Authority extends DataModel{
 
     /**
      * Loads a row of authority groups
+     *
      * @todo Implement authority model load
      * @return void
      */
-    public function load() {
-        
+    public function load( $authorityId ) {
+
+        $authoritiesSQLc  = "SELECT a.authority_id, a.lft, a.rgt, a.authority_name,a.authority_parent_id FROM ?authority a WHERE a.authority_id= {$this->database->quote((int)$authorityId)} ORDER BY a.lft ASC";
+        $authoritiesSQL   = $this->database->prepare( $authoritiesSQLc );
+
+        return  $authoritiesSQL->execute()->fetchArray();
     }
 
     /**
@@ -221,6 +226,7 @@ class Authority extends DataModel{
         $rows = $results->fetchAll();
         $authorities = array();
         $right = array();
+
         foreach ($rows as $authority) {
 
             if (count($right) > 0) {

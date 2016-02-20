@@ -9,6 +9,7 @@
 namespace Budkit\Cms\Helper;
 
 use Budkit\Dependency\Container;
+use Budkit\Event\Event;
 use Budkit\Validation\Exception\InvalidException;
 use Nette\Mail\Message;
 
@@ -59,8 +60,7 @@ class Mailer
         return $this->message;
     }
 
-    public function compose($message, $to, $html = false ){
-
+    public function compose($message, $to, $data = [], $html = false ){
 
         //Check that we are sending to a valid email address;
         if(!$this->application->validate->isEmail($to)){
@@ -80,7 +80,7 @@ class Mailer
             $this->config->get("setup.site.name","Budkit")
         );
 
-        $this->addMessage( $message, $html);
+        $this->addMessage( $message, $data, $html);
 
 
         return $this;
@@ -106,7 +106,32 @@ class Mailer
     }
 
 
-    public function addMessage ( $message , $html = false ){
+    public function addMessage ( $message , $data = [], $html = false ){
+
+
+        //die;
+        //Search for (?<=\$\{)([a-zA-Z]+)(?=\}) and replace with data
+        if (preg_match_all('/(?<=\@\{)([a-zA-Z]+)(?=\})/i', $message, $matches)) {
+
+            $placemarkers = (is_array($matches) && isset($matches[0])) ? $matches[0] : [];
+            $searches = [];
+            $replaces = [];
+
+            foreach ($placemarkers as $placemarker):
+
+                $replace = $this->getData($placemarker, $data);
+
+                if (is_string($replace)) {
+                    $searches[] = '@{' . $placemarker . '}';
+                    $replaces[] = $replace;
+                }
+
+            endforeach;
+
+            $message = str_ireplace($searches, $replaces, $message);
+
+        }
+
         //Set the body
         if($html){
             $this->message->setHtmlBody( $message );
@@ -126,6 +151,54 @@ class Mailer
         $this->message = new Message; //or null?
 
         return true;
+    }
+
+
+    protected function getData($path, $data)
+    {
+
+        //when the path is just $, the element is request the data array or string as is.
+        //modifies such as ${config://} to get config data or do anything else fancy
+        if (preg_match('|^(.*?)://(.+)$|', $path, $matches)) {
+
+            $parseDataScheme = new Event('Layout.onCompile.scheme.data', $this, ["scheme" => $matches[1], "path" => $matches[2], "data"=>$data]);
+            $parseDataScheme->setResult(null); //set initial result
+
+            $observer = $this->application->observer;
+            $observer->trigger($parseDataScheme); //Parse the Node;
+
+            return $parseDataScheme->getResult();
+        }
+
+        $array = $data;
+        $keys = $this->explode($path);
+
+
+        //From this point we can only work with data arrays;
+        if( is_array($array) || $array instanceof \ArrayAcces ) {
+
+            foreach ($keys as $key) {
+                if (isset($array[$key])) {
+                    if($array instanceof \ArrayAcces){
+                        $array = $array->offsetGet( $key );
+                        //print_R($array);
+                    }else {
+                        $array = $array[$key];
+                    }
+                } else {
+                    return "";
+                }
+            }
+
+            return $array;
+        }
+
+        return null;
+    }
+
+    protected function explode($path)
+    {
+        return preg_split('/[:\.]/', $path);
     }
 
 }

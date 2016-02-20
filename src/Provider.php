@@ -4,6 +4,7 @@ namespace Budkit\Cms;
 
 use Budkit\Cms\Helper\Authorize\Permission;
 use Budkit\Application\Support\Service;
+use Budkit\Cms\Model\User;
 use Budkit\Dependency\Container;
 use Budkit\Cms\Controller;
 use Budkit\Cms\Helper\ErrorHandler;
@@ -34,7 +35,11 @@ class Provider implements Service
         //Register a before dispatch method to check if
         //The system has been installed;
         $this->application->observer->attach([$this, "onAfterRouteMatch"], "Dispatcher.afterRouteMatch");
+        $this->application->observer->attach([$this, "onAfterDispatch"],"Dispatcher.afterDispatch");
         $this->application->observer->attach([$this, "onCompileLayoutData"], "Layout.onCompile.scheme.data");
+        $this->application->observer->attach([$this, "onUserSignUp"], "Member.onSignUp");
+        $this->application->observer->attach([$this, "onPreparePostStory"], "Story.onPrepareStory");
+
         //$this->application->observer->attach([$this, "onRegisterThemes"], "app.register.themes");
         /*
         |--------------------------------------------------------------------------
@@ -112,7 +117,8 @@ class Provider implements Service
         Route::attach("/admin",  Controller\Admin::class, function($route){
 
             $route->setTokens(array(
-                'format' => '(\.[^/]+)?'
+                'format' => '(\.[^/]+)?',
+                'username'=>'(\@[a-zA-Z0-9-_]+)',
             ));
 
             //subroutes
@@ -130,10 +136,17 @@ class Provider implements Service
             | Members management
             |--------------------------------------------------------------------------
             */
-            $route->attach('/members', Controller\Admin\Members::class, function ($route) {
+            $route->attach('/member', Controller\Admin\Members::class, function ($route) {
+
+
+                $route->setTokens(array(
+                    'format' => '(\.[^/]+)?',
+                    'username'=>'(\@[a-zA-Z0-9-_]+)',
+                ));
 
                 //$route->setAction(Controller\Admin\Settings\Permissions::class);
-                $route->addGet('{format}', 'index');
+                $route->addGet('s{format}', 'index');
+                $route->addGet('{/username}/moderate{format}', 'moderate');
 
                 /*
                 |--------------------------------------------------------------------------
@@ -301,6 +314,33 @@ class Provider implements Service
 
         /*
         |--------------------------------------------------------------------------
+        | File upload
+        |--------------------------------------------------------------------------
+        |
+        | File uploads to the system
+        |
+        | NOTE: If a use is not signed in, all files are uploaded as temp, and the return
+        |       data will contain a base64 encoded path to the file. If use is signed in, an attachment
+        |       object is created, and the return data will contain the file URI, and the file URL
+        |
+        */
+        Route::attach("/file", Controller\File::class, function($route){
+
+            $route->setTokens(array(
+                'uri' => '(\d+[a-zA-Z0-9]{9})?', //category id
+                'format' => '(\.[^/]+)?',
+//                 'key'=> '.*',
+//                'width'=> '(\d+)',
+//                'height'=> '(\d+)'
+            ));
+            $route->addGet("/placeholder{format}{/size}", "placeholder");
+            $route->addGet("/{uri}{format}{/size}", "read");
+            $route->addPost('/upload{format}{/key}', "upload");
+
+        });
+
+        /*
+        |--------------------------------------------------------------------------
         | Member Routes
         |--------------------------------------------------------------------------
         |
@@ -310,56 +350,53 @@ class Provider implements Service
 
         Route::attach("/member", Controller\Member::class, function ($route) {
             $route->setTokens(array(
-                'id' => '(\d+):[a-zA-Z0-9-_]+?', //username and userId
-                'format' => '(\.[^/]+)?'
+                'username'=>'(\@[a-zA-Z0-9-_]+)',
+                'format' => '(\.[^/]+)?',
+                'key'=> '.*',
+                'id' => '(\d+)[a-zA-Z0-9-_]+?', //post I'ds must start with a number
+                //'name' => '[a-zA-Z0-9-_]+?'
             ));
 
             $route->add('/signin{format}', 'signin');
             $route->add('/signup{format}', 'signup');
             $route->add('/signout{format}', 'signout');
             $route->add('/signin/reset', 'resetPassword');
-            $route->addPost('/create{format}', 'add');
-            $route->addGet('{/id}{format}', "view");
-            $route->add('{/id}/edit{format}', "edit");
-            $route->addDelete('{/id}/delete{format}', "delete");
+            $route->add('/signin/verify/{key}', 'verifyEmail');
 
             //Member settings
             $route->attach("/settings", Controller\Member\Settings::class, function($route){
                 $route->addGet("{/group}{format}", 'index');
+                $route->addPost("/update", 'update');
             });
 
 
             //Member settings
-            $route->attach("/profile", Controller\Member\Profile::class, function($route){
-                $route->addGet("{/id}{format}", 'index');
-            });
+            $route->attach("{/username}", Controller\Member\Profile::class, function($route){
 
-
-            $route->attach("/timeline", Controller\Member\Timeline::class, function($route){
-
-                $route->setTokens(array(
-                    'id' => '(\d+)[a-zA-Z0-9-_]+?', //post I'ds must start with a number
-                    'format' => '(\.[^/]+)?'
-                ));
-
-                $route->addPost('/put', 'put');
                 $route->addGet("{format}", 'index');
-                $route->addGet('{/id}{format}', "read");
-                $route->add('/filters{format}', "filters");
-                $route->add('/map{/id}{format}', "map");
+                $route->addPost('/create{format}', 'add'); //user signup;
+                $route->add('/edit{format}', "edit"); //intended for console management
+                $route->addDelete('/delete{format}', "delete"); //intended for console management
 
-                $route->attach("/filter", Controller\Member\Timeline\Filters::class, function($route){
-                    $route->setTokens(array(
-                        'name' => '[a-zA-Z0-9-_]+?',
-                        'format' => '(\.[^/]+)?'
-                    ));
-                    $route->addPost('/new', 'add');
-                    $route->addGet('{/name}{format}', "read");
-                    $route->add('{/name}/edit{format}', "edit");
-                    $route->addDelete('{/name}/delete{format}', "delete");
+                $route->attach("/timeline", Controller\Member\Timeline::class, function($route){
 
-                });
-            }); //a collection of streams;
+                    $route->addGet("{format}", 'index');
+                    $route->addPost('/put', 'put');
+                    $route->addGet('/{id}{format}', "read");
+                    $route->add('/map{/id}{format}', "map");
+
+                    $route->attach("/filter", Controller\Member\Timeline\Filters::class, function($route){
+
+                        $route->addGet("s{format}", 'manage'); //list all filters
+                        $route->add('/new', 'add');
+                        $route->addGet('/{name}{format}', "execute");
+                        $route->add('/{name}/edit{format}', "edit");
+                        $route->addDelete('/{name}/delete{format}', "delete");
+
+                    });
+                }); //a collection of streams;
+
+            });
         });
 
     }
@@ -455,10 +492,53 @@ class Provider implements Service
                 //exit("You are not allowed to view this resource");
 
                 $this->application->dispatcher->redirect("/member/signin", HTTP_FOUND, $message);
-
             }
+
+
+            /*
+             |--------------------------------------------------------------------------
+             | Does the user have permission to view this current path?
+             |--------------------------------------------------------------------------
+             |
+             | Check that the current user has permission to follow this route
+             |
+             */
+            $user = $this->application->createInstance(User::class);
+            $data = $user->getCurrentUser(["user_first_name","user_last_name","user_name_id","user_photo"], false);
+
+            //Add some more global vars
+            $response->setData("session", ["user"=>$data->getPropertyData()]);
         }
     }
+
+
+    public function onAfterDispatch(&$event){
+
+        //Do something after route is disapteched;
+
+    }
+
+    /**
+     * Performs additional tasks on user signup
+     *
+     * @param $event
+     */
+    public function onUserSignUp($event){
+
+        $user = $event->getData();
+
+        if( $user->getPropertyValue("user_verification") !== null ) {
+
+            $member = $this->application->createInstance( Controller\Member::class );
+
+            $member->resendVerificationEmail(
+                $user->getPropertyValue("user_verification"),
+                $user
+            );
+
+        }
+    }
+
 
     public function onCompileLayoutData($event)
     {
@@ -469,7 +549,7 @@ class Provider implements Service
         if (strtolower($scheme) == "config") {
 
             //if the scheme is config://get.config.path, then load the config data;
-            return $event->setResult(trim($this->application->config->get($path)));
+            return $event->setResult( $this->application->config->get($path) );
         }
 
     }
@@ -492,6 +572,28 @@ class Provider implements Service
 //        $event->setResult( $themes ); //all members who call this even need to append to the result;
 //
 //    }
+
+
+    public function onPreparePostStory($event){
+
+        $story  = $event->getData();
+        $graph  = $event->getResult();
+
+        //print_R($story);
+
+        //if this is just a posted story;
+        if($story->getName() == "posted"){
+
+            $story->setData( $story->getTail()->getData() );
+
+            //The stream_item_type key is super important
+            //Without it the stream has no idea of knowing how to display its content
+            //and the edge is actually removed from the stream;
+            $story->addData("story_item_type", "posts/post-standard");
+       }
+
+       // print_R($graph);
+    }
 
     public function definition()
     {

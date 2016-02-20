@@ -44,16 +44,20 @@ class Settings extends Admin {
 
         //Check that we have post data;
         if (!$this->application->input->methodIs("post")) {
-            $this->response->addAlert("No configuration data recieved", 'error');
+            $this->response->addAlert("No configuration data received", 'error');
         }else {
             //Get the data;
             if (($data = $this->application->input->getArray("options", array(), "post")) == FALSE) {
-                $this->response->addAlert("No input data recieved, Something went wrong", 'error');
+                $this->response->addAlert("No input data received, Something went wrong", 'error');
             }else{
 
                 $namespace = $this->application->input->getString("options_namespace", "", "post");
-                //print_R($data);
+
                 $this->application->config->mergeParams($namespace, $data);
+
+//                print_R($this->application->config->getValues());
+//
+//                die;
 
                 if (!$this->application->config->saveParams()) {
                     $this->response->addAlert('Something went wrong, Did not save the parameters', 'error');

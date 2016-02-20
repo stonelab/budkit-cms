@@ -108,7 +108,7 @@ class Page extends Controller
         $layout .= empty($template) ? "-default" : "-" . $template;
 
 
-        $this->view->setLayout($layout);
+        $this->view->setLayout( $layout );
 
     }
 

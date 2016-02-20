@@ -67,10 +67,11 @@ class Content extends Entity {
             "media_provider" => array("Provider", "mediumtext", 100, "budkit"),
             "media_mentions" => array("Mentions", "varchar", 1000), //*
             "media_owner" => array("Owner", "varchar", 1000),
-            "media_verb" => array("Verb", "mediumtext", 20, "post"),
-            "media_geotags" => array("Geotags", "varchar", 1000), //*
-            "media_object" => array("Object", "varchar", 1000),
-            "media_target" => array("Target", "varchar", 1000), //the object uri of the timeline stream;
+           // "media_verb" => array("Verb", "mediumtext", 20, "post"),
+            "media_geotag_lat" => array("Geottag Latitude", "varchar", 1000),
+            "media_geotag_long" => array("Geottag Longitude", "varchar", 1000), //*
+            "media_attachments" => array("Object", "varchar", 1000),
+            //"media_target" => array("Target", "varchar", 1000), //the object uri of the timeline stream;
             "media_permissions" => array("Permissions", "mediumtext", 50), //* //allow:{},deny:{}
         ), "media");
 

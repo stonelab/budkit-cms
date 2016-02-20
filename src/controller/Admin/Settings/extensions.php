@@ -18,6 +18,11 @@ use Budkit\Cms\Controller\Admin\Settings;
  */
 class Extensions extends Settings {
 
+    public function __construct(Application $application, Menu $menu, Composer  $composer){
+
+
+    }
+
     public function index($format = 'html', $id="") {
         //echo "Browsing in {$format} format";
 

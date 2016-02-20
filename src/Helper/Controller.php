@@ -103,12 +103,23 @@ class Controller extends RouteController {
     }
 
 
+    /**
+     *
+     * //Do not check again for view as this is already checked by the provider;
+     *
+     * @param string $level
+     * @param string $path
+     * @return bool
+     */
     function checkPermission( $level="view", $path = ''){
 
         $path = empty($path)? $this->request->getPathInfo() : $path;
+        $route = $this->application->router->getMatchedRoute();
+
+        //print_R($route); die;
 
 
-        if (!$this->permission->isAllowed( $path, null, $level)) {
+        if (!$this->permission->isAllowedRoute( $route, $this->request, $level)) {
 
             $message = t("You do not have permission to access the requested resource. If you are not signed in please consider signing in with an account that has sufficient permissions.");
 
@@ -124,7 +135,7 @@ class Controller extends RouteController {
 
                 //$session->update( $session->getId() );
 
-            print_R($session); die;
+            //print_R($session); die;
 
             $this->response->addAlert($message, "warning");
 

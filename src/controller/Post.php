@@ -4,6 +4,10 @@ namespace Budkit\Cms\Controller;
 
 use Budkit\Cms\Helper\Controller;
 use Budkit\Cms\Model\Media\Content;
+use Budkit\Cms\Model\Story;
+use Budkit\Helper\Date;
+use Budkit\Helper\Time;
+use ArrayObject;
 
 class Post extends Controller {
 
@@ -11,7 +15,12 @@ class Post extends Controller {
     public function index($format = 'html') {
 
         $this->view->setData("title", "Timeline");
-        //$this->view->addToBlock("stream", '');
+
+        $story = $this->application->createInstance( Story::class );
+        $graph = $story->get();
+
+        $this->view->setData("stories", getArrayObjectAsArray( new ArrayObject( $graph->getEdgeSet() ) ) );
+
 
         $this->timeline();
 
@@ -54,18 +63,42 @@ class Post extends Controller {
 
             //3. load the page;
             $content = $this->application->createInstance(Content::class);
-            // $page = $page->defineValueGroup("page");
-            //$page = $page->loadObjectByURI($uri);
 
-            print_r($input->data("post"));
+            $_content = $content->getPropertyModel();
 
+            // print_R($_POST);
+            foreach ($_content as $attribute => $definition):
+                $value = $input->getString($attribute, "", "post");
+                $content->setPropertyValue($attribute,  $value);
+            endforeach;
+
+            //Allow some HTML in media content;
+            $mediaContent = $input->getFormattedString("media_content", "", "post", true);
+
+            $content->setPropertyValue("media_content", $mediaContent);
+
+            //@TODO determine the user has permission to post;
+            $content->setPropertyValue("media_owner", $this->user->getCurrentUser()->getPropertyValue("user_name_id"));
+            $content->setPropertyValue("media_published", Time::stamp());
+
+            if (!$content->saveObject(null, "media")) {
+                //There is a problem! the error will be in $this->getError();
+                $this->response->addAlert("Your post could not be submitted an error occurred", "error");
+                //return false;
+            }else{
+
+                $this->response->addAlert("Your post was submitted successfully", "success");
+
+                //Now create a new user story
+                $post  = $content->loadObjectByURI( $content->getLastSavedObjectURI() );
+                $story = $this->application->createInstance( Story::class );
+
+                if( !$story->create( $this->user->getCurrentUser(), "posted", $post ) ){
+                    $this->response->addAlert("Your post was submitted, but an error occurred whilst adding it to the timeline", "warning");
+                }
+            }
         }
-
-        //Is the user authenticated?
-        // $this->requireAuthentication();
-        //Is the input method submitted via POST;
-
-
+        $this->application->dispatcher->returnToReferrer();
     }
 
     public function delete($uri, $format = 'html') {

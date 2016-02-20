@@ -37,7 +37,19 @@ class Member extends Controller {
     }
 
 
-    public function index($format = 'html') {
+    public function index($username, $format = 'html') {
+
+            //echo "Browsing in {$username} format {$format}";
+
+            $user = empty($username)? $this->user->getCurrentUser() : $this->user->loadObjectByURI( $username );
+
+            // echo "Pages admin";
+            $this->view->setData("title", t("@{$user->getObjectURI()}"));
+            $this->view->setData("sbstate", "minimized");
+
+            $this->view->setData("user", $user->getPropertyData());
+            //$this->view->addToBlock("main", 'import://member/member-profile');
+            $this->view->setLayout("member/member-profile");
 
     }
 
@@ -45,10 +57,55 @@ class Member extends Controller {
 
         $this->view->setData("title", "Reset Password");
         $this->view->setLayout("member/reset");
+        
 
     }
 
 
+    final public function resendVerificationEmail( $verification = null, User $user ){
+
+
+        if(!$verification){
+
+            $verification = getRandomString(30, false, true) ;
+            $user->setPropertyValue("user_verification", $verification );
+
+            if (!$user->saveObject( $user->getPropertyValue("user_name_id"), "user", null, false)) {
+                //There is a problem!
+                return false;
+            }
+        }
+
+        $salt   = base64_encode($user->getPropertyValue("user_name_id"));
+        $mail   = array(
+            "subject"=>"Welcome to ".$this->application->config->get("setup.site.name", "Budkit"),
+            "link"=> $this->application->uri->externalize("/member/signin/verify/{$verification}:{$salt}")
+        );
+
+        //Sending an email;
+        try{
+
+            $default  = "Hi {$user->getPropertyValue("user_first_name")}. Verify your email with this link {$mail['link']}" ;
+            $renderer = $this->view;
+            $renderer->setData("email-body", $this->application->config->get("email.verification.text" , $default ));
+            $message = $renderer->render("email", true); //partial must be set to true
+
+            $this->application->mailer
+                ->compose($message, $user->getPropertyValue("user_email"), [
+                    'recipient'=> $user->getPropertyValue("user_first_name"),
+                    'link'=>$mail['link'] ], true )
+                ->setSubject( $this->application->config->get("email.verification.subject" , $mail['subject'] )  )
+                ->send();
+
+            $this->response->addAlert(t("Before you can login, please check your inbox ({$user->getPropertyValue("user_email")}), and click on a special link we've just sent you to verify your email."), "info");
+
+        }catch (\Exception $e){
+
+            $this->response->addAlert(t("We were unable to send out a verification email."), "error");
+            //$this->application->dispatcher->returnToReferrer();
+        }
+
+    }
 
 
     final public function signout() {
@@ -61,6 +118,41 @@ class Member extends Controller {
         //$this->alert(_t("You have been logged out"), "", "info");
         //$this->redirect("/");
         $this->application->dispatcher->redirect("/member/signin");
+    }
+
+    public function verifyEmail( $key ){
+
+
+        $parts = explode(":", $key);
+        $verification = reset($parts);
+        $usernameid   = base64_decode( end($parts) );
+
+
+        $user  = $this->user->loadObjectByURI( $usernameid  );
+
+        if($user->getPropertyValue("user_verification") == $verification ) {
+
+            $user->setPropertyValue("user_verified", "verified");
+            $user->setPropertyValue("user_verification",  getRandomString(30, false, true));
+            $user->defineValueGroup("user");
+
+            if (!$user->saveObject($user->getPropertyValue("user_name_id"), "user", $user->getObjectId(), false)) {
+                //There is a problem!
+
+                //die;
+
+                return false;
+            }
+
+            $this->response->addAlert(t("Congratulations {$user->getPropertyValue("user_first_name")}, your account has now been verified. Please log in again"), "success");
+        }else{
+
+            $this->response->addAlert(t("We were unable to verify an account with the code/link provided. Try again"), "error");
+        }
+
+
+        $this->application->dispatcher->redirect("/member/signin", HTTP_FOUND, null);
+
     }
 
     public function signin(){
@@ -101,8 +193,30 @@ class Member extends Controller {
                     );
                     if($pass){
 
+                        //print_R($pass); die;
+
                         $currentUser    = $this->user->getCurrentUser();
                         $currentUserIp  = $this->application->input->getVar('REMOTE_ADDR', \IS\STRING, '', 'server');
+
+                        $verified       = $this->user->getPropertyValue("user_verified");
+
+
+                        //User verification;
+                        if(empty($verified) ) {
+
+                            $session = $this->user->getSession();
+
+                            $session->unlock("auth");
+                            $session->remove("handler", "auth");
+
+                            $session->update($session->getId());
+
+                            $this->resendVerificationEmail(null, $this->user);
+
+                            $this->application->dispatcher->returnToReferrer();
+
+                            return false;
+                        }
 
                         $this->response->addAlert(t("Welcome back {$currentUser->getPropertyValue('user_first_name')}"), "info");
 
@@ -122,12 +236,18 @@ class Member extends Controller {
                         //return;
                     }else{
                         //Tell the user why the authentication failed
+                        $this->response->addAlert(t('User authentication has failed with the credentials you provided. Try again'), "error");
+                        //return false;
                     }
                 } catch (Exception $exception) {
 
                     //@TODO do something with the exception;
                     //May be display a message about the failed auth
+                    //log the exception;
+
                     //set a message saying something very bad happened;
+                    $this->response->addAlert(t('User authentication has failed with the credentials you provided. Try again'), "error");
+                    //return false;
                 }
             endif;
         }
@@ -192,35 +312,15 @@ class Member extends Controller {
                 //@TODO attach post user sign up event;
 
 
-                $onSignUp = new Event('Member.onSignUp', $this, $this->user);
-                $this->observer->trigger( $onSignUp ); //Parse the Node;
-
-
                 //@TODO if email verification is required;
                 $this->user = $this->user->loadObjectByURI( $usernameid, [], true);
 
-                if( $this->user->getPropertyValue("user_verification") !== null ) {
-
-
-                    $mail = array(
-                        "subject"=>"Welcome to ".$this->application->config->get("setup.site.name", "Budkit"),
-                        "verification_link"=> $this->application->uri->externalize("/member/verify/{$this->user->getPropertyValue("user_verification")}")
-                    );
-
-                    //Sending an email;
-                    if(!$this->application->mailer
-                        ->compose("Hi {$username}. Verify your email with this link {$mail['verification_link']}", $this->user->getPropertyValue("user_email"))
-                        ->setSubject( $mail['subject'] )
-                        ->send()){
-                        $this->response->addAlert(t("We were unable to send out a verification email. Please contact us with your username and password in order to activate your account."), "error");
-                    }else{
-                        $this->response->addAlert(t("Before you can login, please check your inbox ({$useremail}), and click on a special link we've sent you to verify your account."), "warning");
-                    }
-
-                }
+                $onSignUp = new Event('Member.onSignUp', $this, $this->user);
+                $this->observer->trigger( $onSignUp ); //Parse the Node;
 
                 //Redirect to the sign up page;
                 $this->application->dispatcher->redirect("/member/signin", HTTP_FOUND, null);
+
             }else{
                 //You need to be logged out!
                 $this->response->addAlert(t('You are already logged in and cannot create another account.'), "error");
