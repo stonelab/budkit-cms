@@ -106,17 +106,19 @@ class Story
         $this->graph = ($this->graph) ? new Graph : $this->getGraph();
 
         $this->database->startTransaction();
-        $this->database->query("SET @SQL = NULL;");
+        $this->database->query("SET @sql = NULL;");
+        $this->database->query("SET SESSION group_concat_max_len=5000000000;");
         //Now find all the property fields
         $this->database->query(
             "SELECT
               GROUP_CONCAT(DISTINCT
                 CONCAT(
-                  '\nMAX(IF(d.property_name =''', d.property_name, ''', d.value_data, NULL)) AS ', d.property_name)
+                  'MAX(IF(d.property_name =''', d.property_name, ''', d.value_data, NULL)) AS ', d.property_name , '\n'
+                  )
               ) INTO @sql
             FROM {$this->database->replacePrefix("`?stories`")} AS d;"
         );
-        $this->database->query("SET @sql = CONCAT('SELECT d.*, ', @sql ,' FROM {$this->database->replacePrefix('`?stories`')} AS d GROUP BY d.object_id ORDER BY d.object_created_on DESC');");
+        $this->database->query("SET @sql = CONCAT('SELECT ', IFNULL( CONCAT(@sql, ','), '' ) ,' d.*  FROM {$this->database->replacePrefix('`?stories`')} AS d GROUP BY d.object_id ORDER BY d.object_created_on DESC');");
         $this->database->query("PREPARE stmt FROM @sql;");
 
         if (!$this->database->commitTransaction()) {
@@ -152,7 +154,7 @@ class Story
             $this->graph = $handler->getResult();
 			//Post prepare processing;
 			//@TODO if  there is no defined stream_item_type remove from the storyboard;
-            if(!isset($story['story_item_type'])){
+            if(!isset($story['story_type'])){
                 $this->graph->removeEdgeWithId( $story->getId() );
             }
 

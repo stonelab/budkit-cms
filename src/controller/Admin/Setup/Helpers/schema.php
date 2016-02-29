@@ -83,7 +83,7 @@ final class Schema{
         $this->database->query("DROP TABLE IF EXISTS `?groups`;");
         $this->database->query(
             "CREATE TABLE IF NOT EXISTS `?groups` (
-                `group_id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
+                `group_id` int(11) NOT NULL AUTO_INCREMENT ,
                 `group_name` VARCHAR(45) NOT NULL ,
                 `group_title` VARCHAR(45) NOT NULL ,
                 `group_description` VARCHAR(100) NULL ,
@@ -95,12 +95,19 @@ final class Schema{
                 INDEX `group_owner_uri` (`group_owner` ASC) 
             ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;"
         );
+
+        //If object is deleted, remove its authority from this table
+        //If authority group is deleted, remove all objects that are part of this authority;
+        $this->database->query(
+            "ALTER TABLE `?groups`
+                    ADD CONSTRAINT `group_owner_fk_1` FOREIGN KEY (`group_owner`) REFERENCES `?objects` (`object_uri`) ON DELETE CASCADE;"
+        );
     }
 
 
     public function createStoriesView(){
         $this->database->query(
-            "CREATE OR REPLACE VIEW `GhpMA_stories` AS (
+            "CREATE OR REPLACE VIEW `?stories` AS (
                 SELECT e.edge_head_object, e.edge_name, e.edge_tail_object, m.value_data, p.property_name, o.object_id, o.object_uri, o.object_type, o.object_created_on, o.object_updated_on, o.object_status
                 FROM `?objects_edges` AS e
                 LEFT JOIN ?objects AS o ON o.object_uri = e.edge_tail_object
@@ -149,6 +156,12 @@ final class Schema{
                 (14,	1,	'^/file(/[a-z0-9-]*)*',	'allow',	'view',	'Content'),
                 (16,	2,	'^/post(/[a-z0-9-]*)*',	'allow',	'execute',	'Content'),
                 (15,	1,	'^/page(/[a-z0-9-]*)*',	'allow',	'view',	'Content');"
+        );
+
+        //If the authority is deleted, remove all the permissions from the permission table
+        $this->database->query(
+            "ALTER TABLE `?authority_permissions`
+                    ADD CONSTRAINT `authority_id_permission_fk_1` FOREIGN KEY (`authority_id`) REFERENCES `?authority` (`authority_id`) ON DELETE CASCADE;"
         );
     }
 
@@ -201,6 +214,12 @@ final class Schema{
                 (102,0,	'Extensions', '/admin/settings/extensions',	NULL,	0,	3,	'link',	NULL,	17,	18,	1),
                 (103,0,	'Members', '/admin/members',	NULL,	0,	3,	'link',	NULL,	17,	20,	1),
                 (104, 80, 'Permissions', '/admin/members/permissions', '', 0, 3, 'link', '', 18, 19, 1);"
+        );
+
+        //If a menu group is deleted, remove all the menu items
+        $this->database->query(
+            "ALTER TABLE `?menu`
+                    ADD CONSTRAINT `menu_group_id_links_fk_1` FOREIGN KEY (`menu_group_id`) REFERENCES `?menu_group` (`menu_group_id`) ON DELETE CASCADE;"
         );
     }
 
@@ -344,48 +363,48 @@ final class Schema{
      * @deprecated 21/02/2012 v1.0.0
      * @return void
      */
-    private function createUsermetaTable() {
-        $this->database->query("DROP TABLE IF EXISTS `?usermeta`");
-        $this->database->query(
-            "CREATE TABLE IF NOT EXISTS `?usermeta` (
-                `usermeta_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                `usermeta_user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
-                `usermeta_key` varchar(255) DEFAULT NULL,
-                `usermeta_value` longtext,
-                PRIMARY KEY (`usermeta_id`),
-                KEY `user_id` (`usermeta_user_id`),
-                KEY `meta_key` (`usermeta_key`)
-            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;"
-        );
-    }
+//    private function createUsermetaTable() {
+//        $this->database->query("DROP TABLE IF EXISTS `?usermeta`");
+//        $this->database->query(
+//            "CREATE TABLE IF NOT EXISTS `?usermeta` (
+//                `usermeta_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+//                `usermeta_user_id` bigint(20) unsigned NOT NULL DEFAULT '0',
+//                `usermeta_key` varchar(255) DEFAULT NULL,
+//                `usermeta_value` longtext,
+//                PRIMARY KEY (`usermeta_id`),
+//                KEY `user_id` (`usermeta_user_id`),
+//                KEY `meta_key` (`usermeta_key`)
+//            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;"
+//        );
+//    }
 
     /**
      * Creates the Users table
      * @deprecated 21/02/2012 v1.0.0 Uses the new EAV model
      * @return void
      */
-    private function createUsersTable() {
-
-        $this->database->query("DROP TABLE IF EXISTS `?users`;");
-        $this->database->query(
-            "CREATE TABLE IF NOT EXISTS `?users` (
-                `user_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-                `user_name_id` varchar(60) NOT NULL DEFAULT '',
-                `user_name` varchar(250) NOT NULL DEFAULT '',
-                `user_password` varchar(255) NOT NULL,
-                `user_email` varchar(100) NOT NULL DEFAULT '',
-                `user_url` varchar(100) NOT NULL DEFAULT '',
-                `user_registered` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                `user_key` varchar(60) NOT NULL DEFAULT '',
-                `user_status` int(11) NOT NULL DEFAULT '0',
-                PRIMARY KEY (`user_id`),
-                UNIQUE KEY `user_unique` (`user_name_id`,`user_email`),
-                UNIQUE KEY `user_email_unique` (`user_email`),
-                UNIQUE KEY `user_name_unique` (`user_name_id`),
-                KEY `user_login_key` (`user_name_id`)
-            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;"
-        );
-    }
+//    private function createUsersTable() {
+//
+//        $this->database->query("DROP TABLE IF EXISTS `?users`;");
+//        $this->database->query(
+//            "CREATE TABLE IF NOT EXISTS `?users` (
+//                `user_id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+//                `user_name_id` varchar(60) NOT NULL DEFAULT '',
+//                `user_name` varchar(250) NOT NULL DEFAULT '',
+//                `user_password` varchar(255) NOT NULL,
+//                `user_email` varchar(100) NOT NULL DEFAULT '',
+//                `user_url` varchar(100) NOT NULL DEFAULT '',
+//                `user_registered` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+//                `user_key` varchar(60) NOT NULL DEFAULT '',
+//                `user_status` int(11) NOT NULL DEFAULT '0',
+//                PRIMARY KEY (`user_id`),
+//                UNIQUE KEY `user_unique` (`user_name_id`,`user_email`),
+//                UNIQUE KEY `user_email_unique` (`user_email`),
+//                UNIQUE KEY `user_name_unique` (`user_name_id`),
+//                KEY `user_login_key` (`user_name_id`)
+//            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;"
+//        );
+//    }
 
     /**
      * Creates the object authority table
@@ -397,10 +416,18 @@ final class Schema{
             "CREATE TABLE IF NOT EXISTS `?objects_authority` (
                 `object_authority_id` int(11) NOT NULL AUTO_INCREMENT,
                 `authority_id` bigint(20) NOT NULL,
-                `object_id` bigint(20) NOT NULL,
+                `object_id` int(11) NOT NULL,
                 PRIMARY KEY (`object_authority_id`),
                 UNIQUE KEY `object_authority` (`authority_id`,`object_id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8;"
+        );
+
+        //If object is deleted, remove its authority from this table
+        //If authority group is deleted, remove all objects that are part of this authority;
+        $this->database->query(
+            "ALTER TABLE `?objects_authority`
+                    ADD CONSTRAINT `object_id_authority_fk_1` FOREIGN KEY (`object_id`) REFERENCES `?objects` (`object_id`) ON DELETE CASCADE,
+                    ADD CONSTRAINT `object_id_authority_fk_2` FOREIGN KEY (`authority_id`) REFERENCES `?authority` (`authority_id`) ON DELETE CASCADE;"
         );
     }
 
@@ -413,11 +440,17 @@ final class Schema{
         $this->database->query(
             "CREATE TABLE IF NOT EXISTS `?objects_group` (
                 `object_group_id` INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-                `group_id` INT NOT NULL ,
+                `group_id` int(11) NOT NULL ,
                 `object_uri` VARCHAR(20) NOT NULL ,
                 PRIMARY KEY (`object_group_id`) ,
                 UNIQUE INDEX `object_group_id_UNIQUE` (`object_group_id` ASC) 
             )ENGINE=InnoDB DEFAULT CHARSET=utf8;"
+        );
+
+        $this->database->query(
+            "ALTER TABLE `?objects_group`
+                    ADD CONSTRAINT `group_object_uri_fk_1` FOREIGN KEY (`object_uri`) REFERENCES `?objects` (`object_uri`) ON DELETE CASCADE,
+                    ADD CONSTRAINT `group_group_id_fk_1` FOREIGN KEY (`group_id`) REFERENCES `?groups` (`group_id`) ON DELETE CASCADE;"
         );
     }
 
@@ -440,8 +473,8 @@ final class Schema{
               UNIQUE KEY `object_edge_head_tail_UNIQUE` (`edge_head_object`,`edge_tail_object`,`edge_name`),
               KEY `edge_head_uri` (`edge_head_object`),
               KEY `edge_tail_uri` (`edge_tail_object`),
-              CONSTRAINT `edge_tail_uri` FOREIGN KEY (`edge_tail_object`) REFERENCES `?objects` (`object_uri`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-              CONSTRAINT `edge_head_uri` FOREIGN KEY (`edge_head_object`) REFERENCES `?objects` (`object_uri`) ON DELETE NO ACTION ON UPDATE NO ACTION
+              CONSTRAINT `edge_tail_uri` FOREIGN KEY (`edge_tail_object`) REFERENCES `?objects` (`object_uri`) ON DELETE CASCADE ON UPDATE NO ACTION,
+              CONSTRAINT `edge_head_uri` FOREIGN KEY (`edge_head_object`) REFERENCES `?objects` (`object_uri`) ON DELETE CASCADE ON UPDATE NO ACTION
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8"
         );
     }
@@ -462,7 +495,7 @@ final class Schema{
                 PRIMARY KEY (`rating_id`) ,
                 UNIQUE KEY `object_rating` (`rating_user`,`object_id`),
                 KEY `object_id_idx` (`object_id`),
-                CONSTRAINT `objects_rating_ibfk_1` FOREIGN KEY (`object_id` ) REFERENCES `?objects` (`object_id` )
+                CONSTRAINT `objects_rating_ibfk_1` FOREIGN KEY (`object_id` ) REFERENCES `?objects` (`object_id` ) ON DELETE CASCADE
              ) ENGINE=InnoDB DEFAULT CHARSET=utf8;"
         );
         //CONSTRAINT `objects_rating_ibfk_1` FOREIGN KEY (`object_id` ) REFERENCES `?objects` (`object_id` )
@@ -613,7 +646,7 @@ final class Schema{
             //Add reference constrains
             $this->database->query(
                 "ALTER TABLE `?{$group}_property_values`
-                    ADD CONSTRAINT `{$group}_property_values_ibfk_1` FOREIGN KEY (`object_id`) REFERENCES `?objects` (`object_id`),
+                    ADD CONSTRAINT `{$group}_property_values_ibfk_1` FOREIGN KEY (`object_id`) REFERENCES `?objects` (`object_id`) ON DELETE CASCADE,
                     ADD CONSTRAINT `{$group}_property_values_ibfk_2` FOREIGN KEY (`property_id`) REFERENCES `?properties` (`property_id`) ON DELETE CASCADE;"
             );
         endif;
@@ -635,7 +668,9 @@ final class Schema{
                     PRIMARY KEY (`value_id`),
                     UNIQUE KEY `object_property_uid` (`object_id`,`property_id`),
                     KEY `property_id_idxfk` (`property_id`),
-                    KEY `object_id_idxfk` (`object_id`)
+                    KEY `object_id_idxfk` (`object_id`),
+                    CONSTRAINT `value_object_id_ibfk_1` FOREIGN KEY (`object_id`) REFERENCES `?objects` (`object_id`) ON DELETE CASCADE,
+                    CONSTRAINT `value_property_ibfk_2` FOREIGN KEY (`property_id`) REFERENCES `?properties` (`property_id`) ON DELETE CASCADE
                   ) ENGINE=InnoDB  DEFAULT CHARSET=utf8;"
         );
         $this->database->query("DROP PROCEDURE IF EXISTS `property_value_validate`;");
@@ -672,6 +707,13 @@ final class Schema{
                     CALL ?property_value_validate(NEW.property_id, NEW.value_data);
                 END;"
         );
+
+        //Add reference constrains
+//        $this->database->query(
+//            "ALTER TABLE `?property_values`
+//                    ADD CONSTRAINT `property_values_ibfk_1` FOREIGN KEY (`object_id`) REFERENCES `?objects` (`object_id`) ON DELETE CASCADE,
+//                    ADD CONSTRAINT `property_values_ibfk_2` FOREIGN KEY (`property_id`) REFERENCES `?properties` (`property_id`) ON DELETE CASCADE;"
+//        );
     }
 
     /**
@@ -725,8 +767,10 @@ final class Schema{
         $this->createAuthorityTable();
         $this->createAuthorityPermissionsTable();
 
-        $this->createMenutable();
+
         $this->createMenuGroupTable();
+        $this->createMenutable();
+
         $this->createOptionsTable();
         //$this->createContentmetaTable();
         //$this->createContentsTable();

@@ -8,43 +8,44 @@ use Budkit\Cms\Model\Authority;
 
 class Permissions extends Settings {
 
-    /**
-     * Displays a list of network authority groups
-     * @todo Implement the ability to modify groups
-     * @param string $edit
-     * @return void
-     */
-//    public function addRule() {
-//        //1. Load the model
-//        $authority = $this->load->model("authority");
-//        //2. If we are editing the authority, save
-//        if ($this->input->methodIs("post")):
-//            if (!$authority->storePermissions()) {
-//                $errors = $this->getErrorString();
-//                $this->alert($errors, null, "error");
-//            } else {
-//                //Succesffully added
-//                $this->alert(_("Permisison rule has been added successfully"), "", "success");
-//            }
-//        endif;
-//        //Redirect back to the settings page
-//        $this->redirect($this->output->link("/settings/system/permissions"));
-//    }
 
-    public function addRule(){
+    public function addRule($format = 'html'){
+
+        //1. Load the model
+        $authority = $this->application->createInstance( Authority::class );
+
+        //2. If we are editing the authority, save
+        if ($this->application->input->methodIs("post")):
+
+            if (!$authority->storePermissions()) {
+
+                $this->response->addAlert( _("Could not save permissions"), "error");
+            } else {
+                //Succesffully added
+                $this->response->addAlert(_("Permisison rule has been added successfully"),  "success");
+            }
+
+        endif;
+
+        //Report on state saved
+        $this->application->dispatcher->redirect($this->application->input->getReferer(), HTTP_FOUND, null);
+
+        return true;
 
     }
 
 
-    public function updatedRule()
-    {}
+    public function addAuthority($format = 'html'){}
 
-    public function updateAuthorities(){}
 
-    public function deleteRule(){}
+    public function getAuthorityMembers($format = 'html'){}
 
-    public function deleteAuthority(){}
 
+    public function updatedRule($format = 'html'){}
+    public function updateAuthority($format = 'html'){}
+
+    public function deleteRule($format = 'html'){}
+    public function deleteAuthority($format = 'html'){}
 
 
     public function index($format = 'html', $id="") {
@@ -52,7 +53,6 @@ class Permissions extends Settings {
 
         //3. Get the authorities list
         $authorityModel = $this->application->createInstance( Authority::class );
-
         $authorities = $authorityModel->getAuthorities();
 
         //print_R($authorities);

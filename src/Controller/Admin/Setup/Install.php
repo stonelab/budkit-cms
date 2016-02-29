@@ -132,7 +132,7 @@ class Install extends Controller {
 
         $this->view->addToBlock("form", "import://admin/setup/database");
         $this->view->setData("step", "3");
-        $this->view->setData("randomstring", getRandomString('5')."_");
+        $this->view->setData("randomstring", strtolower( getRandomString('5')."_" ) ); //may be case sensitive on some systems
         $this->view->setData("title", t("Installation | Database Settings"));
 
 

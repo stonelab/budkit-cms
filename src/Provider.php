@@ -99,12 +99,12 @@ class Provider implements Service
         */
         Route::attachResource("/page", Controller\Page::class); //a collection of streams;
         //Route::attachResource("/message", Controller\Message::class); //controller should extend post;
-        Route::attachResource("/notification", Controller\Notification::class);
+        //Route::attachResource("/notification", Controller\Notification::class);
         Route::attachResource("/post", Controller\Post::class); //notes?
-        Route::attachResource("/event", Controller\Event::class); //multiple event types and status, e.g proposed meting
-        Route::attachResource("/stream", Controller\Stream::class); //collection of resources,
-        Route::attachResource("/group", Controller\Group::class); //collection of persons?
-        Route::attachResource("/file", Controller\File::class); //collection of persons?
+        // Route::attachResource("/event", Controller\Event::class); //multiple event types and status, e.g proposed meting
+        //Route::attachResource("/stream", Controller\Stream::class); //collection of resources,
+        //Route::attachResource("/group", Controller\Group::class); //collection of persons?
+        //Route::attachResource("/file", Controller\File::class); //collection of persons?
 
         /*
         |--------------------------------------------------------------------------
@@ -153,12 +153,14 @@ class Provider implements Service
                 | Access Control settings
                 |--------------------------------------------------------------------------
                 */
-                $route->attach('/permissions', Controller\Admin\Settings\Permissions::class, function ($route) {
+                $route->attach('s/permissions', Controller\Admin\Settings\Permissions::class, function ($route) {
 
                     //$route->setAction(Controller\Admin\Settings\Permissions::class);
                     $route->addGet('{format}', 'index');
-                    $route->addPost('/rule', 'updaterule');
-                    $route->addPost('/authority', 'updateauthority');
+                    $route->addPost('/add/rule', 'addRule');
+                    $route->addPost('/add/authority', 'addAuthority');
+                    $route->addPatch('/update/rule', 'updateRule');
+                    $route->addPatch('/update/authority', 'updateAuthority');
 
 
                 });
@@ -271,9 +273,18 @@ class Provider implements Service
                 */
                 $route->attach('/navigation', Controller\Admin\Settings\Navigation::class, function ($route) {
 
+                    $route->setTokens(array(
+                        'format' => '(\.[^/]+)?',
+                        'group' => '(\d+)'
+                    ));
+
+
                     //$route->setAction(Controller\Admin\Settings\Permissions::class);
                     $route->addGet('{format}', 'index');
-
+                    $route->addPost('/create{format}','create');
+                    $route->addPost('/add{format}', 'add');
+                    $route->addPatch('/update{/group}', 'update');
+                    $route->add('/delete{format}{/group}', 'delete');
 
                 });
 
@@ -354,7 +365,7 @@ class Provider implements Service
                 'format' => '(\.[^/]+)?',
                 'key'=> '.*',
                 'id' => '(\d+)[a-zA-Z0-9-_]+?', //post I'ds must start with a number
-                //'name' => '[a-zA-Z0-9-_]+?'
+                //'name' => '([A-Z][a-z]+)'
             ));
 
             $route->add('/signin{format}', 'signin');
@@ -380,20 +391,32 @@ class Provider implements Service
 
                 $route->attach("/timeline", Controller\Member\Timeline::class, function($route){
 
-                    $route->addGet("{format}", 'index');
-                    $route->addPost('/put', 'put');
-                    $route->addGet('/{id}{format}', "read");
-                    $route->add('/map{/id}{format}', "map");
 
-                    $route->attach("/filter", Controller\Member\Timeline\Filters::class, function($route){
+                    $route->attach("{/name}", Controller\Member\Timeline\Filters::class, function($route){
 
-                        $route->addGet("s{format}", 'manage'); //list all filters
-                        $route->add('/new', 'add');
-                        $route->addGet('/{name}{format}', "execute");
-                        $route->add('/{name}/edit{format}', "edit");
-                        $route->addDelete('/{name}/delete{format}', "delete");
+                        $route->addGet('{format}', "index");
+                        $route->add("/list", 'manage'); //list all filters
+
+
+                        $route->add('/edit{format}', "edit");
+                        $route->addDelete('/delete{format}', "delete");
 
                     });
+
+                    $route->addGet("{format}", 'index');
+                    //create a new timelne
+                    $route->add('/new', 'add');
+
+                    $route->addPost('/put', 'put');
+
+                    //will need a seperate subroot for ids
+                    $route->addGet('/{id}{format}', "read");
+                    //$route->add('/map{/id}{format}', "map");
+
+
+
+
+
                 }); //a collection of streams;
 
             });
@@ -589,7 +612,7 @@ class Provider implements Service
             //The stream_item_type key is super important
             //Without it the stream has no idea of knowing how to display its content
             //and the edge is actually removed from the stream;
-            $story->addData("story_item_type", "posts/post-standard");
+            $story->addData("story_type", "posts/post-standard");
        }
 
        // print_R($graph);

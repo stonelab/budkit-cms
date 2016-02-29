@@ -18,9 +18,11 @@ class File extends Controller {
             return false;
         }
 
-
         //Load the file;
-        $file = $attachment->loadObjectByURI( $uri );
+        $file = $attachment->loadObjectByURI( $uri , ['attachment_src', 'attachment_type']);
+
+        //Javascript?
+
 
         if( $file->getObjectType() !== "attachment" ){
             throw new \Exception("The requested item is not an file");
@@ -28,7 +30,7 @@ class File extends Controller {
         }
 
         if ($file->getObjectType() !== "attachment")
-            return false; //we only deal with attachments, let others deal withit
+            return false; //we only deal with attachments, let others deal with it
 
         $fileId   = $file->getObjectType();
         $filePath = PATH_DATA. base64_decode( $file->getPropertyValue("attachment_src") );

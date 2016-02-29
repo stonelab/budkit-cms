@@ -2,6 +2,14 @@
 
 namespace Budkit\Cms\Controller\Admin\Settings;
 use Budkit\Cms\Controller\Admin\Settings;
+use Budkit\Cms\Helper\Menu;
+use Budkit\Dependency\Container as Application;
+use Composer\Composer;
+use Composer\IO\ConsoleIO;
+
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
+
 
 /**
  * Admin settings action controller
@@ -18,13 +26,31 @@ use Budkit\Cms\Controller\Admin\Settings;
  */
 class Extensions extends Settings {
 
-    public function __construct(Application $application, Menu $menu, Composer  $composer){
+    protected $composer;
+
+    public function __construct(Application $application, Menu $menu){
+
+        parent::__construct($application, $menu);
+
+//        $input = new InputInterface();
+//        $output = new OutputInterface();
+//
+//        $io = new ConsoleIO(new InputInterface(), new OutputInterface(), $this->getApplication()->getHelperSet());
+//        $composer = Factory::create($io);
+
+//        $this->composer = $composer;
 
 
     }
 
     public function index($format = 'html', $id="") {
         //echo "Browsing in {$format} format";
+
+        //$repository = $this->composer->getPackage();
+
+        //print_r( $repository );
+
+
 
         // echo "Pages admin";
         $this->view->setData("title", t("Extensions"));

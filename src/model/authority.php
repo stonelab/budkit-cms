@@ -7,6 +7,7 @@ use Budkit\Datastore\Database;
 use Budkit\Datastore\Model\DataModel;
 use Budkit\Dependency\Container;
 use Budkit\Protocol\Input;
+use Whoops\Example\Exception;
 
 /**
  * Authority group model
@@ -60,7 +61,7 @@ class Authority extends DataModel{
         $authorityId = $this->input->getInt("area-authority");
 
         //3. Synchronize and bind to table object
-        $table = $this->load->table("?authority_permissions");
+        $table = $this->database->getTable("?authority_permissions");
 
         $aData = array(
             "authority_id" => $authorityId,
@@ -73,13 +74,13 @@ class Authority extends DataModel{
         //All fields required;
         foreach ($aData as $k => $item) {
             if (empty($item)) {
-                $this->setError(_t("Please complete all permission fields; Provide a title and uri defining the area, a permission type and value"));
+                throw new Exception(_t("Please complete all permission fields; Provide a title and uri defining the area, a permission type and value"));
                 return false;
             }
         }
 
         if (!$table->bindData($aData)) {
-            throw new \Platform\Exception($table->getError());
+            throw new \Platform\Exception( $table->getError() );
             return false;
         }
 
@@ -104,10 +105,6 @@ class Authority extends DataModel{
      * @return boolean true on success 
      */
     public function store($data = "", $params = array()) {
-
-        //1. Load Helpers
-        $encrypt = \Library\Encrypt::getInstance();
-
 
         //2. Saniitize the data
         $authorityTitle = $this->input->getString("authority-title");

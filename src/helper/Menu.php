@@ -31,11 +31,28 @@ class Menu
 
     }
 
-
-    public function load($event)
+    public function getMenus()
     {
+        //1. Get all menu items for this menu id from the table
+        $statement = $this->database
+            ->select("g.*")
+            ->from("?menu_group AS g")
+            ->orderBy("g.menu_group_id", "ASC")->prepare();
 
-        $uniqueId = $event->getData("uid");
+        $results = $statement->execute();
+        $nodes = array();
+
+        while ($menu = $results->fetchArray()) {
+
+            $menu['children'] = $this->getMenuArray($menu['menu_group_uid'], false);
+            $nodes[] = $menu;
+
+        }
+        return $nodes;
+    }
+
+    public function getMenuArray($uniqueId, $hierarchical = true)
+    {
 
         if (empty($uniqueId)) return; //we need a unique Id to load the menu;
 
@@ -73,21 +90,111 @@ class Menu
                     $right = array();
                 }
             }
-            $menu['indent'] = sizeof($right);
-            $right[] = $menu['rgt'];
-
+            //
             $parent = $menu['menu_parent_id'];
             $id = $menu['menu_id'];
 
-            if (array_key_exists($parent, $nodes)) {
-                $nodes[$parent]["children"][$id] = $menu;
+            //
+            if (!empty($parent)){
+                $menu['indent'] = sizeof($right);
+
+            }
+            $right[] = $menu['rgt'];
+
+            if ($hierarchical) {
+                if (array_key_exists($parent, $nodes)) {
+                    $nodes[$parent]["children"][$id] = $menu;
+                } else {
+                    $nodes[$id] = $menu;
+                }
+
             } else {
-                $nodes[$id] = $menu;
+
+                $nodes = insertIntoArray($nodes, $parent, $id, $menu, true, true);
             }
         }
 
+        return $nodes;
+    }
+
+
+    public function load($event)
+    {
+        $uniqueId = $event->getData("uid");
+        $nodes = $this->getMenuArray($uniqueId);
 
         $event->setResult($nodes);
+
+    }
+
+    /**
+     * Saves or updates;
+     *
+     * @param array $data
+     * @return bool
+     */
+    public function saveMenu(array $data, $update = true)
+    {
+
+        $database = $this->database;
+        $data = array_map(function ($value) use ($database) {
+            return $database->quote($value);
+        }, $data);
+
+        if ($this->database->insert("?menu_group", $data, $update)) {
+            return true;
+        }
+
+        return false;
+    }
+
+
+    public function saveLink(array $data )
+    {
+
+        //3. Load and prepare the  Menu Table
+        $table = $this->database->getTable("?menu");
+        $database = $this->database;
+        $parentId   = intval($data['menu_parent_id']);
+
+//        $data = array_map(function ($value) use ($database) {
+//            return $database->quote($value);
+//        }, $data);
+
+
+        if (!$table->bindData($data)) {
+
+            throw new \Exception($table->getError());
+            return false;
+        }
+
+
+        //4. Are we adding a new row
+        if ($table->isNewRow() ) {
+
+            //Get the parent left and right value, to make space
+            if( !empty($parentId) ) {
+
+                $parent = $this->database->select("lft, rgt, menu_id")->from("?menu")->where("menu_id", (int)$table->getRowFieldValue('menu_parent_id'))->prepare()->execute()->fetchObject();
+
+                //$this->database->where(array("menu_parent_id" => $parent->menu_id) )->orWhere( array("menu_id"=> $parent->menu_id) )->where(array("lft >" => ($parent->rgt )))->update("?menu", array("lft" => "lft+2"));
+                $this->database->where(array("menu_parent_id" => $parent->menu_id) )->orWhere( array("menu_id"=> $parent->menu_id) )->where(array("rgt >=" => ($parent->rgt )))->update("?menu", array("rgt" => "rgt+2"));
+
+            }
+
+            $table->setRowFieldValue("lft", !empty($parentId) ? $parent->rgt : "1");
+            $table->setRowFieldValue("rgt",  !empty($parentId) ? $parent->rgt + 1 : "2");
+        }
+
+        //5. Save the table modifications
+        if (!$table->save()) {
+            return false;
+        }
+
+
+       // print_R($this->database); die;
+
+        return true;
 
     }
 
@@ -159,27 +266,27 @@ class Menu
             [
                 "menu_title" => "Information",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/timeline/filter/Information"
+                "menu_url" => "/member/timeline/Information"
             ],
             [
                 "menu_title" => "Urgent",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/timeline/filter/Urgent"
+                "menu_url" => "/member/timeline/Urgent"
             ],
             [
                 "menu_title" => "Task",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/timeline/filter/Task"
+                "menu_url" => "/member/timeline/Task"
             ],
             [
                 "menu_title" => "Done",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/timeline/filter/Done"
+                "menu_url" => "/member/timeline/Done"
             ],
             [
-                "menu_title" => "More filters",
+                "menu_title" => "More timelines",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/timeline/filters"
+                "menu_url" => "/member/timeline/list"
             ]
         ];
 
@@ -198,6 +305,7 @@ class Menu
         $event->setResult($menuItems);
     }
 
+
     public function hasPermission($event)
     {
 
@@ -214,6 +322,7 @@ class Menu
         if ($this->permission->isAllowed($item["menu_url"])) {
 
             $item["menu_viewable"] = true;
+
         }
 
         //Check whether the current menu is active;
