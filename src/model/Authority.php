@@ -54,11 +54,11 @@ class Authority extends DataModel{
 
 
         //2. Saniitize the data
-        $authorityAreaTitle = $this->input->getString("area-title");
-        $authorityAreaURI = $this->input->getString("area-uri");
-        $authorityAreaAction = $this->input->getString("area-action");
-        $authorityAreaPermission = $this->input->getString("area-permission");
-        $authorityId = $this->input->getInt("area-authority");
+        $authorityAreaTitle = $this->input->getString("area-title", "", "post");
+        $authorityAreaURI = $this->input->getString("area-uri", "", "post");
+        $authorityAreaAction = $this->input->getString("area-action", "", "post");
+        $authorityAreaPermission = $this->input->getString("area-permission", "", "post");
+        $authorityId = $this->input->getInt("area-authority", "", "post");
 
         //3. Synchronize and bind to table object
         $table = $this->database->getTable("?authority_permissions");
@@ -104,47 +104,25 @@ class Authority extends DataModel{
      * @param array $data
      * @return boolean true on success 
      */
-    public function store($data = "", $params = array()) {
+    public function store(Array $aData) {
 
         //2. Saniitize the data
-        $authorityTitle = $this->input->getString("authority-title");
-        $authorityParent = $this->input->getInt("authority-parent");
-        $authorityId = $this->input->getInt("authority-id");
 
-        $authorityDescription = $this->input->getString("authority-description");
-
-        $authorityName = strtoupper(str_replace(array(" ", "(", ")", "-", "&", "%", ",", "#"), "", $authorityTitle));
-
-//        $authorityAreaTitle         = $this->input->getArray("area-title", array() );
-//        $authorityAreaURI           = $this->input->getArray("area-uri", array() );
-//        $authorityAreaAction        = $this->input->getArray("area-action", array() );
-//        $authorityAreaPermission    = $this->input->getArray("area-permission", array() );
-//        
-//        $authorityAreaName          = strtoupper(str_replace(array(" ", "(", ")", "-", "&", "%", ",", "#"), "", $authorityAreaTitle));
-//        
-
-        $aData = array(
-            "authority_id" => $authorityId,
-            "authority_name" => $authorityName,
-            "authority_title" => $authorityTitle,
-            "authority_parent_id" => empty($authorityParent) ? 1 : (int) $authorityParent,
-            "authority_description" => $authorityDescription
-        );
 
         //3. Load and prepare the Authority Table
-        $table = $this->load->table("?authority");
+        $table = $this->database->getTable("?authority");
 
         if (!$table->bindData($aData)) {
             //print_R($table->getErrors());
-            throw new \Platform\Exception($table->getError());
+            throw new \Exception( $table->getError() );
             return false;
         }
 
         //4. Are we adding a new row
         if ($table->isNewRow()) {
 
-            if (empty($authorityName) || empty($authorityParent) || empty($authorityTitle)) {
-                $this->setError(_t('Every new authority must have a defined Title, and must be a subset of the public authority'));
+            if (empty($aData['authority_name']) || empty($aData['authority_parent_id']) || empty($aData['authority_title'])) {
+                throw new \Exception(_('Every new authority must have a defined Title, and must be a subset of the public authority'));
                 return false;
             }
 

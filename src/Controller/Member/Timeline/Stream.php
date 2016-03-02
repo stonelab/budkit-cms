@@ -4,7 +4,7 @@ namespace Budkit\Cms\Controller\Member\Timeline;
 
 use Budkit\Cms\Controller\Member;
 
-class Filters extends Member\Timeline {
+class Stream extends Member\Timeline {
 
 
     public function manage($format = 'html')
@@ -15,7 +15,15 @@ class Filters extends Member\Timeline {
     }
 
 
-    public function execute($username, $name, $format = 'html') {
+    public function mentions($format = 'html'){
+        //echo $type;
+
+        parent::index($format);
+    }
+
+
+
+    public function execute($name, $format = 'html') {
 
         //echo func_num_args();
         //echo "Reading {$name} in {$format} format {}";

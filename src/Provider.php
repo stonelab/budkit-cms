@@ -2,13 +2,12 @@
 
 namespace Budkit\Cms;
 
-use Budkit\Cms\Helper\Authorize\Permission;
 use Budkit\Application\Support\Service;
+use Budkit\Cms\Controller;
+use Budkit\Cms\Helper\Authorize\Permission;
+use Budkit\Cms\Helper\ErrorHandler;
 use Budkit\Cms\Model\User;
 use Budkit\Dependency\Container;
-use Budkit\Cms\Controller;
-use Budkit\Cms\Helper\ErrorHandler;
-use Budkit\Event\Event;
 use Route;
 
 
@@ -25,7 +24,7 @@ class Provider implements Service
 
     }
 
-    public static function  getPackageDir()
+    public static function getPackageDir()
     {
         return __DIR__ . "/";
     }
@@ -35,7 +34,7 @@ class Provider implements Service
         //Register a before dispatch method to check if
         //The system has been installed;
         $this->application->observer->attach([$this, "onAfterRouteMatch"], "Dispatcher.afterRouteMatch");
-        $this->application->observer->attach([$this, "onAfterDispatch"],"Dispatcher.afterDispatch");
+        $this->application->observer->attach([$this, "onAfterDispatch"], "Dispatcher.afterDispatch");
         $this->application->observer->attach([$this, "onCompileLayoutData"], "Layout.onCompile.scheme.data");
         $this->application->observer->attach([$this, "onUserSignUp"], "Member.onSignUp");
         $this->application->observer->attach([$this, "onPreparePostStory"], "Story.onPrepareStory");
@@ -55,13 +54,13 @@ class Provider implements Service
         $application = $this->application;
         $environment = $this->application->config->get("setup.environment.mode", 0);
 
-        if ((int)$environment > 2){ //0=developermet;1=test;2=production
+        if ((int)$environment > 2) { //0=developermet;1=test;2=production
             //$this->application->error->unregister();
-            $this->application->error->pushHandler( $application->createInstance( ErrorHandler::class ));
+            $this->application->error->pushHandler($application->createInstance(ErrorHandler::class));
             //$this->application->error->register();
         }
 
-       //print_R( $this->application->request->getAttributes() );
+        //print_R( $this->application->request->getAttributes() );
         //$this->view->appendLayoutSearchPath( Provider::getPackageDir()."layouts/");
 
         $this->instantiateHelpers();
@@ -70,10 +69,11 @@ class Provider implements Service
 
     }
 
-    public function registerRoutes(){
+    public function registerRoutes()
+    {
 
         //Sets global tokens
-        Route::setTokens(['format' => '(\.[^/]+)?', 'page'=>'(\d)']);
+        Route::setTokens(['format' => '(\.[^/]+)?', 'page' => '(\d)']);
 
 
         /*
@@ -85,7 +85,6 @@ class Provider implements Service
         |
         */
         Route::addGet("/", "homepage", Controller\Page::class);
-
 
 
         /*
@@ -114,18 +113,18 @@ class Provider implements Service
         | All member actions
         |
         */
-        Route::attach("/admin",  Controller\Admin::class, function($route){
+        Route::attach("/admin", Controller\Admin::class, function ($route) {
 
             $route->setTokens(array(
                 'format' => '(\.[^/]+)?',
-                'username'=>'(\@[a-zA-Z0-9-_]+)',
+                'username' => '(\@[a-zA-Z0-9-_]+)',
             ));
 
             //subroutes
             $route->addGet('{format}', 'index');
             $route->addGet('/dashboard{format}', 'index');
 
-            $route->attach('/pages', Controller\Admin\Pages::class, function($route){
+            $route->attach('/pages', Controller\Admin\Pages::class, function ($route) {
 
                 $route->addGet("{format}{/page}", "index");
 
@@ -141,19 +140,28 @@ class Provider implements Service
 
                 $route->setTokens(array(
                     'format' => '(\.[^/]+)?',
-                    'username'=>'(\@[a-zA-Z0-9-_]+)',
+                    'username' => '(\@[a-zA-Z0-9-_]+)',
                 ));
 
                 //$route->setAction(Controller\Admin\Settings\Permissions::class);
                 $route->addGet('s{format}', 'index');
                 $route->addGet('{/username}/moderate{format}', 'moderate');
 
+
+            });
+
+            $route->attach("/settings", Controller\Admin\Settings::class, function ($route) {
+
+                $route->setTokens(array(
+                    'format' => '(\.[^/]+)?'
+                ));
+
                 /*
-                |--------------------------------------------------------------------------
-                | Access Control settings
-                |--------------------------------------------------------------------------
-                */
-                $route->attach('s/permissions', Controller\Admin\Settings\Permissions::class, function ($route) {
+                 |--------------------------------------------------------------------------
+                 | Access Control settings
+                 |--------------------------------------------------------------------------
+                 */
+                $route->attach('/permissions', Controller\Admin\Settings\Permissions::class, function ($route) {
 
                     //$route->setAction(Controller\Admin\Settings\Permissions::class);
                     $route->addGet('{format}', 'index');
@@ -164,15 +172,6 @@ class Provider implements Service
 
 
                 });
-
-            });
-
-            $route->attach("/settings", Controller\Admin\Settings::class, function ($route) {
-
-                $route->setTokens(array(
-                    'format' => '(\.[^/]+)?'
-                ));
-
 
                 /*
                 |--------------------------------------------------------------------------
@@ -281,7 +280,7 @@ class Provider implements Service
 
                     //$route->setAction(Controller\Admin\Settings\Permissions::class);
                     $route->addGet('{format}', 'index');
-                    $route->addPost('/create{format}','create');
+                    $route->addPost('/create{format}', 'create');
                     $route->addPost('/add{format}', 'add');
                     $route->addPatch('/update{/group}', 'update');
                     $route->add('/delete{format}{/group}', 'delete');
@@ -305,8 +304,6 @@ class Provider implements Service
             });
 
         });
-
-
 
 
         /*
@@ -335,7 +332,7 @@ class Provider implements Service
         |       object is created, and the return data will contain the file URI, and the file URL
         |
         */
-        Route::attach("/file", Controller\File::class, function($route){
+        Route::attach("/file", Controller\File::class, function ($route) {
 
             $route->setTokens(array(
                 'uri' => '(\d+[a-zA-Z0-9]{9})?', //category id
@@ -361,10 +358,9 @@ class Provider implements Service
 
         Route::attach("/member", Controller\Member::class, function ($route) {
             $route->setTokens(array(
-                'username'=>'(\@[a-zA-Z0-9-_]+)',
+                'username' => '(\@[a-zA-Z0-9-_]+)',
                 'format' => '(\.[^/]+)?',
-                'key'=> '.*',
-                'id' => '(\d+)[a-zA-Z0-9-_]+?', //post I'ds must start with a number
+                'key' => '.*',
                 //'name' => '([A-Z][a-z]+)'
             ));
 
@@ -375,49 +371,53 @@ class Provider implements Service
             $route->add('/signin/verify/{key}', 'verifyEmail');
 
             //Member settings
-            $route->attach("/settings", Controller\Member\Settings::class, function($route){
+            $route->attach("/settings", Controller\Member\Settings::class, function ($route) {
                 $route->addGet("{/group}{format}", 'index');
                 $route->addPost("/update", 'update');
             });
 
+            $route->attach("/stream", Controller\Member\Timeline\Stream::class, function ($route) {
+
+                $route->setTokens(array(
+                    'format' => '(\.[^/]+)?',
+                    //'name' => '([A-Z][a-z])+?'
+                ));
+                $route->add('/mentions{format}', 'mentions');
+                $route->add('/list{format}', "manage");
+                $route->add('{/name}{format}', "execute");
+                $route->add('{/name}/edit{format}', "edit");
+                $route->addDelete('{/name}/delete{format}', "delete");
+
+            });
 
             //Member settings
-            $route->attach("{/username}", Controller\Member\Profile::class, function($route){
+            $route->attach("{/username}", Controller\Member\Profile::class, function ($route) {
 
                 $route->addGet("{format}", 'index');
                 $route->addPost('/create{format}', 'add'); //user signup;
                 $route->add('/edit{format}', "edit"); //intended for console management
                 $route->addDelete('/delete{format}', "delete"); //intended for console management
 
-                $route->attach("/timeline", Controller\Member\Timeline::class, function($route){
+                $route->attach("/timeline", Controller\Member\Timeline::class, function ($route) {
 
+                    $route->setTokens(array(
+                        'format' => '(\.[^/]+)?',
+                        'id' => '(\d+)[a-zA-Z0-9-_]+?', //post I'ds must start with a number
+                        'file'=> '(photos|text|audio|videos)'
+                    ));
 
-                    $route->attach("{/name}", Controller\Member\Timeline\Filters::class, function($route){
-
-                        $route->addGet('{format}', "index");
-                        $route->add("/list", 'manage'); //list all filters
-
-
-                        $route->add('/edit{format}', "edit");
-                        $route->addDelete('/delete{format}', "delete");
-
-                    });
 
                     $route->addGet("{format}", 'index');
                     //create a new timelne
                     $route->add('/new', 'add');
-
                     $route->addPost('/put', 'put');
+                    $route->add('/{file}{format}', null, Controller\Member\Timeline\Attachments::class );
 
-                    //will need a seperate subroot for ids
+                    //will need a seperat subroot for ids
                     $route->addGet('/{id}{format}', "read");
-                    //$route->add('/map{/id}{format}', "map");
+                    //$route->add("/list", 'manage', Controller\Member\Timeline\Stream::class); //list all filters
 
-
-
-
-
-                }); //a collection of streams;
+                });
 
             });
         });
@@ -425,7 +425,8 @@ class Provider implements Service
     }
 
 
-    public function instantiateHelpers(){
+    public function instantiateHelpers()
+    {
 
         /*
         |--------------------------------------------------------------------------
@@ -436,7 +437,7 @@ class Provider implements Service
         |
         */
         $this->application->shareInstance(
-            $this->application->createInstance( Helper\Mailer::class), 'mailer');
+            $this->application->createInstance(Helper\Mailer::class), 'mailer');
 
     }
 
@@ -527,15 +528,16 @@ class Provider implements Service
              |
              */
             $user = $this->application->createInstance(User::class);
-            $data = $user->getCurrentUser(["user_first_name","user_last_name","user_name_id","user_photo"], false);
+            $data = $user->getCurrentUser(["user_first_name", "user_last_name", "user_name_id", "user_photo"], false);
 
             //Add some more global vars
-            $response->setData("session", ["user"=>$data->getPropertyData()]);
+            $response->setData("session", ["user" => $data->getPropertyData()]);
         }
     }
 
 
-    public function onAfterDispatch(&$event){
+    public function onAfterDispatch(&$event)
+    {
 
         //Do something after route is disapteched;
 
@@ -546,13 +548,14 @@ class Provider implements Service
      *
      * @param $event
      */
-    public function onUserSignUp($event){
+    public function onUserSignUp($event)
+    {
 
         $user = $event->getData();
 
-        if( $user->getPropertyValue("user_verification") !== null ) {
+        if ($user->getPropertyValue("user_verification") !== null) {
 
-            $member = $this->application->createInstance( Controller\Member::class );
+            $member = $this->application->createInstance(Controller\Member::class);
 
             $member->resendVerificationEmail(
                 $user->getPropertyValue("user_verification"),
@@ -572,7 +575,7 @@ class Provider implements Service
         if (strtolower($scheme) == "config") {
 
             //if the scheme is config://get.config.path, then load the config data;
-            return $event->setResult( $this->application->config->get($path) );
+            return $event->setResult($this->application->config->get($path));
         }
 
     }
@@ -597,25 +600,26 @@ class Provider implements Service
 //    }
 
 
-    public function onPreparePostStory($event){
+    public function onPreparePostStory($event)
+    {
 
-        $story  = $event->getData();
-        $graph  = $event->getResult();
+        $story = $event->getData();
+        $graph = $event->getResult();
 
         //print_R($story);
 
         //if this is just a posted story;
-        if($story->getName() == "posted"){
+        if ($story->getName() == "posted") {
 
-            $story->setData( $story->getTail()->getData() );
+            $story->setData($story->getTail()->getData());
 
             //The stream_item_type key is super important
             //Without it the stream has no idea of knowing how to display its content
             //and the edge is actually removed from the stream;
             $story->addData("story_type", "posts/post-standard");
-       }
+        }
 
-       // print_R($graph);
+        // print_R($graph);
     }
 
     public function definition()

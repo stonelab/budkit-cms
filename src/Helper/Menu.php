@@ -254,11 +254,30 @@ class Menu
 
 
         $menuId = $event->getData("uid");
+        $menuItems = $event->getResult();
+
+
+        if($menuId == "mediamenu"){
+
+            array_unshift($menuItems, [
+                    "menu_title" => "Everything",
+                    "menu_classes" => "link-label",
+                    "menu_url" => "/member/timeline"
+                ],
+                [
+                    "menu_title" => "@ Mentions",
+                    "menu_classes" => "link-label",
+                    "menu_url" => "/member/stream/mentions"
+                ]
+            );
+
+            return $event->setResult($menuItems);
+        }
 
         //We only process the usermenu;
         if ($menuId !== "dashboardmenu") return;
 
-        $menuItems = $event->getResult();
+
         //$menuUser = $this->user->getCurrentUser();
 
         //will need to load this from the DB!
@@ -266,27 +285,27 @@ class Menu
             [
                 "menu_title" => "Information",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/timeline/Information"
+                "menu_url" => "/member/stream/Information"
             ],
             [
                 "menu_title" => "Urgent",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/timeline/Urgent"
+                "menu_url" => "/member/stream/Urgent"
             ],
             [
                 "menu_title" => "Task",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/timeline/Task"
+                "menu_url" => "/member/stream/Task"
             ],
             [
                 "menu_title" => "Done",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/timeline/Done"
+                "menu_url" => "/member/stream/Done"
             ],
             [
-                "menu_title" => "More timelines",
-                "menu_classes" => "link-label",
-                "menu_url" => "/member/timeline/list"
+                "menu_title" => "More...",
+                "menu_classes" => "link-label modal-response",
+                "menu_url" => "/member/stream/list"
             ]
         ];
 

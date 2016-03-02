@@ -61,17 +61,18 @@ final class Schema{
                 `authority_description` varchar(255) DEFAULT NULL,
                 `lft` int(11) NOT NULL,
                 `rgt` int(11) NOT NULL,
+                `authority_is_core` int(2) NOT NULL DEFAULT 0 COMMENT '',
                 PRIMARY KEY (`authority_id`),
                 UNIQUE KEY `authority_name_UNIQUE` (`authority_name`)
             ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=5 ;"
         );
         //Dumping data for table authority?
         $this->database->query(
-            "INSERT INTO `?authority` (`authority_id`, `authority_title`, `authority_parent_id`, `authority_name`, `authority_description`, `lft`, `rgt`) VALUES
-            (1, 'PUBLIC', 0, 'PUBLIC', 'All unregistered nodes, users and applications', 1, 8),
-            (2, 'Registered Users', 1, 'REGISTEREDUSERS', 'All registered nodes with a known unique identifier', 2, 7),
-            (3, 'Moderators', 2, 'MODERATORS', 'System moderators, Users allowed to manage user generated import', 3, 6),
-            (4, 'Super Administrators', 3, 'MASTERADMINISTRATORS', 'Special users with awesome powers', 4, 5);"
+            "INSERT INTO `?authority` (`authority_id`, `authority_title`, `authority_parent_id`, `authority_name`, `authority_description`, `lft`, `rgt`,`authority_is_core`) VALUES
+            (1, 'PUBLIC', 0, 'PUBLIC', 'All unregistered nodes, users and applications', 1, 8, 1),
+            (2, 'Members', 1, 'MEMBERS', 'All registered nodes with a known unique identifier', 2, 7, 1),
+            (3, 'Moderators', 2, 'MODERATORS', 'System moderators, Users allowed to manage user generated import', 3, 6, 1),
+            (4, 'Master Administrators', 3, 'MASTERADMINISTRATORS', 'Special users with awesome powers', 4, 5, 1);"
         );
     }
 
@@ -195,25 +196,25 @@ final class Schema{
         //               (73, 0, 'Inbox', '/member/timeline', '', 0, 2, 'link', NULL, 1, 2, 1),
         $this->database->query(
             "INSERT INTO `?menu` (`menu_id`, `menu_parent_id`, `menu_title`, `menu_url`, `menu_classes`, `menu_order`, `menu_group_id`, `menu_type`, `menu_callback`, `lft`, `rgt`, `menu_iscore`) VALUES
-                (85, 0, 'Photos', '/photo/gallery', NULL, 0, 1, 'link', NULL, 3, 12, 1),
-                (86, 0, 'Audio', '/audio/gallery', NULL, 0, 1, 'link', NULL, 4, 11, 1),
-                (87, 0, 'Videos', '/video/gallery', NULL, 0, 1, 'link', NULL, 5, 10, 1),
-                (88, 0, 'Text', '/text/gallery', '', 23, 1, 'link', '', 6, 9, 1),
-                (74, 0, 'Settings', '/member/settings', NULL, 0, 2, 'link', NULL, 3, 4, 1),
-                (75, 0, 'Timeline', '/member/timeline', NULL, 0, 3, 'link', NULL, 2, 3, 1),
-                (25, 80, 'Maintenance', '/admin/settings/maintenance', '', 20, 3, 'link', '', 12, 13, 1),
-                (30, 80, 'Emails', '/admin/settings/emails', '', 20, 3, 'link', '', 10, 11, 1),
-                (32, 80, 'Localization', '/admin/settings/localization', '', 20, 3, 'link', '', 8, 9, 1),
-                (33, 80, 'Input', '/admin/settings/input', '', 20, 3, 'link', '', 6, 7, 1),
-                (34, 80, 'Server', '/admin/settings/server', '', 20, 3, 'link', '', 4, 5, 1),
-                (56, 0, 'Dashboard', '/admin/dashboard', NULL, 0, 3, 'link', NULL, 1, 2, 1),
-                (80, 0, 'Configuration', '/admin/settings/configuration', '', 20, 3, 'link', '', 3, 16, 1),
-                (98, 0, 'Appearance', '/admin/settings/appearance', NULL, 0, 3, 'link', NULL, 17, 18, 1),
-                (99, 0, 'Pages', '/admin/pages', NULL , 0, 3, 'link', NULL, 3, 4, 1),
-                (101,0,	'Navigation', '/admin/settings/navigation',	NULL,	0,	3,	'link',	NULL,	17,	18,	1),
-                (102,0,	'Extensions', '/admin/settings/extensions',	NULL,	0,	3,	'link',	NULL,	17,	18,	1),
-                (103,0,	'Members', '/admin/members',	NULL,	0,	3,	'link',	NULL,	17,	20,	1),
-                (104, 80, 'Permissions', '/admin/members/permissions', '', 0, 3, 'link', '', 18, 19, 1);"
+                (22, 0, 'Dashboard', '/admin/dashboard', NULL, 1, 3, 'link', NULL, 1, 2, 1),
+                (23, 0, 'Timeline', '/member/timeline', NULL, 2, 3, 'link', NULL, 3, 4, 1),
+                (24, 0, 'Configuration', '/admin/settings/configuration', '', 3, 3, 'link', '', 5, 23, 1),
+                (25, 24, 'Maintenance', '/admin/settings/maintenance', '', 4, 3, 'link', '', 6, 7, 1),
+                (30, 24, 'Emails', '/admin/settings/emails', '', 5, 3, 'link', '', 8, 9, 1),
+                (32, 24, 'Localization', '/admin/settings/localization', '', 6, 3, 'link', '', 10, 11, 1),
+                (33, 24, 'Input', '/admin/settings/input', '', 7, 3, 'link', '', 12, 13, 1),
+                (34, 24, 'Server', '/admin/settings/server', '', 8, 3, 'link', '', 14, 15, 1),
+                (35, 24, 'Navigation', '/admin/settings/navigation', NULL, 9, 3, 'link', NULL, 16, 17, 1),
+                (36, 24, 'Extensions', '/admin/settings/extensions', NULL, 10, 3, 'link', NULL, 18, 19, 1),
+                (37, 24, 'Appearance', '/admin/settings/appearance', NULL, 11, 3, 'link', NULL, 20, 21, 1),
+                (38, 24, 'Permissions', '/admin/settings/permissions', NULL, 12, 3, 'link', NULL, 22, 23, 1),
+                (39, 0, 'Pages', '/admin/pages', NULL, 13, 3, 'link', NULL, 24, 25, 1),
+                (40, 0, 'Members', '/admin/members', NULL, 14, 3, 'link', NULL, 26, 27, 1),
+                (41, 0, 'Settings', '/member/settings', NULL, 1, 2, 'link', NULL, 1, 2, 1),
+                (42, 0, 'Photos', '/member/timeline/photos', NULL, 1, 1, 'link', NULL, 1, 2, 1),
+                (43, 0, 'Audio', '/member/timeline/audio', NULL, 2, 1, 'link', NULL, 3, 4, 1),
+                (44, 0, 'Videos', '/member/timeline/video', NULL, 3, 1, 'link', NULL, 5, 6, 1),
+                (45, 0, 'Text', '/member/timeline/text', '', 4, 1, 'link', '', 7, 8, 1);"
         );
 
         //If a menu group is deleted, remove all the menu items
