@@ -431,7 +431,7 @@ class Attachment extends Content {
     final public function place($fileId="", $filePath="", $contentType="image/png", $modifiers=[]){
 
         $attachments    = $this;
-        $fullPath       = empty($filePath) ? PATH_DATA.$this->config->get("content.posts.figure-placeholder", "") : $filePath;
+        $fullPath       = empty($filePath) ? PATH_PUBLIC.$this->config->get("content.posts.figure-placeholder", "") : $filePath;
 
         $browsable = array("image/jpg", "image/jpeg", "image/png", "image/gif");
 
