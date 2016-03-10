@@ -96,6 +96,9 @@ class Controller extends RouteController {
         //Extend the user menu
         $this->observer->attach([$menu, "extendDashboardMenu"], "Layout.onCompile.menu.data");
 
+        //Extend the media menu
+        $this->observer->attach([$menu, "extendMediaMenu"], "Layout.onCompile.menu.data");
+
         //Check has permission
         $this->observer->attach([$menu, "hasPermission"], "Layout.beforeRender.menu.item");
 

@@ -359,8 +359,8 @@ class Provider implements Service
         Route::attach("/member", Controller\Member::class, function ($route) {
             $route->setTokens(array(
                 'username' => '(\@[a-zA-Z0-9-_]+)',
-                'format' => '(\.[^/]+)?',
                 'key' => '.*',
+                'format' => '(\.[^/]+)?'
                 //'name' => '([A-Z][a-z]+)'
             ));
 
@@ -401,9 +401,10 @@ class Provider implements Service
                 $route->attach("/timeline", Controller\Member\Timeline::class, function ($route) {
 
                     $route->setTokens(array(
-                        'format' => '(\.[^/]+)?',
+                        'file'=> '(photos|text|audio|videos)',
                         'id' => '(\d+)[a-zA-Z0-9-_]+?', //post I'ds must start with a number
-                        'file'=> '(photos|text|audio|videos)'
+                        'format' => '(\.[^/]+)?',
+
                     ));
 
 
@@ -411,11 +412,12 @@ class Provider implements Service
                     //create a new timelne
                     $route->add('/new', 'add');
                     $route->addPost('/put', 'put');
-                    $route->add('/{file}{format}', null, Controller\Member\Timeline\Attachments::class );
-
                     //will need a seperat subroot for ids
                     $route->addGet('/{id}{format}', "read");
                     //$route->add("/list", 'manage', Controller\Member\Timeline\Stream::class); //list all filters
+
+                    $route->add('/{file}{format}', null, Controller\Member\Timeline\Attachments::class );
+
 
                 });
 

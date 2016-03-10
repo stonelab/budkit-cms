@@ -3,11 +3,15 @@
 namespace Budkit\Cms\Controller;
 
 use Budkit\Cms\Helper\Controller;
+use Budkit\Cms\Helper\ErrorNotFoundException;
 use Budkit\Cms\Model\Media\Content;
+use Budkit\Cms\Model\Media\MediaLink;
 use Budkit\Cms\Model\Story;
+use Budkit\Event\Event;
 use Budkit\Helper\Date;
 use Budkit\Helper\Time;
 use ArrayObject;
+use Parsedown;
 
 class Post extends Controller {
 
@@ -26,25 +30,99 @@ class Post extends Controller {
 
     }
 
-
-    public function read($id, $format = 'html') {
+    public function read($username = null, $id,  $format = 'html') {
 
         //We are going to add a single Item;
         //$this->index();
 
-        //Change the title
-        $title = "Reading {$id} in {$format} format";
+//        $args = func_get_args();
+//
+//        $route = $this->application->router->getMatchedRoute();
+//
+//        print_R($args);
+//
+//        print_R($route);
+//
+//        echo $format;
+//
+//        die;
 
-        $this->view->setData("title", $title );
+        if (empty($id)){
+            //Checks for a homepage in the settings
+            throw new ErrorNotFoundException('The requested post does not exists');
+            return false;
+        }
 
-        //add the single stream
+            //2. load the page;
+            $post = $this->application->createInstance( Content::class );
+            $post = $post->defineValueGroup("media");
+            $post = $post->getMedia(null, $id);
+
+            //throw a not found exception if the page id does not exists
+            if (!isset($post["items"]) || count($post["items"]) < 1) {
+                throw new ErrorNotFoundException("The requested page does not exist");
+                return false;
+            }
+
+            $read = reset($post["items"]); //first element;
+
+            //If this is the homepage, lets add some more data;
+            //set homepage data;
+            $onReadPost = new Event('Post.onPost', $this);
+            $onReadPost->setResult($read);
+            $this->observer->trigger( $onReadPost ); //Parse the Node;
+
+            $read = $onReadPost->getResult();
+
+            //lets fix the content;
+            if(isset($read["media_content"])) {
+
+
+                $read["media_content"] = Parsedown::instance()
+                    // ->setBreaksEnabled(true) # enables automatic line breaks
+                    ->text($read["media_content"]);
+
+            }
+
+            // 1. load the page;
+            $template =  ( isset($read["media_template"]) && !empty($read["media_template"]) ) ? $read["media_template"] : null; //determine page template from
+
+
+            //show a page or load custom page template
+            $this->view->setData("title", (isset($read["media_template"]) && !empty($read["media_title"]) ? $read["media_title"] : Time::difference( strtotime($read['object_created_on']) )  ));
+            $this->view->setData("reading", $read);
+
+
+        //If we are using a custom template;
+        if (!empty($template)) {
+
+            //Trigger Layout.onLoad.page.template.definitions
+            $templateDefinitions = [];
+            $loadPostTemplates = new Event('Layout.onLoad.post.template.definitions', $this);
+            $loadPostTemplates->setResult($templateDefinitions);
+
+            $this->observer->trigger($loadPostTemplates);
+
+            $definedTemplates = $loadPostTemplates->getResult();
+
+            foreach ($definedTemplates as $_ => $def) {
+                //add the look up paths to the layout so the view can be found
+                if(!isset($def["name"]) || !isset($def["source"])) continue;
+                if($def["name"] === $template) $this->view->appendLayoutSearchPath($def["source"]);
+            }
+        }
+
+
+        $layout = empty($template) ? "posts/post-single" :  $template;
+
 
         //$this->view->setData("object_uri", $uri);
         $this->view->setData("csrftoken", $this->application->session->getCSRFToken());
-        $this->view->addToBlock("main", 'import://posts/post-single');
+        $this->view->addToBlock("main", 'import://'.$layout);
         $this->view->setLayout('posts/post-dashboard');
 
     }
+
 
     public function edit($id = 'new', $format = 'html') {
         echo "Editing {$id} in {$format} format";

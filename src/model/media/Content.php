@@ -104,7 +104,6 @@ class Content extends Entity {
         $objects = $this->getMediaObjectsList($objectType, $objectURI, $objectId)->fetchAll();
         $items = array();
 
-
         //Parse the mediacollections;
         foreach ($objects as $i=>$object) {
             $object = $this->getOwner($object, $object['media_owner']);
@@ -264,7 +263,7 @@ class Content extends Entity {
 
         $actorImage = new MediaLink();
         $actorImageEntity = $this->container->createInstance( Attachment::class )->loadObjectByURI($object['user_photo']);
-        $actorImageURL = !empty($object['user_photo']) ? "/system/object/{$object['user_photo']}/resize/60/60" : "http://placeskull.com/50/50/999999";
+        $actorImageURL = !empty($object['user_photo']) ? "/file/{$object['user_photo']}/60/60" : "http://placeskull.com/50/50/999999";
         $actorImage::set("type", $actorImageEntity->getPropertyValue("attachment_type"));
         $actorImage::set("url", $actorImageURL);
         $actorImage::set("height", 60);

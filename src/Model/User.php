@@ -181,7 +181,6 @@ class User extends Entity implements AuthenticationUser
         $authorities = $this->getUserAuthorities();
         $authorityGroup = null;
 
-
         foreach ($authorities as $group) {
             //1.The easiest thing to do is check if we have the authority group defined
             if ($group['authority_id'] == $groupId) {
@@ -201,8 +200,6 @@ class User extends Entity implements AuthenticationUser
                 }
             }
         }
-
-        die;
 
         return false;
 

@@ -325,6 +325,46 @@ class Menu
     }
 
 
+    public function extendMediaMenu($event){
+
+
+        $menuId = $event->getData("uid");
+        $menuItems = $event->getResult();
+
+
+        if (preg_match("/^mediamenu:(\\d+[a-zA-Z0-9]{9})/", $menuId, $matches)) {
+
+            $postid = $matches[1];
+
+            $menuItems = array_merge($menuItems, [
+
+                    array(
+                        "menu_title" => "Report",
+                        "menu_url" => "/post/{$postid}/report",
+                    ),
+                    array(
+                        "menu_title" => "Label",
+                        "menu_url" => "/post/{$postid}/label",
+                        "menu_classes" => "modal-response"
+                    ),
+                    array(
+                        "menu_title" => "Edit",
+                        "menu_url" => "/post/{$postid}/data",
+                    ),
+                    array(
+                        "menu_title" => "Delete",
+                        "menu_url"  => "/post/{$postid}/delete",
+                        "menu_classes" => "color-alizarin"
+                    )
+                ]
+            );
+
+
+            return $event->setResult($menuItems);
+
+        }
+
+    }
     public function hasPermission($event)
     {
 
