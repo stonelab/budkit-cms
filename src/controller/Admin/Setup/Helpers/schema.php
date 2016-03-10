@@ -213,7 +213,7 @@ final class Schema{
                 (41, 0, 'Settings', '/member/settings', NULL, 1, 2, 'link', NULL, 1, 2, 1),
                 (42, 0, 'Photos', '/member/timeline/photos', NULL, 1, 1, 'link', NULL, 1, 2, 1),
                 (43, 0, 'Audio', '/member/timeline/audio', NULL, 2, 1, 'link', NULL, 3, 4, 1),
-                (44, 0, 'Videos', '/member/timeline/video', NULL, 3, 1, 'link', NULL, 5, 6, 1),
+                (44, 0, 'Videos', '/member/timeline/videos', NULL, 3, 1, 'link', NULL, 5, 6, 1),
                 (45, 0, 'Text', '/member/timeline/text', '', 4, 1, 'link', '', 7, 8, 1);"
         );
 

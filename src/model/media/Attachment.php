@@ -431,7 +431,9 @@ class Attachment extends Content {
     final public function place($fileId="", $filePath="", $contentType="image/png", $modifiers=[]){
 
         $attachments    = $this;
-        $fullPath       = empty($filePath) ? PATH_PUBLIC.$this->config->get("content.posts.figure-placeholder", "") : $filePath;
+        $file           = $this->container->file;
+        $placeholder    = PATH_PUBLIC.$this->config->get("content.posts.figure-placeholder", "") ;
+        $fullPath       = empty($filePath) ? $placeholder : $filePath;
 
         $browsable = array("image/jpg", "image/jpeg", "image/png", "image/gif");
 
@@ -444,6 +446,9 @@ class Attachment extends Content {
                 $fullPath =  $this->$modifier($fullPath, $params);
             }
         endif;
+
+        $fullPath = !$file->exists($filePath) ? $placeholder : $fullPath;
+
 
         //Attempt to determine the files mimetype
         $ftype = !empty($contentType) ? $contentType : $this->container->file->getMimeType( $fullPath );
