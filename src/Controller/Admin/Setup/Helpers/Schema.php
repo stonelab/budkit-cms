@@ -150,7 +150,6 @@ final class Schema{
                 (7,	1,	'^/search(/[a-z0-9-]*)*',	'allow',	'execute',	'Search'),
                 (8,	4,	'^/repository(/[a-z0-9-]*)*',	'allow',	'special',	'Directory'),
                 (9,	2,	'^/notification(/[a-z0-9-]*)*',	'allow',	'execute',	'Messages'),
-                (10,	1,	'^/post(/[a-z0-9-]*)*',	'allow',	'view',	'Content'),
                 (11,	1,	'^/event(/[a-z0-9-]*)*',	'allow',	'view',	'Content'),
                 (12,	1,	'^/stream(/[a-z0-9-]*)*',	'allow',	'view',	'Content'),
                 (13,	1,	'^/group(/[a-z0-9-]*)*',	'allow',	'view',	'Content'),
@@ -210,11 +209,7 @@ final class Schema{
                 (38, 24, 'Permissions', '/admin/settings/permissions', NULL, 12, 3, 'link', NULL, 22, 23, 1),
                 (39, 0, 'Pages', '/admin/pages', NULL, 13, 3, 'link', NULL, 24, 25, 1),
                 (40, 0, 'Members', '/admin/members', NULL, 14, 3, 'link', NULL, 26, 27, 1),
-                (41, 0, 'Settings', '/member/settings', NULL, 1, 2, 'link', NULL, 1, 2, 1),
-                (42, 0, 'Photos', '/member/timeline/photos', NULL, 1, 1, 'link', NULL, 1, 2, 1),
-                (43, 0, 'Audio', '/member/timeline/audio', NULL, 2, 1, 'link', NULL, 3, 4, 1),
-                (44, 0, 'Videos', '/member/timeline/videos', NULL, 3, 1, 'link', NULL, 5, 6, 1),
-                (45, 0, 'Text', '/member/timeline/text', '', 4, 1, 'link', '', 7, 8, 1);"
+                (41, 0, 'Settings', '/member/settings', NULL, 1, 2, 'link', NULL, 1, 2, 1);"
         );
 
         //If a menu group is deleted, remove all the menu items

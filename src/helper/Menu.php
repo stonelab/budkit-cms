@@ -214,7 +214,7 @@ class Menu
             //will need to load this from the DB!
             $labels = [
                 [
-                    "menu_title" => "About you",
+                    "menu_title" => "Profile",
                     "menu_url" => "/member/settings/profile"
                 ],
                 [
@@ -267,7 +267,7 @@ class Menu
                 [
                     "menu_title" => "@ Mentions",
                     "menu_classes" => "link-label",
-                    "menu_url" => "/member/stream/mentions"
+                    "menu_url" => "/member/timeline/mentions"
                 ]
             );
 
@@ -283,29 +283,29 @@ class Menu
         //will need to load this from the DB!
         $labels = [
             [
-                "menu_title" => "Information",
+                "menu_title" => "information",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/stream/Information"
+                "menu_url" => "/member/timeline/information"
             ],
             [
-                "menu_title" => "Urgent",
+                "menu_title" => "urgent",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/stream/Urgent"
+                "menu_url" => "/member/timeline/urgent"
             ],
             [
-                "menu_title" => "Task",
+                "menu_title" => "task",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/stream/Task"
+                "menu_url" => "/member/timeline/task"
             ],
             [
-                "menu_title" => "Done",
+                "menu_title" => "done",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/stream/Done"
+                "menu_url" => "/member/timeline/done"
             ],
             [
-                "menu_title" => "More...",
+                "menu_title" => "All labels",
                 "menu_classes" => "link-label modal-response",
-                "menu_url" => "/member/stream/list"
+                "menu_url" => "/member/timeline/list"
             ]
         ];
 

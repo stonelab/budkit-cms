@@ -30,7 +30,7 @@ class Post extends Controller {
 
     }
 
-    public function read($username = null, $id,  $format = 'html') {
+    public function read($id,  $format = 'html') {
 
         //We are going to add a single Item;
         //$this->index();
