@@ -32,13 +32,12 @@ final class Schema{
               `tax_id` INT(11) NOT NULL AUTO_INCREMENT ,
               `tax_parent_id` INT(11) NOT NULL DEFAULT '0' ,
               `tax_name` VARCHAR(45) NOT NULL ,
-              `tax_poster` VARCHAR(10) NOT NULL ,
-              `tax_title` VARCHAR(45) NOT NULL ,
+              `tax_owner` VARCHAR(10) NOT NULL ,
               `tax_iscore` TINYINT(1) NOT NULL DEFAULT '0' ,
-              `tax_description` VARCHAR(200) NULL ,
+              `tax_bookmarked` TINYINT(1) NOT NULL DEFAULT '0',
               `tax_order` INT(11) NOT NULL DEFAULT '0' ,
-              `lft` INT(11) NOT NULL ,
-              `rgt` INT(11) NOT NULL ,
+              `lft` INT(11) NOT NULL DEFAULT '1',
+              `rgt` INT(11) NOT NULL DEFAULT '2',
               PRIMARY KEY (`tax_id`),
               UNIQUE KEY `tax_name_UNIQUE` (`tax_name`)
               )ENGINE=InnoDB DEFAULT CHARACTER SET = utf8 AUTO_INCREMENT=2;"
@@ -401,6 +400,31 @@ final class Schema{
 //            ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;"
 //        );
 //    }
+
+    /**
+     * Creates the object authority table
+     * @return void
+     */
+    private function createObjectsTaxonomyTable() {
+        $this->database->query("DROP TABLE IF EXISTS `?objects_taxonomy`;");
+        $this->database->query(
+            "CREATE TABLE IF NOT EXISTS `?objects_taxonomy` (
+                `object_tax_id` int(11) NOT NULL AUTO_INCREMENT,
+                `tax_id` int(11) NOT NULL,
+                `object_id` int(11) NOT NULL,
+                PRIMARY KEY (`object_tax_id`),
+                UNIQUE KEY `object_tax` (`tax_id`,`object_id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8;"
+        );
+
+        //If object is deleted, remove its authority from this table
+        //If authority group is deleted, remove all objects that are part of this authority;
+        $this->database->query(
+            "ALTER TABLE `?objects_taxonomy`
+                    ADD CONSTRAINT `object_id_taxonomy_fk_1` FOREIGN KEY (`object_id`) REFERENCES `?objects` (`object_id`) ON DELETE CASCADE,
+                    ADD CONSTRAINT `object_id_taxonomy_fk_2` FOREIGN KEY (`tax_id`) REFERENCES `?taxonomy` (`tax_id`) ON DELETE CASCADE;"
+        );
+    }
 
     /**
      * Creates the object authority table
@@ -775,6 +799,7 @@ final class Schema{
         $this->createObjectsTable();
         $this->createGroupsTable();
         $this->createObjectsAuthorityTable();
+        $this->createObjectsTaxonomyTable();
         $this->createObjectsGroupTable();
         $this->createObjectsEdgesTable();
         $this->createPropertiesTable();
