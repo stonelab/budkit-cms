@@ -344,7 +344,7 @@ class Menu
 
             //If this is a post!
             if(!empty($post->getObjectType())) {
-                
+
                 $actions = [
 
                     array(
