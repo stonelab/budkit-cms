@@ -98,10 +98,12 @@ class Story
      * Returns a story graph;
      *
      * @param null $verb
-     * @param bool $direction
-     * @return Graph
+     * @param bool $directed
+     * @param null $condition
+     * @return bool|Graph
+     * @throws Exception
      */
-    public function get($verb = null, $directed = false)
+    public function get($verb = null, $directed = false, $conditional = null)
     {
         $this->graph = ($this->graph) ? new Graph : $this->getGraph();
 
@@ -118,7 +120,9 @@ class Story
               ) INTO @sql
             FROM {$this->database->replacePrefix("`?stories`")} AS d;"
         );
-        $this->database->query("SET @sql = CONCAT('SELECT ', IFNULL( CONCAT(@sql, ','), '' ) ,' d.*  FROM {$this->database->replacePrefix('`?stories`')} AS d GROUP BY d.object_id ORDER BY d.object_created_on DESC');");
+
+
+        $this->database->query("SET @sql = CONCAT('SELECT ', IFNULL( CONCAT(@sql, ','), '' ) ,' d.*  FROM {$this->database->replacePrefix('`?stories`')} AS d {$conditional} GROUP BY d.object_id ORDER BY d.object_created_on DESC');");
         $this->database->query("PREPARE stmt FROM @sql;");
 
         if (!$this->database->commitTransaction()) {
@@ -128,6 +132,9 @@ class Story
 
         $results = $this->database->prepare("EXECUTE stmt;")->execute();
         $last = null;
+
+
+        //print_R($this->database);
 
         while($story = $results->fetchAssoc()){
 
@@ -227,6 +234,43 @@ class Story
 
         return $this->graph;
     }
+
+
+    /**
+     * Returns a stories graph containing stories of a particular taxon
+     *
+     * @param $taxon
+     * @param null $verb
+     */
+    public function getByTaxon($taxon, $verb = null){}
+
+    /**
+     * Returns a stories graph contain stories where a specific use is mentioned
+     * in the media_content field only
+     *
+     * @param $user
+     * @param null $verb
+     * @return bool|Graph
+     * @throws Exception
+     */
+    public function getByUserMentionInContent($user, $verb=null){
+
+        //set the conditionals;
+        $database = $this->database->like("d.value_data", "@".$user->getPropertyValue("user_name_id"));
+
+        return $this->get(null, false, $database->getConditionals());
+
+    }
+
+
+    /**
+     *
+     * Returns a stories graph with objects containing an attachment object
+     *
+     * @param null $ofType
+     * @param null $verb
+     */
+    public function getWithAttachments($ofType = null, $verb=null){}
 
 
 }

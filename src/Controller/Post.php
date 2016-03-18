@@ -23,6 +23,8 @@ class Post extends Controller {
         $story = $this->application->createInstance( Story::class );
         $graph = $story->get();
 
+        //die;
+
         $this->view->setData("stories", getArrayObjectAsArray( new ArrayObject( $graph->getEdgeSet() ) ) );
 
 
@@ -75,14 +77,14 @@ class Post extends Controller {
             $read = $onReadPost->getResult();
 
             //lets fix the content;
-            if(isset($read["media_content"])) {
-
-
-                $read["media_content"] = Parsedown::instance()
-                    // ->setBreaksEnabled(true) # enables automatic line breaks
-                    ->text($read["media_content"]);
-
-            }
+//            if(isset($read["media_content"])) {
+//
+//
+//                $read["media_content"] = Parsedown::instance()
+//                    // ->setBreaksEnabled(true) # enables automatic line breaks
+//                    ->text($read["media_content"]);
+//
+//            }
 
             // 1. load the page;
             $template =  ( isset($read["media_template"]) && !empty($read["media_template"]) ) ? $read["media_template"] : null; //determine page template from
@@ -204,7 +206,7 @@ class Post extends Controller {
     }
 
 
-    private function timeline(){
+    protected function timeline(){
 
 
         //$this->view->addData("action", ["title"=>"Map","link"=>"/member/timeline/map", "class"=>"btn-primary"]);

@@ -59,13 +59,13 @@ class Page extends Controller
             $read = reset($page["items"]);
 
             //lets fix the content;
-            if(isset($read["media_content"])) {
-
-                $read["media_content"] = Parsedown::instance()
-                    // ->setBreaksEnabled(true) # enables automatic line breaks
-                    ->text($read["media_content"]);
-
-            }
+//            if(isset($read["media_content"])) {
+//
+//                $read["media_content"] = Parsedown::instance()
+//                    // ->setBreaksEnabled(true) # enables automatic line breaks
+//                    ->text($read["media_content"]);
+//
+//            }
 
             // 1. load the page;
             $template =  ( isset($read["media_template"]) && !empty($read["media_template"]) ) ? $read["media_template"] : null; //determine page template from

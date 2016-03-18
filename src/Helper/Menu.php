@@ -9,8 +9,10 @@
 namespace Budkit\Cms\Helper;
 
 use Budkit\Cms\Helper\Authorize\Permission;
+use Budkit\Cms\Model\Media\Content;
 use Budkit\Cms\Model\User;
 use Budkit\Datastore\Database;
+use Budkit\Dependency\Container;
 use Budkit\Protocol\Http\Request;
 use Budkit\Protocol\Uri;
 
@@ -21,13 +23,14 @@ class Menu
     protected $database;
 
 
-    public function __construct(Database $database, Permission $permission, Uri $uri, Request $request, User $user)
+    public function __construct(Container $Application , Database $database, Permission $permission, Uri $uri, Request $request, User $user)
     {
         $this->database = $database;
         $this->permission = $permission;
         $this->uri = $uri;
         $this->request = $request;
         $this->user = $user;
+        $this->application = $Application;
 
     }
 
@@ -303,7 +306,7 @@ class Menu
                 "menu_url" => "/member/timeline/done"
             ],
             [
-                "menu_title" => "All labels",
+                "menu_title" => "Labels...",
                 "menu_classes" => "link-label modal-response",
                 "menu_url" => "/member/timeline/list"
             ]
@@ -336,28 +339,74 @@ class Menu
 
             $postid = $matches[1];
 
-            $menuItems = array_merge($menuItems, [
+            $content = $this->application->createInstance( Content::class );
+            $post    = $content->loadObjectByUri( $postid , ['media_owner'] ); //just one property
+
+            //If this is a post!
+            if(!empty($post->getObjectType())) {
+                
+                $actions = [
 
                     array(
                         "menu_title" => "Report",
                         "menu_url" => "/post/{$postid}/report",
-                    ),
-                    array(
-                        "menu_title" => "Label",
-                        "menu_url" => "/post/{$postid}/label",
-                        "menu_classes" => "modal-response"
-                    ),
-                    array(
-                        "menu_title" => "Edit",
-                        "menu_url" => "/post/{$postid}/data",
-                    ),
-                    array(
-                        "menu_title" => "Delete",
-                        "menu_url"  => "/post/{$postid}/delete",
-                        "menu_classes" => "color-alizarin"
                     )
-                ]
-            );
+                ];
+
+                if( $this->user->getPropertyValue("user_name_id") == $post->getPropertyValue("media_owner") ){
+
+                    $actions = array_merge( $actions, [
+                        array(
+                            "menu_title" => "Label",
+                            "menu_url" => "/post/{$postid}/label",
+                            "menu_attributes" => [
+                                "data-action" => "add-label",
+                                "data-target" => $postid
+                            ],
+                            'children' => [ //@TODO limit labels to max 5 per user
+                                [
+                                    "menu_title" => "#information",
+                                    "menu_url" => "/post/{$postid}/label/information",
+                                    "menu_classes" => "menu-display-selected"
+                                ],
+                                [
+                                    "menu_title" => "#done",
+                                    "menu_url" => "/post/{$postid}/label/information",
+                                    "menu_classes" => "menu-display-selected"
+                                ],
+                                [
+                                    "menu_title" => "#task",
+                                    "menu_url" => "/post/{$postid}/label/information",
+                                    "menu_classes" => "menu-display-selected"
+                                ],
+                                [
+                                    "menu_title" => "#success",
+                                    "menu_url" => "/post/{$postid}/label/information",
+                                    "menu_classes" => "menu-display-selected"
+                                ],
+                                [
+                                    "menu_title" => "#priority",
+                                    "menu_url" => "/post/{$postid}/label/information",
+                                    "menu_classes" => "menu-display-selected"
+                                ]
+                            ]
+                        ),
+                        array(
+                            "menu_title" => "Edit",
+                            "menu_url" => "/post/{$postid}/data",
+                        ),
+                        array(
+                            "menu_title" => "Delete",
+                            "menu_url" => "/post/{$postid}/delete",
+                            "menu_classes" => "color-alizarin"
+                        )
+
+                    ]);
+
+                }
+
+                $menuItems = array_merge($menuItems, $actions );
+            }
 
 
             return $event->setResult($menuItems);

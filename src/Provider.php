@@ -385,11 +385,19 @@ class Provider implements Service
                 ));
                 $route->add('/mentions{format}', 'mentions');
                 $route->add('/list{format}', "manage");
+                //create a new timelne
+                $route->add('/new{format}', 'add');
+                $route->addPost('/put{format}', 'put');
+                //will need a seperat subroot for ids
+                //$route->addGet('/{id}{format}', "read");
+                //$route->add("/list", 'manage', Controller\Member\Timeline\Stream::class); //list all filters
+
+                $route->add('/{file}{format}', null, Controller\Member\Timeline\Attachments::class );
+
                 $route->add('{/name}{format}', "execute");
                 $route->add('{/name}/edit{format}', "edit");
                 $route->addDelete('{/name}/delete{format}', "delete");
 
-                $route->add('/{file}{format}', null, Controller\Member\Timeline\Attachments::class );
 
             });
 
@@ -412,14 +420,7 @@ class Provider implements Service
 
 
                     $route->addGet("{format}", 'index');
-                    //create a new timelne
-                    $route->add('/new', 'add');
-                    $route->addPost('/put', 'put');
-                    //will need a seperat subroot for ids
-                    //$route->addGet('/{id}{format}', "read");
-                    //$route->add("/list", 'manage', Controller\Member\Timeline\Stream::class); //list all filters
 
-                    $route->add('/{file}{format}', null, Controller\Member\Timeline\Attachments::class );
 
 
                 });
