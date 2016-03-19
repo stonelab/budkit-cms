@@ -9,7 +9,6 @@
 namespace Budkit\Cms\Helper;
 
 use Budkit\Cms\Model\User;
-use Budkit\Cms\Provider;
 use Budkit\Event\Event;
 use Budkit\Routing\Controller as RouteController;
 use Budkit\Dependency\Container as Application;
