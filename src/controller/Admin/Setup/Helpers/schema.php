@@ -153,8 +153,9 @@ final class Schema{
                 (12,	1,	'^/stream(/[a-z0-9-]*)*',	'allow',	'view',	'Content'),
                 (13,	1,	'^/group(/[a-z0-9-]*)*',	'allow',	'view',	'Content'),
                 (14,	1,	'^/file(/[a-z0-9-]*)*',	'allow',	'view',	'Content'),
-                (16,	2,	'^/post(/[a-z0-9-]*)*',	'allow',	'execute',	'Content'),
-                (15,	1,	'^/page(/[a-z0-9-]*)*',	'allow',	'view',	'Content');"
+                (15,	2,	'^/post(/[a-z0-9-]*)*',	'allow',	'execute',	'Content'),
+                (16,	1,	'^/page(/[a-z0-9-]*)*',	'allow',	'view',	'Content'),
+                (17,	4,	'^/extensions(/[a-z0-9-]*)*',	'allow',	'special',	'Extension Manager');"
         );
 
         //If the authority is deleted, remove all the permissions from the permission table
