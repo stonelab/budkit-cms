@@ -13,7 +13,7 @@ use Budkit\Authentication\User as AuthenticatedUser;
 class User extends AuthenticatedUser
 {
 
-    
+
     public function isMemberOfAuthorityGroup($groupId, $inheritance = true)
     {
 
