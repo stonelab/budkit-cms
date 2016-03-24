@@ -286,21 +286,6 @@ class Provider implements Service
                     $route->add('/delete{format}{/group}', 'delete');
 
                 });
-
-
-                /*
-                |--------------------------------------------------------------------------
-                | Extensions settings
-                |--------------------------------------------------------------------------
-                */
-                $route->attach('/extensions', Controller\Admin\Settings\Extensions::class, function ($route) {
-
-                    //$route->setAction(Controller\Admin\Settings\Permissions::class);
-                    $route->addGet('{format}', 'index');
-
-
-                });
-
             });
 
         });
