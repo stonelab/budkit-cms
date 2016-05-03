@@ -195,8 +195,8 @@ final class Schema{
         //               (73, 0, 'Inbox', '/member/timeline', '', 0, 2, 'link', NULL, 1, 2, 1),
         $this->database->query(
             "INSERT INTO `?menu` (`menu_id`, `menu_parent_id`, `menu_title`, `menu_url`, `menu_classes`, `menu_order`, `menu_group_id`, `menu_type`, `menu_callback`, `lft`, `rgt`, `menu_iscore`) VALUES
-                (22, 0, 'Dashboard', '/admin/dashboard', NULL, 1, 3, 'link', NULL, 1, 2, 1),
-                (23, 0, 'Timeline', '/member/timeline', NULL, 2, 3, 'link', NULL, 3, 4, 1),
+                (22, 0, 'Dashboard', '/admin/dashboard', NULL, 1, 2, 'link', NULL, 1, 2, 1),
+                (23, 0, 'Timeline', '/member/timeline', NULL, 2, 2, 'link', NULL, 3, 4, 1),
                 (24, 0, 'Configuration', '/admin/settings/configuration', '', 3, 3, 'link', '', 5, 23, 1),
                 (25, 24, 'Maintenance', '/admin/settings/maintenance', '', 4, 3, 'link', '', 6, 7, 1),
                 (30, 24, 'Emails', '/admin/settings/emails', '', 5, 3, 'link', '', 8, 9, 1),
@@ -209,7 +209,7 @@ final class Schema{
                 (38, 24, 'Permissions', '/admin/settings/permissions', NULL, 12, 3, 'link', NULL, 22, 23, 1),
                 (39, 0, 'Pages', '/admin/pages', NULL, 13, 3, 'link', NULL, 24, 25, 1),
                 (40, 0, 'Members', '/admin/members', NULL, 14, 3, 'link', NULL, 26, 27, 1),
-                (41, 0, 'Settings', '/member/settings', NULL, 1, 2, 'link', NULL, 1, 2, 1);"
+                (41, 0, 'Settings', '/member/settings', NULL, 1, 2, 'link', NULL, 5, 6, 1);"
         );
 
         //If a menu group is deleted, remove all the menu items
@@ -533,7 +533,7 @@ final class Schema{
             "CREATE TABLE IF NOT EXISTS `?objects` (
                 `object_id` int(11) NOT NULL AUTO_INCREMENT,
                 `object_type` varchar(55) NOT NULL DEFAULT 'entity',
-                `object_created_on` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+                `object_created_on` datetime NOT NULL DEFAULT '1970-01-01 00:00:01',
                 `object_updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 `object_uri` varchar(20) NOT NULL,
                 `object_status` enum('disabled','active') DEFAULT 'active',

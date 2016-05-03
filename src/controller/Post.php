@@ -191,6 +191,7 @@ class Post extends Controller {
         $this->view->setData("title", "Create New Post");
 
         $this->view->setLayout("editor");
+        
     }
 
     public function update($uri, $format = 'html') {
@@ -212,7 +213,7 @@ class Post extends Controller {
         //$this->view->addData("action", ["title"=>"Map","link"=>"/member/timeline/map", "class"=>"btn-primary"]);
 
         //$this->view->setData("object_uri", $uri);
-        $this->view->setData("csrftoken", $this->application->session->getCSRFToken());
+        $this->view->setData("csrftoken", $this->application->session->getCSRFToken(), true);
         $this->view->addToBlock("main", 'import://posts/post-inbox');
         $this->view->setLayout('posts/post-dashboard');
 

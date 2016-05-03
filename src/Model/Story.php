@@ -122,7 +122,8 @@ class Story
         );
 
 
-        $this->database->query("SET @sql = CONCAT('SELECT ', IFNULL( CONCAT(@sql, ','), '' ) ,' d.*  FROM {$this->database->replacePrefix('`?stories`')} AS d {$conditional} GROUP BY d.object_id ORDER BY d.object_created_on DESC');");
+
+        $this->database->query("SET @sql = CONCAT('SELECT ', IFNULL( CONCAT(@sql, ','), '' ) ,' ANY_VALUE(d.edge_head_object) AS edge_head_object, ANY_VALUE(d.edge_tail_object) AS edge_tail_object, ANY_VALUE(d.edge_name) AS edge_name, ANY_VALUE(d.object_uri) AS object_uri, d.object_id, d.object_created_on  FROM {$this->database->replacePrefix('`?stories`')} AS d {$conditional} GROUP BY d.object_id ORDER BY d.object_created_on DESC');");
         $this->database->query("PREPARE stmt FROM @sql;");
 
         if (!$this->database->commitTransaction()) {
@@ -130,11 +131,15 @@ class Story
             return false;
         }
 
+
         $results = $this->database->prepare("EXECUTE stmt;")->execute();
         $last = null;
 
 
-        //print_R($this->database);
+        //print_R($results->fetchAssoc() );
+
+        //die;
+
 
         while($story = $results->fetchAssoc()){
 

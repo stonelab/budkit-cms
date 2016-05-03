@@ -199,10 +199,11 @@ class Member extends Controller {
                         $currentUserIp  = $this->application->input->getVar('REMOTE_ADDR', \IS\STRING, '', 'server');
 
                         $verified       = $this->user->getPropertyValue("user_verified");
-
+                        $superadmin     = $this->application->config->get("setup.site.superadmin-authority", 999999);
 
                         //User verification;
-                        if(empty($verified) ) {
+                        //if the user is not a superadmin and has not been verified
+                        if(empty($verified) && !$this->user->isMemberOfAuthorityGroup(  $superadmin ) ) {
 
                             $session = $this->user->getSession();
 

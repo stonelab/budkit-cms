@@ -13,15 +13,15 @@ class Pages extends Admin {
     public function index($format = 'html', $page="") {
 
         //@TODO sockets This is our new stuff
-//        $context = new ZMQContext();
-//
-//        $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'pubsub');
-//        $socket->connect("tcp://127.0.0.1:5555");
-//
-//        $socket->send(json_encode([
-//            "topic"=>"admin.pages",
-//            "message"=>"Admin page refreshed"
-//        ]));
+        $context = new ZMQContext();
+
+        $socket = $context->getSocket(ZMQ::SOCKET_PUSH, 'pubsub');
+        $socket->connect("tcp://127.0.0.1:8080");
+
+        $socket->send(json_encode([
+            "topic"=>"admin.pages",
+            "message"=>"Admin page refreshed"
+        ]));
 
 
         //checks for a higher permission here, because there are links

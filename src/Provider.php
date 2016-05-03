@@ -373,19 +373,25 @@ class Provider implements Service
                 //create a new timelne
                 $route->add('/new{format}', 'add');
                 $route->addPost('/put{format}', 'put');
-                //will need a seperat subroot for ids
-                //$route->addGet('/{id}{format}', "read");
-                //$route->add("/list", 'manage', Controller\Member\Timeline\Stream::class); //list all filters
+
 
                 $route->add('/{file}{format}', null, Controller\Member\Timeline\Attachments::class );
 
-                $route->add('{/name}{format}', "execute");
-                $route->add('{/name}/edit{format}', "edit");
+            });
+
+
+            $route->attach("/taxon", Controller\Taxon::class, function($route){
+
+                //@TIP specific routes should always be defined first before regex ones
+
+                $route->addGet('/list{format}', 'taxa');
+                $route->addPost('/edit{format}', "create");
+
+                $route->addGet('{/name}{format}', "view");
                 $route->addDelete('{/name}/delete{format}', "delete");
 
 
             });
-
             //Member settings
             $route->attach("{/username}", Controller\Member\Profile::class, function ($route) {
 
@@ -522,7 +528,7 @@ class Provider implements Service
             $data = $user->getCurrentUser(["user_first_name", "user_last_name", "user_name_id", "user_photo"], false);
 
             //Add some more global vars
-            $response->setData("session", ["user" => $data->getPropertyData()]);
+            $response->setData("session", ["user" => $data->getPropertyData()], true);
         }
     }
 
