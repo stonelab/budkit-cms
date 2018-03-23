@@ -15,7 +15,7 @@
         "react/zmq": "0.3.*",
         "budkit/frontend" : "*",
         "budkit/framework": "*",
-        "budkit/directory": "*",
+        "budkit/repository": "*",
         "nette/mail": "*",
         "composer/composer": "*"
     },
