@@ -1,7 +1,7 @@
 {
     "name": "budkit/cms",
     "description": "A complete app for Budkit",
-    "license": "GPLv3",
+    "license": "MIT",
     "authors": [
         {
             "name": "Livingstone Fultang",
