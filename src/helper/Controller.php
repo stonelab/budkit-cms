@@ -74,7 +74,7 @@ class Controller extends RouteController {
 
         $this->observer->trigger( $loadPostExtensions );
 
-        $this->view->setData("newactions", $loadPostExtensions->getResult(), true ) ;
+        $this->view->setData("newactions", $loadPostExtensions->getResult());
 
         /*
         |--------------------------------------------------------------------------

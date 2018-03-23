@@ -278,7 +278,7 @@ class Menu
         }
 
         //We only process the usermenu;
-        if ($menuId !== "usermenu") return;
+        if ($menuId !== "dashboardmenu") return;
 
 
         //$menuUser = $this->user->getCurrentUser();
@@ -288,27 +288,27 @@ class Menu
             [
                 "menu_title" => "information",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/taxon/information"
+                "menu_url" => "/member/timeline/information"
             ],
             [
                 "menu_title" => "urgent",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/taxon/urgent"
+                "menu_url" => "/member/timeline/urgent"
             ],
             [
                 "menu_title" => "task",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/taxon/task"
+                "menu_url" => "/member/timeline/task"
             ],
             [
                 "menu_title" => "done",
                 "menu_classes" => "link-label",
-                "menu_url" => "/member/taxon/done"
+                "menu_url" => "/member/timeline/done"
             ],
             [
                 "menu_title" => "Labels...",
                 "menu_classes" => "link-label modal-response",
-                "menu_url" => "/member/taxon/list"
+                "menu_url" => "/member/timeline/list"
             ]
         ];
 
