@@ -49,7 +49,8 @@ class Extensions extends Settings {
         //$repository = $this->composer->getPackage();
 
         //print_r( $repository );
-        
+
+
 
         // echo "Pages admin";
         $this->view->setData("title", t("Extensions"));

@@ -13,7 +13,7 @@ use Budkit\Filesystem\Directory;
  * @version   1.0.0
  * @since     Jan 14, 2012 4:54:37 PM
  * @author    Livingstone Fultang <livingstone.fultang@stonyhillshq.com>
- * 
+ *
  */
 final class Requirements {
 
@@ -23,7 +23,7 @@ final class Requirements {
      * @todo Implement file upload system requirements test at install
      */
     public function testFileUploads() {
-        
+
     }
 
     /**
@@ -31,27 +31,27 @@ final class Requirements {
      * @todo Implement system memory test at install
      */
     public function testMemory() {
-        
+
     }
 
     /**
      * Test float?
      */
     public function testFloat() {
-        
+
     }
 
     /**
      * Checks required modules
-     * 
+     *
      * @param string $name
      * @param array $directive
-     * @return boolean 
+     * @return boolean
      */
     public function testModule($name, $directive = array()) {
 
         $return = array(
-            "title" => $directive['title'], "name" => $name, "current" => "", "test" => false
+            "title" => $directive['title'], "name" => $name, "current" => "", "test" => "Failed"
         );
 
         if (is_array($directive)) {
@@ -78,7 +78,7 @@ final class Requirements {
 
             //@TODO If we have alternative modules
             if (!$return['test'] && isset($directive['alternate'])) {
-                //$altName = 
+                //$altName =
             }
         }
 
@@ -142,10 +142,10 @@ final class Requirements {
 
     /**
      * Test PHP Directives before install
-     * 
+     *
      * @param string $name
      * @param array $directive
-     * @return boolean 
+     * @return boolean
      */
     public function testDirective($name, $directive = array()) {
 
@@ -172,10 +172,10 @@ final class Requirements {
     }
 
     /**
-     * Converts human readable file size (e.g. 10 MB, 200.20 GB) into bytes. 
-     * 
-     * @param string $str 
-     * @return int the result is in bytes 
+     * Converts human readable file size (e.g. 10 MB, 200.20 GB) into bytes.
+     *
+     * @param string $str
+     * @return int the result is in bytes
      * @author Livingstone Fultang <livingstone@budkit.org> modified to include M, K, KiB etc...
      */
     public static function sizeToBytes($string) {
@@ -205,7 +205,7 @@ final class Requirements {
 
     /**
      * Tests required system resource limits
-     * 
+     *
      * @param type $name
      * @param type $directive
      */
@@ -240,8 +240,8 @@ final class Requirements {
     }
 
     /**
-     * Checks the current version 
-     * 
+     * Checks the current version
+     *
      * @param string $component
      * @return boolean
      */
@@ -252,4 +252,3 @@ final class Requirements {
 
 
 }
-
