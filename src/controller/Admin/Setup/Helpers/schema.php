@@ -13,13 +13,13 @@ use Budkit\Datastore\Database;
  * @version   1.0.0
  * @since     Jan 14, 2012 4:54:37 PM
  * @author    Livingstone Fultang <livingstone.fultang@stonyhillshq.com>
- *
+ * 
  */
 final class Schema{
 
     /**
      * The database object
-     * @var object
+     * @var object 
      */
     protected  $database;
 
@@ -92,7 +92,7 @@ final class Schema{
                 `group_lft` INT NOT NULL DEFAULT 0 ,
                 `group_rgt` INT NOT NULL DEFAULT 0 ,
                 PRIMARY KEY (`group_id`) ,
-                INDEX `group_owner_uri` (`group_owner` ASC)
+                INDEX `group_owner_uri` (`group_owner` ASC) 
             ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;"
         );
 
@@ -464,7 +464,7 @@ final class Schema{
                 `group_id` int(11) NOT NULL ,
                 `object_uri` VARCHAR(20) NOT NULL ,
                 PRIMARY KEY (`object_group_id`) ,
-                UNIQUE INDEX `object_group_id_UNIQUE` (`object_group_id` ASC)
+                UNIQUE INDEX `object_group_id_UNIQUE` (`object_group_id` ASC) 
             )ENGINE=InnoDB DEFAULT CHARSET=utf8;"
         );
 
@@ -533,7 +533,7 @@ final class Schema{
             "CREATE TABLE IF NOT EXISTS `?objects` (
                 `object_id` int(11) NOT NULL AUTO_INCREMENT,
                 `object_type` varchar(55) NOT NULL DEFAULT 'entity',
-                `object_created_on` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                `object_created_on` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
                 `object_updated_on` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 `object_uri` varchar(20) NOT NULL,
                 `object_status` enum('disabled','active') DEFAULT 'active',
@@ -696,16 +696,16 @@ final class Schema{
         );
         $this->database->query("DROP PROCEDURE IF EXISTS `property_value_validate`;");
         $this->database->query(
-            "CREATE PROCEDURE `?property_value_validate`(IN _property_id INT, IN _value_data LONGTEXT)
-                BEGIN
+            "CREATE PROCEDURE `?property_value_validate`(IN _property_id INT, IN _value_data LONGTEXT) 
+                BEGIN 
                     DECLARE _validationFails CONDITION FOR SQLSTATE '99001';
-                    DECLARE _dataTypeRegExp VARCHAR(255);
+                    DECLARE _dataTypeRegExp VARCHAR(255); 
                     DECLARE _signalText TEXT;
                     SELECT r.datatype_validation  FROM `?properties` AS d INNER JOIN `?property_datatypes` AS r WHERE `property_id`= _property_id AND d.property_datatype=r.datatype_name INTO _dataTypeRegExp;
                     IF (_dataTypeRegExp IS NOT NULL) THEN
                             IF (_value_data NOT REGEXP(_dataTypeRegExp)) THEN
                             	SET _signalText = CONCAT('The inserted/updated value fails the property data type validation');
-                                SIGNAL _validationFails SET MESSAGE_TEXT=_signalText;
+                                SIGNAL _validationFails SET MESSAGE_TEXT=_signalText; 
                             END IF;
                     END IF;
                 END;"
@@ -831,3 +831,4 @@ final class Schema{
     }
 
 }
+

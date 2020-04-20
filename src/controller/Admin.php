@@ -22,10 +22,10 @@ class Admin extends Controller {
 
 
                 //Send the message
-                // $this->application->mailer
-                // ->compose($message, "livingstonefultang@gmail.com", ['recipient'=>'Livingstone', 'link'=>'http://budkit.com'], true )
-                // ->setSubject("This is a subject")
-                // ->send();
+                $this->application->mailer
+                ->compose($message, "livingstonefultang@gmail.com", ['recipient'=>'Livingstone', 'link'=>'http://budkit.com'], true )
+                ->setSubject("This is a subject")
+                ->send();
 
             }catch (\Exception $e){
                 $this->response->addAlert(t("We were unable to send out a verification email."), "error");
