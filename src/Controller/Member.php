@@ -6,7 +6,7 @@ use Budkit\Cms\Helper\Menu;
 use Budkit\Cms\Model\User;
 use Budkit\Cms\Helper\Controller;
 use Budkit\Dependency\Container as Application;
-
+use Budkit\Cms\Model\Story;
 use Budkit\Authentication\Authenticate;
 use Budkit\Authentication\Type\DbAuth;
 use Budkit\Authentication\Type\Ldap;
@@ -45,9 +45,16 @@ class Member extends Controller {
 
             // echo "Pages admin";
             $this->view->setData("title", t("@{$user->getObjectURI()}"));
-            $this->view->setData("sbstate", "minimized");
+            
+            if($format == "html") $this->view->setData("sbstate", "minimized");
 
             $this->view->setData("user", $user->getPropertyData());
+
+            $story = $this->application->createInstance( Story::class );
+            $graph = $story->getBySubject( $user->getPropertyValue("user_name_id") );
+
+            $this->view->setData("stories", getArrayObjectAsArray(  $graph->getEdgeSet()  ) );
+
             //$this->view->addToBlock("main", 'import://member/member-profile');
             $this->view->setLayout("member/member-profile");
 
@@ -199,7 +206,6 @@ class Member extends Controller {
                         $currentUserIp  = $this->application->input->getVar('REMOTE_ADDR', \IS\STRING, '', 'server');
 
                         $verified       = $this->user->getPropertyValue("user_verified");
-
 
                         //User verification;
                         if(empty($verified) ) {

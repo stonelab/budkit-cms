@@ -29,7 +29,7 @@ class Admin extends Controller {
 
             }catch (\Exception $e){
                 $this->response->addAlert(t("We were unable to send out a verification email."), "error");
-                $this->application->dispatcher->returnToReferrer();
+                //$this->application->dispatcher->returnToReferrer();
             }
 
         //We can add content to Block or just import more content;

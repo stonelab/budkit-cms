@@ -254,7 +254,7 @@ class Content extends Entity {
             return $object;
 
         //2.0 THE ACTOR
-        $actorObject = new Object();
+        $actorObject = new Item();
         $actorName = implode(' ', array($object['user_first_name'], $object['user_last_name']));
         $actorObject::set("objectType", "user"); //@TODO Not only User objects can be actors! You will need to be able to allow other apps to be actors
         $actorObject::set("displayName", $actorName);
@@ -304,7 +304,7 @@ class Content extends Entity {
 
         if (!empty($mediaObjectURI)):
             //Create an media object, and fire an event asking callbacks to complete the media object
-            $mediaSubject = new Object();
+            $mediaSubject = new Item();
             $mediaObjectType = $subject->getObjectType();
 
             //Fire the event, passing the mediaSubject by reference

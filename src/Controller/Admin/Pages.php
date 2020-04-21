@@ -42,10 +42,10 @@ class Pages extends Admin {
         $this->view->setData("title", t("Pages"));
         $this->view->setData("pages", $pages);
 
+        //Pagination only exists if the size of available pages is greater than 1
         $pagination = $page->getPagination();
-
-        if($pagination["total"] > 1) {
-            $this->view->setData("pagination", $page->getPagination());
+        if($pagination) {
+            $this->view->setData("pagination", $pagination);
         }
 
         $this->view->addToBlock("main", "import://pages/page-list");
