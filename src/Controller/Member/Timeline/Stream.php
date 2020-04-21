@@ -19,7 +19,7 @@ class Stream extends Member\Timeline {
 
         //die;
 
-        $this->view->setData("stories", getArrayObjectAsArray( new ArrayObject( $graph->getEdgeSet() ) ) );
+        $this->view->setData("stories", getArrayObjectAsArray( $graph->getEdgeSet() ) );
 
 
         $this->timeline();

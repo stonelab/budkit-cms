@@ -25,10 +25,12 @@ class Members extends Admin {
 
         $this->view->setData("members", $members);
 
-        $pagination = $user->getPagination();
+         //Pagination only exists if the size of available pages is greater than 1
+        //print_r($members); die;
 
-        if($pagination["total"] > 1) {
-            $this->view->setData("pagination", $members->getPagination());
+        $pagination = $user->getPagination();
+        if($pagination) {
+            $this->view->setData("pagination", $pagination);
         }
 
         $this->view->addToBlock("main", "import://member/member-list");

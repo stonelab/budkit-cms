@@ -122,8 +122,9 @@ class Story
         );
 
 
-
-        $this->database->query("SET @sql = CONCAT('SELECT ', IFNULL( CONCAT(@sql, ','), '' ) ,' ANY_VALUE(d.edge_head_object) AS edge_head_object, ANY_VALUE(d.edge_tail_object) AS edge_tail_object, ANY_VALUE(d.edge_name) AS edge_name, ANY_VALUE(d.object_uri) AS object_uri, d.object_id, d.object_created_on  FROM {$this->database->replacePrefix('`?stories`')} AS d {$conditional} GROUP BY d.object_id ORDER BY d.object_created_on DESC');");
+        //Mariadb does not support ANY_VALUE
+        //$this->database->query("SET @sql = CONCAT('SELECT ', IFNULL( CONCAT(@sql, ','), '' ) ,' ANY_VALUE(d.edge_head_object) AS edge_head_object, ANY_VALUE(d.edge_tail_object) AS edge_tail_object, ANY_VALUE(d.edge_name) AS edge_name, ANY_VALUE(d.object_uri) AS object_uri, d.object_id, d.object_created_on  FROM {$this->database->replacePrefix('`?stories`')} AS d {$conditional} GROUP BY d.object_id ORDER BY d.object_created_on DESC');");
+        $this->database->query("SET @sql = CONCAT('SELECT ', IFNULL( CONCAT(@sql, ','), '' ) ,' d.edge_head_object AS edge_head_object, d.edge_tail_object AS edge_tail_object, d.edge_name AS edge_name, d.object_uri AS object_uri, d.object_id, d.object_created_on  FROM {$this->database->replacePrefix('`?stories`')} AS d {$conditional} GROUP BY d.object_id ORDER BY d.object_created_on DESC');");
         $this->database->query("PREPARE stmt FROM @sql;");
 
         if (!$this->database->commitTransaction()) {
@@ -134,12 +135,6 @@ class Story
 
         $results = $this->database->prepare("EXECUTE stmt;")->execute();
         $last = null;
-
-
-        //print_R($results->fetchAssoc() );
-
-        //die;
-
 
         while($story = $results->fetchAssoc()){
 
@@ -179,7 +174,7 @@ class Story
 
 
             //@TODO group items
-            //1. If its the same use posting the same type of post, don't show person;
+            //1. If its the same user posting the same type of post, don't show person;
             //2. Stream hide person;
         }
 
@@ -206,9 +201,17 @@ class Story
     public function getBySubjectAndObject($subject, $object, $verb = null, $direction = false)
     {
 
-        $this->graph = new Graph;
+        $conditions = [
+            "d.edge_head_object" => $this->database->quote($subject),
+            "d.edge_tail_object" => $this->database->quote($object),
+        ];
+        if($verb){
+            $conditions["d.edge_name"] = $verb ;
+        }
+        //set the conditionals;
+        $database = $this->database->where($conditions);
 
-        return $this->graph;
+        return $this->get(null, false, $database->getConditionals());
     }
 
     /**
@@ -220,9 +223,14 @@ class Story
      */
     public function getBySubject($subject, $verb = null)
     {
-        $this->graph = new Graph;
+        $conditions = ["d.edge_head_object" => $this->database->quote($subject)];
+        if($verb){
+            $conditions["d.edge_name"] = $verb ;
+        }
+        //set the conditionals;
+        $database = $this->database->where($conditions);
 
-        return $this->graph;
+        return $this->get(null, false, $database->getConditionals());
     }
 
     /**
@@ -235,9 +243,14 @@ class Story
      */
     public function getByObject($object, $verb = null)
     {
-        $this->graph = new Graph;
+        $conditions = ["d.edge_tail_object" => $this->database->quote($subject)];
+        if($verb){
+            $conditions["d.edge_name"] = $verb ;
+        }
+        //set the conditionals;
+        $database = $this->database->where($conditions);
 
-        return $this->graph;
+        return $this->get(null, false, $database->getConditionals());
     }
 
 

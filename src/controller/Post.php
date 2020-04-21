@@ -23,10 +23,7 @@ class Post extends Controller {
         $story = $this->application->createInstance( Story::class );
         $graph = $story->get();
 
-        //die;
-
-        $this->view->setData("stories", getArrayObjectAsArray( new ArrayObject( $graph->getEdgeSet() ) ) );
-
+        $this->view->setData("stories", getArrayObjectAsArray(  $graph->getEdgeSet()  ) );
 
         $this->timeline();
 
