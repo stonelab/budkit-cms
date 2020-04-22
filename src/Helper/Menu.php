@@ -13,6 +13,7 @@ use Budkit\Cms\Model\Media\Content;
 use Budkit\Cms\Model\User;
 use Budkit\Datastore\Database;
 use Budkit\Dependency\Container;
+use Budkit\Event\Event;
 use Budkit\Protocol\Http\Request;
 use Budkit\Protocol\Uri;
 
@@ -54,7 +55,7 @@ class Menu
         return $nodes;
     }
 
-    public function getMenuArray($uniqueId, $hierarchical = true)
+    public function getMenuArray($uniqueId, $hierarchical = true, $compiled = false)
     {
 
         if (empty($uniqueId)) return; //we need a unique Id to load the menu;
@@ -80,6 +81,7 @@ class Menu
             $menu['children'] = array();
             $menu['indent'] = 0;
 
+
             //Now indent
             if (sizeof($right) > 0) {
 
@@ -104,6 +106,8 @@ class Menu
             }
             $right[] = $menu['rgt'];
 
+
+            //If we want this menu as a heirachy
             if ($hierarchical) {
                 if (array_key_exists($parent, $nodes)) {
                     $nodes[$parent]["children"][$id] = $menu;
@@ -115,6 +119,63 @@ class Menu
 
                 $nodes = insertIntoArray($nodes, $parent, $id, $menu, true, true);
             }
+        }
+
+        return $nodes;
+    }
+
+
+    public function getCompiledMenuArray($uniqueId, $hierarchical=true, $authorise = false){
+
+
+        $menuItems = $this->getMenuArray($uniqueId, $hierarchical, true);
+
+        //Use this event to extend the loaded menu.
+        //beforeCompile.menu.data should not really be used.
+        //Will need to think of private events
+        $menuItemsExtendEvent = new Event('Layout.onCompile.menu.data', $this, ["uid" => $uniqueId]);
+        $menuItemsExtendEvent->setResult($menuItems);
+
+        $this->application->observer->trigger($menuItemsExtendEvent); //Parse the Node;
+
+        $menuItems = $menuItemsExtendEvent->getResult();
+
+        $menuItems = $this->beforeRenderMenuItem( $menuItems );
+
+
+        return $menuItems;
+
+    }
+
+
+    private function beforeRenderMenuItem($menuItems){
+
+        $nodes = array();
+        
+        foreach($menuItems as $key => $item){
+
+            if (!empty($item['menu_url'])):
+
+                //check has permission;
+                $menuItemRenderEvent = new Event('Layout.beforeRender.menu.item', $this, ["item" => $item]);
+                $this->application->observer->trigger($menuItemRenderEvent); //Parse the Node;
+
+                $item = $menuItemRenderEvent->getResult();
+
+                if (!isset($item['menu_viewable']) || !$item['menu_viewable']) {
+                    continue;
+                }
+
+                //Loop through the children.
+                if(!empty($menuItem['children'])){
+                    $item['children'] = $this->authoriseMenu( $item['children'] );
+                }
+
+                //affix the rendered menu item here
+                $nodes[$key] = $item ;
+
+            endif;
+
         }
 
         return $nodes;
