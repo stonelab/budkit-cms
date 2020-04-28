@@ -167,7 +167,7 @@ class Menu
                 }
 
                 //Loop through the children.
-                if(!empty($menuItem['children'])){
+                if(!empty($item['children'])){
                     $item['children'] = $this->authoriseMenu( $item['children'] );
                 }
 
