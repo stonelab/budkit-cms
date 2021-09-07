@@ -51,7 +51,6 @@ final class Install{
         //3. Encrypt validated password if new users!
         //4. If not new user, check user has update permission on this user
         //5. MailOut
-        
         if(empty($userpass)||empty($username)||empty($usernameid)||empty($useremail)){
             //Display a message telling them what can't be empty
             throw new Exception(t('Please provide at least a Name, Username, E-mail and Password') );
@@ -63,13 +62,14 @@ final class Install{
             throw new Exception(t('The user passwords do not match') );
             return false;
         }
-        
+
         //6. Store the user
         if(!$account->store( $application->input->data("post") , true)){
             //Display a message telling them what can't be empty
             throw new Exception( t('Could not store the admin user account')  );
             return false;
         }
+        
 
         //Add this user to the superadministrators group!
         //$adminObject    = $account->getObjectByURI( $usernameid );
@@ -141,36 +141,26 @@ final class Install{
         $config->set("setup.database.driver", strtolower($dbDriver ) );
         $config->set("setup.database.port", intval($dbPort) );
 
-
+        
         //Try connect to the database with these details?
-        try{
-
+        //try{
             $application->createInstance("database",
                 [
                     $application->config->get("setup.database.driver"), //get the database driver
                     $application->config->get("setup.database") //get all the database options and pass to the driver
                 ]
             );
-
-        } catch (Exception $exception) {
-
-
-           //@TODO do something with this exception;
-
-            return false;
-
-        }
+        // } catch (Exception $exception) {
+        //    //@TODO do something with this exception;
+        //     return false;
+        // }
 
 
         //@TODO run the install.sql script on the connected database
          $schema = new Schema();
 
-
          //print_r($schema::$database);
         if(!$schema->createTables( $application->database )){
-
-            echo "wtf";
-
             return false;
         }
 
@@ -181,14 +171,10 @@ final class Install{
         $config->set("setup.encrypt.key", $encryptKey );
 
         if(!$config->saveParams() ){
-
             throw new Exception("could not save config");
-
             return false;
         }
         return true;
     }
-
-
 }
 

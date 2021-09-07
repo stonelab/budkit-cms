@@ -274,9 +274,9 @@ class Permission{
         //Login and sign-up pages;
         //@TODO may need to get them via named routes;
         if (
-            in_array( $path , array("/", "/member/signin", "/member/signup", "/member/signin/reset" ))||
+            in_array( $path , array("/", "/auth/signin", "/auth/signup", "/auth/signin/reset" ))||
            //@TODO a better way to whitewash soume routes;
-            preg_match( "@^\\/member\\/signin\\/verify\\/.*@i", $path)
+            preg_match( "@^\\/auth\\/signin\\/verify\\/.*@i", $path)
         ){
             $allowed = true;
         }

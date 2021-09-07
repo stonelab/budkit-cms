@@ -334,6 +334,29 @@ class Provider implements Service
 
         /*
         |--------------------------------------------------------------------------
+        | Authentication Route
+        |--------------------------------------------------------------------------
+        |
+        | All member actions
+        |
+        */
+        Route::attach("/auth", Controller\Auth::class, function ($route) {
+            $route->setTokens(array(
+                'username' => '(\@[a-zA-Z0-9-_]+)',
+                'key' => '.*',
+                'format' => '(\.[^/]+)?'
+                //'name' => '([A-Z][a-z]+)'
+            ));
+
+            $route->add('/signin{format}', 'signin');
+            $route->add('/signup{format}', 'signup');
+            $route->add('/signout{format}', 'signout');
+            $route->add('/signin/reset', 'resetPassword');
+            $route->add('/signin/verify/{key}', 'verifyEmail');
+        });
+
+        /*
+        |--------------------------------------------------------------------------
         | Member Routes
         |--------------------------------------------------------------------------
         |
@@ -349,11 +372,11 @@ class Provider implements Service
                 //'name' => '([A-Z][a-z]+)'
             ));
 
-            $route->add('/signin{format}', 'signin');
-            $route->add('/signup{format}', 'signup');
-            $route->add('/signout{format}', 'signout');
-            $route->add('/signin/reset', 'resetPassword');
-            $route->add('/signin/verify/{key}', 'verifyEmail');
+            // $route->add('/signin{format}', 'signin');
+            // $route->add('/signup{format}', 'signup');
+            // $route->add('/signout{format}', 'signout');
+            // $route->add('/signin/reset', 'resetPassword');
+            // $route->add('/signin/verify/{key}', 'verifyEmail');
 
             //Member settings
             $route->attach("/settings", Controller\Member\Settings::class, function ($route) {
@@ -512,7 +535,7 @@ class Provider implements Service
                 //@TODO maybe redirect to a public page or just post a message
                 //exit("You are not allowed to view this resource");
 
-                $this->application->dispatcher->redirect("/member/signin", HTTP_FOUND, $message);
+                $this->application->dispatcher->redirect("/auth/signin", HTTP_FOUND, $message);
             }
 
 

@@ -181,6 +181,9 @@ class Menu
         return $nodes;
     }
 
+    public function authoriseMenu( $menuItem ){
+        return $menuItem;
+    }
 
     public function load($event)
     {
@@ -300,13 +303,13 @@ class Menu
 
             array_push($menuItems, array(
                     "menu_title" => "Sign out",
-                    "menu_url" => "/member/signout",
+                    "menu_url" => "/auth/signout",
                 )
             );
         } else {
             array_push($menuItems, array(
                     "menu_title" => "Sign In",
-                    "menu_url" => "/member/signin",
+                    "menu_url" => "/auth/signin",
                 )
             );
         }

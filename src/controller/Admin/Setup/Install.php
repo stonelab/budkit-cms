@@ -20,12 +20,12 @@ class Install extends Controller {
     }
 
 
-    public function index($format = 'html') {
+    public function index($format = 'html', ?int $step = 1) {
         //echo "Browsing in {$format} format";
 
         $this->view->setData("name", "Livingstone");
 
-        $step = $this->application->input->getInt("step", 1);
+        $step = is_null($step) ? $this->application->input->getInt("step", 1) : $step;
 
         switch ($step) {
 
@@ -82,14 +82,12 @@ class Install extends Controller {
         $requirements = [];
         $directives = require_once( PATH_CONFIG.'/requirements.inc' );
 
-
         //Check Modules
         $server = ["title"=>"Required Server Software", "tests"=>[]];
         foreach( $directives["server"] as $name=>$directive ){
             $server["tests"][] = $systemcheck->testServerVersions($name, $directive);
         }
         $requirements[] = $server;
-
 
         //Check Modules
         $modules = ["title"=>"Required Modules", "tests"=>[]];
@@ -105,7 +103,6 @@ class Install extends Controller {
         }
         $requirements[] = $limits;
 
-
         //Check Modules
         $directories = ["title"=>"Required Folder Permissions", "tests"=>[]];
         foreach( $directives["directories"] as $name=>$directive ){
@@ -113,9 +110,6 @@ class Install extends Controller {
             $directories["tests"][] = $systemcheck->testFolderPermissions($directive["path"], $directive);
         }
         $requirements[] =  $directories;
-
-
-
 
         $this->view->setDataArray( ["requirements"=> $requirements ]);
 
@@ -134,8 +128,6 @@ class Install extends Controller {
         $this->view->setData("step", "3");
         $this->view->setData("randomstring", strtolower( getRandomString('5')."_" ) ); //may be case sensitive on some systems
         $this->view->setData("title", t("Installation | Database Settings"));
-
-
 
         return;
 
@@ -156,22 +148,19 @@ class Install extends Controller {
         $this->view->setData("step", "4");
         $this->view->setData("title", t("Installation | Install SuperUser"));
 
+        $isPost = $this->application->input->methodIs("post");
 
-        if ($this->application->input->methodIs("post")) {
-
+        if ($isPost == true) {
             // $this->view->setData("alerts", [ ["message"=>t('Success. The database was successfully configured'),"type"=>'success'] ] );
             $install = new Helpers\Install($this->application->config, $this->application->encrypt );
+        
 
             //preform the installation;
             if(!$install->database( $this->application )){
                 $this->application->dispatcher->redirect("/admin/setup/install/3");
             }
-
             $this->response->addAlert("Wohooo! The database was successfully configure. Now please create a super user.", "info");
-
-
         }
-
         return;
 
     }
@@ -188,11 +177,14 @@ class Install extends Controller {
         $this->view->setData("title", t("Installation | Install SuperUser"));
 
 
-        if ($this->application->input->methodIs("post")) {
+        $isPost = $this->application->input->methodIs("post");
+
+        if ($isPost == true) {
 
 
             //Because the database is still not fully,
             //we need to create it as follows
+
 
             $database = $this->application->createInstance("database",
                 [
@@ -215,6 +207,8 @@ class Install extends Controller {
                 $this->application->dispatcher->redirect("/member/signin");
             }
 
+
+            
         }
 
         //installation is complete

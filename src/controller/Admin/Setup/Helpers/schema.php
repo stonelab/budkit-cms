@@ -788,7 +788,6 @@ final class Schema{
         $this->createAuthorityTable();
         $this->createAuthorityPermissionsTable();
 
-
         $this->createMenuGroupTable();
         $this->createMenutable();
 
@@ -819,14 +818,10 @@ final class Schema{
         $this->createUsersView();
         $this->createStoriesView();
 
-
         if (!$this->database->commitTransaction()) {
-
             //$this->setError($this->$database->getError());
-
             return false;
         }
-
         return true;
     }
 
